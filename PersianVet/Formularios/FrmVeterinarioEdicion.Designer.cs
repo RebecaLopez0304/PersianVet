@@ -1,0 +1,19 @@
+namespace PersianVet.Formularios;
+
+partial class FrmVeterinarioEdicion
+{
+    private Label lblTitulo = null!, lblNombres = null!, lblApellidos = null!, lblEspecialidad = null!, lblTelefono = null!;
+    private TextBox txtNombres = null!, txtApellidos = null!, txtEspecialidad = null!, txtTelefono = null!;
+    private Button btnGuardar = null!, btnCancelar = null!;
+
+    private void InitializeComponent()
+    {
+        lblTitulo = new Label(); lblNombres = new Label(); lblApellidos = new Label(); lblEspecialidad = new Label(); lblTelefono = new Label(); txtNombres = new TextBox(); txtApellidos = new TextBox(); txtEspecialidad = new TextBox(); txtTelefono = new TextBox(); btnGuardar = new Button(); btnCancelar = new Button(); SuspendLayout();
+        lblTitulo.AutoSize = true; lblTitulo.Font = new Font("Segoe UI", 20F, FontStyle.Bold); lblTitulo.ForeColor = Color.FromArgb(8, 52, 90); lblTitulo.Location = new Point(28, 22); lblTitulo.Text = "Datos del veterinario";
+        lblNombres.AutoSize = true; lblNombres.Font = new Font("Segoe UI", 9F, FontStyle.Bold); lblNombres.Location = new Point(30, 88); lblNombres.Text = "Nombres"; lblApellidos.AutoSize = true; lblApellidos.Font = new Font("Segoe UI", 9F, FontStyle.Bold); lblApellidos.Location = new Point(300, 88); lblApellidos.Text = "Apellidos";
+        lblEspecialidad.AutoSize = true; lblEspecialidad.Font = new Font("Segoe UI", 9F, FontStyle.Bold); lblEspecialidad.Location = new Point(30, 158); lblEspecialidad.Text = "Especialidad"; lblTelefono.AutoSize = true; lblTelefono.Font = new Font("Segoe UI", 9F, FontStyle.Bold); lblTelefono.Location = new Point(300, 158); lblTelefono.Text = "Teléfono";
+        txtNombres.Font = new Font("Segoe UI", 10F); txtNombres.Location = new Point(30, 110); txtNombres.Size = new Size(240, 30); txtApellidos.Font = new Font("Segoe UI", 10F); txtApellidos.Location = new Point(300, 110); txtApellidos.Size = new Size(240, 30); txtEspecialidad.Font = new Font("Segoe UI", 10F); txtEspecialidad.Location = new Point(30, 180); txtEspecialidad.Size = new Size(240, 30); txtTelefono.Font = new Font("Segoe UI", 10F); txtTelefono.Location = new Point(300, 180); txtTelefono.Size = new Size(240, 30);
+        btnCancelar.BackColor = Color.White; btnCancelar.DialogResult = DialogResult.Cancel; btnCancelar.FlatStyle = FlatStyle.Flat; btnCancelar.ForeColor = Color.FromArgb(31, 78, 121); btnCancelar.Location = new Point(285, 235); btnCancelar.Size = new Size(120, 40); btnCancelar.Text = "Cancelar"; btnGuardar.BackColor = Color.FromArgb(242, 140, 40); btnGuardar.FlatStyle = FlatStyle.Flat; btnGuardar.ForeColor = Color.White; btnGuardar.Location = new Point(420, 235); btnGuardar.Size = new Size(120, 40); btnGuardar.Text = "Guardar"; btnGuardar.Click += Guardar;
+        AcceptButton = btnGuardar; CancelButton = btnCancelar; BackColor = Color.FromArgb(248, 250, 252); ClientSize = new Size(570, 305); Controls.AddRange(new Control[] { lblTitulo, lblNombres, lblApellidos, lblEspecialidad, lblTelefono, txtNombres, txtApellidos, txtEspecialidad, txtTelefono, btnCancelar, btnGuardar }); Font = new Font("Segoe UI", 9F); FormBorderStyle = FormBorderStyle.FixedDialog; MaximizeBox = false; MinimizeBox = false; StartPosition = FormStartPosition.CenterParent; Text = "Nuevo veterinario"; ResumeLayout(false); PerformLayout();
+    }
+}

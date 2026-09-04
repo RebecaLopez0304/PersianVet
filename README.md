@@ -101,7 +101,7 @@ Todas las consultas que reciben información del usuario utilizan parámetros. E
 
 ## Funciones pendientes
 
-- Reportes e impresión.
+<!-- Reportes e impresión se implementarán en otro entregable. -->
 - Permisos diferentes por rol.
 - Fotografías personalizadas de mascotas.
 - Edición y eliminación de consultas, tratamientos y vacunas.

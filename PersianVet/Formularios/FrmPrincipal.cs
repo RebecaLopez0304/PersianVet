@@ -61,6 +61,7 @@ public partial class FrmPrincipal : Form
         AcomodarEncabezado();
         AcomodarMenu();
         ActualizarFechaHora();
+        timerReloj.Start();
         MostrarDashboard();
     }
 
@@ -120,14 +121,15 @@ public partial class FrmPrincipal : Form
         MostrarControl(new UcVeterinarios(veterinarioServicio), btnVeterinarios);
     }
 
-    private void BtnReportes_Click(object? sender, EventArgs e)
-    {
-        MessageBox.Show(
-            "El módulo de reportes se incluirá en el siguiente entregable.",
-            "PersianVet",
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Information);
-    }
+    // El módulo de reportes se desarrollará en otro entregable.
+    // private void BtnReportes_Click(object? sender, EventArgs e)
+    // {
+    //     MessageBox.Show(
+    //         "El módulo de reportes se incluirá en el siguiente entregable.",
+    //         "PersianVet",
+    //         MessageBoxButtons.OK,
+    //         MessageBoxIcon.Information);
+    // }
 
     private void BtnCerrarSesion_Click(object? sender, EventArgs e)
     {
@@ -198,7 +200,8 @@ public partial class FrmPrincipal : Form
 
     private void AsignarIconos()
     {
-        Button[] botones = [btnInicio, btnClientes, btnMascotas, btnCitas, btnConsultas, btnVacunas, btnVeterinarios, btnReportes, btnCerrarSesion];
+        Button[] botones = [btnInicio, btnClientes, btnMascotas, btnCitas, btnConsultas, btnVacunas, btnVeterinarios, btnCerrarSesion];
+        // Cuando se implemente Reportes, btnReportes debe agregarse a esta lista.
         foreach (Button boton in botones)
         {
             boton.Image = Iconos.Crear(boton.Text, Tema.AzulOscuro);

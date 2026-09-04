@@ -14,6 +14,10 @@ public partial class FrmUsuarios : Form
     public FrmUsuarios()
     {
         InitializeComponent();
+        EstiloControles.ConfigurarTabla(tablaUsuarios);
+        EstiloControles.ConfigurarBotonSecundario(btnDesactivarUsuario);
+        EstiloControles.ConfigurarBotonPrincipal(btnCrear);
+        EstiloControles.ConfigurarBotonPrincipal(btnCambiar);
         usuarioServicio = null!;
     }
 

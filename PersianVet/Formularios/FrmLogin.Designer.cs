@@ -1,6 +1,4 @@
 #nullable enable
-using PersianVet.Utilidades;
-
 namespace PersianVet.Formularios;
 
 partial class FrmLogin
@@ -59,7 +57,7 @@ partial class FrmLogin
         ((System.ComponentModel.ISupportInitialize)pictureMascota).BeginInit();
         ((System.ComponentModel.ISupportInitialize)errorProvider).BeginInit();
         SuspendLayout();
-        panelMarca.BackColor = Tema.AzulOscuro;
+        panelMarca.BackColor = Color.FromArgb(8, 52, 90);
         panelMarca.Controls.Add(pictureMascota);
         panelMarca.Controls.Add(lblMarca);
         panelMarca.Controls.Add(lblSubmarca);
@@ -82,19 +80,19 @@ partial class FrmLogin
         lblSubmarca.Text = "Veterinaria Persian";
         lblSubmarca.TextAlign = ContentAlignment.MiddleCenter;
         lblEslogan.Font = new Font("Segoe UI", 12F, FontStyle.Italic);
-        lblEslogan.ForeColor = Tema.Crema;
+        lblEslogan.ForeColor = Color.FromArgb(255, 244, 230);
         lblEslogan.Location = new Point(80, 440);
         lblEslogan.Size = new Size(290, 35);
         lblEslogan.Text = "Cuidado, salud y cariño";
         lblEslogan.TextAlign = ContentAlignment.MiddleCenter;
         lblTitulo.AutoSize = true;
         lblTitulo.Font = new Font("Segoe UI", 25F, FontStyle.Bold);
-        lblTitulo.ForeColor = Tema.AzulOscuro;
+        lblTitulo.ForeColor = Color.FromArgb(8, 52, 90);
         lblTitulo.Location = new Point(555, 125);
         lblTitulo.Text = "Iniciar sesión";
         lblBienvenida.AutoSize = true;
         lblBienvenida.Font = new Font("Segoe UI", 11F);
-        lblBienvenida.ForeColor = Tema.TextoSecundario;
+        lblBienvenida.ForeColor = Color.FromArgb(94, 103, 112);
         lblBienvenida.Location = new Point(560, 180);
         lblBienvenida.Text = "Bienvenido a PersianVet";
         lblUsuario.AutoSize = true;
@@ -123,9 +121,12 @@ partial class FrmLogin
         btnIngresar.Size = new Size(330, 42);
         btnIngresar.Text = "Ingresar";
         btnIngresar.Click += BtnIngresar_Click;
-        EstiloControles.ConfigurarBotonPrincipal(btnIngresar);
+        btnIngresar.BackColor = Color.FromArgb(242, 140, 40);
+        btnIngresar.FlatStyle = FlatStyle.Flat;
+        btnIngresar.ForeColor = Color.White;
+        btnIngresar.FlatAppearance.BorderSize = 0;
         linkUsuarios.AutoSize = true;
-        linkUsuarios.LinkColor = Tema.Azul;
+        linkUsuarios.LinkColor = Color.FromArgb(31, 78, 121);
         linkUsuarios.Location = new Point(650, 505);
         linkUsuarios.Text = "Administrar usuarios";
         linkUsuarios.LinkClicked += LinkUsuarios_LinkClicked;
@@ -136,7 +137,7 @@ partial class FrmLogin
         AcceptButton = btnIngresar;
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
-        BackColor = Tema.Fondo;
+        BackColor = Color.FromArgb(248, 250, 252);
         ClientSize = new Size(1000, 650);
         Controls.Add(panelMarca);
         Controls.Add(lblTitulo);

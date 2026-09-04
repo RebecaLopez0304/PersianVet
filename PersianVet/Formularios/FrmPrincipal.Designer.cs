@@ -1,6 +1,4 @@
 #nullable enable
-using PersianVet.Utilidades;
-
 namespace PersianVet.Formularios;
 
 partial class FrmPrincipal
@@ -21,7 +19,7 @@ partial class FrmPrincipal
     private Button btnConsultas = null!;
     private Button btnVacunas = null!;
     private Button btnVeterinarios = null!;
-    private Button btnReportes = null!;
+    // private Button btnReportes = null!;
     private Button btnCerrarSesion = null!;
     private PictureBox pictureMascota = null!;
     private System.Windows.Forms.Timer timerReloj = null!;
@@ -56,14 +54,14 @@ partial class FrmPrincipal
         btnConsultas = new Button();
         btnVacunas = new Button();
         btnVeterinarios = new Button();
-        btnReportes = new Button();
+        // btnReportes = new Button();
         btnCerrarSesion = new Button();
         timerReloj = new System.Windows.Forms.Timer(components);
         panelEncabezado.SuspendLayout();
         panelMenu.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)pictureMascota).BeginInit();
         SuspendLayout();
-        panelEncabezado.BackColor = Tema.AzulOscuro;
+        panelEncabezado.BackColor = Color.FromArgb(8, 52, 90);
         panelEncabezado.Controls.Add(lblMarca);
         panelEncabezado.Controls.Add(lblEslogan);
         panelEncabezado.Controls.Add(lblFechaHora);
@@ -77,7 +75,7 @@ partial class FrmPrincipal
         lblMarca.Size = new Size(250, 48);
         lblMarca.Text = "PersianVet";
         lblEslogan.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
-        lblEslogan.ForeColor = Tema.Crema;
+        lblEslogan.ForeColor = Color.FromArgb(255, 244, 230);
         lblEslogan.Location = new Point(292, 36);
         lblEslogan.Size = new Size(240, 25);
         lblEslogan.Text = "Cuidado, salud y cariño";
@@ -91,38 +89,32 @@ partial class FrmPrincipal
         lblUsuario.Size = new Size(130, 24);
         lblUsuario.TextAlign = ContentAlignment.MiddleRight;
         lblRol.Font = new Font("Segoe UI", 8F);
-        lblRol.ForeColor = Tema.Crema;
+        lblRol.ForeColor = Color.FromArgb(255, 244, 230);
         lblRol.Location = new Point(1050, 38);
         lblRol.Size = new Size(130, 20);
         lblRol.TextAlign = ContentAlignment.MiddleRight;
         panelMenu.BackColor = Color.White;
-        panelMenu.Controls.AddRange(new Control[] { btnInicio, btnClientes, btnMascotas, btnCitas, btnConsultas, btnVacunas, btnVeterinarios, btnReportes, btnCerrarSesion, pictureMascota });
+        panelMenu.Controls.AddRange(new Control[] { btnInicio, btnClientes, btnMascotas, btnCitas, btnConsultas, btnVacunas, btnVeterinarios, btnCerrarSesion, pictureMascota });
         panelMenu.Dock = DockStyle.Left;
         panelMenu.Width = 224;
         pictureMascota.Location = new Point(25, 490);
         pictureMascota.Size = new Size(155, 120);
         pictureMascota.SizeMode = PictureBoxSizeMode.Zoom;
-        ConfigurarBotonMenu(btnInicio, "Inicio", 88);
-        ConfigurarBotonMenu(btnClientes, "Clientes", 137);
-        ConfigurarBotonMenu(btnMascotas, "Mascotas", 186);
-        ConfigurarBotonMenu(btnCitas, "Citas", 235);
-        ConfigurarBotonMenu(btnConsultas, "Consultas", 284);
-        ConfigurarBotonMenu(btnVacunas, "Vacunas", 333);
-        ConfigurarBotonMenu(btnVeterinarios, "Veterinarios", 382);
-        ConfigurarBotonMenu(btnReportes, "Reportes", 431);
-        ConfigurarBotonMenu(btnCerrarSesion, "Cerrar sesión", 617);
-        btnInicio.Location = new Point(14, 88); btnInicio.Size = new Size(196, 44); btnInicio.Text = "Inicio";
-        btnClientes.Location = new Point(14, 137); btnClientes.Size = new Size(196, 44); btnClientes.Text = "Clientes";
-        btnMascotas.Location = new Point(14, 186); btnMascotas.Size = new Size(196, 44); btnMascotas.Text = "Mascotas";
-        btnCitas.Location = new Point(14, 235); btnCitas.Size = new Size(196, 44); btnCitas.Text = "Citas";
-        btnConsultas.Location = new Point(14, 284); btnConsultas.Size = new Size(196, 44); btnConsultas.Text = "Consultas";
-        btnVacunas.Location = new Point(14, 333); btnVacunas.Size = new Size(196, 44); btnVacunas.Text = "Vacunas";
-        btnVeterinarios.Location = new Point(14, 382); btnVeterinarios.Size = new Size(196, 44); btnVeterinarios.Text = "Veterinarios";
-        btnReportes.Location = new Point(14, 431); btnReportes.Size = new Size(196, 44); btnReportes.Text = "Reportes";
-        btnCerrarSesion.Location = new Point(14, 617); btnCerrarSesion.Size = new Size(196, 44); btnCerrarSesion.Text = "Cerrar sesión";
+        btnInicio.Location = new Point(14, 88); btnInicio.Size = new Size(196, 44); btnInicio.Text = "Inicio"; btnInicio.BackColor = Color.White; btnInicio.FlatStyle = FlatStyle.Flat; btnInicio.FlatAppearance.BorderSize = 0; btnInicio.Font = new Font("Segoe UI", 10F, FontStyle.Bold); btnInicio.ForeColor = Color.FromArgb(8, 52, 90); btnInicio.TextAlign = ContentAlignment.MiddleLeft;
+        btnClientes.Location = new Point(14, 137); btnClientes.Size = new Size(196, 44); btnClientes.Text = "Clientes"; btnClientes.BackColor = Color.White; btnClientes.FlatStyle = FlatStyle.Flat; btnClientes.FlatAppearance.BorderSize = 0; btnClientes.Font = new Font("Segoe UI", 10F, FontStyle.Bold); btnClientes.ForeColor = Color.FromArgb(8, 52, 90); btnClientes.TextAlign = ContentAlignment.MiddleLeft;
+        btnMascotas.Location = new Point(14, 186); btnMascotas.Size = new Size(196, 44); btnMascotas.Text = "Mascotas"; btnMascotas.BackColor = Color.White; btnMascotas.FlatStyle = FlatStyle.Flat; btnMascotas.FlatAppearance.BorderSize = 0; btnMascotas.Font = new Font("Segoe UI", 10F, FontStyle.Bold); btnMascotas.ForeColor = Color.FromArgb(8, 52, 90); btnMascotas.TextAlign = ContentAlignment.MiddleLeft;
+        btnCitas.Location = new Point(14, 235); btnCitas.Size = new Size(196, 44); btnCitas.Text = "Citas"; btnCitas.BackColor = Color.White; btnCitas.FlatStyle = FlatStyle.Flat; btnCitas.FlatAppearance.BorderSize = 0; btnCitas.Font = new Font("Segoe UI", 10F, FontStyle.Bold); btnCitas.ForeColor = Color.FromArgb(8, 52, 90); btnCitas.TextAlign = ContentAlignment.MiddleLeft;
+        btnConsultas.Location = new Point(14, 284); btnConsultas.Size = new Size(196, 44); btnConsultas.Text = "Consultas"; btnConsultas.BackColor = Color.White; btnConsultas.FlatStyle = FlatStyle.Flat; btnConsultas.FlatAppearance.BorderSize = 0; btnConsultas.Font = new Font("Segoe UI", 10F, FontStyle.Bold); btnConsultas.ForeColor = Color.FromArgb(8, 52, 90); btnConsultas.TextAlign = ContentAlignment.MiddleLeft;
+        btnVacunas.Location = new Point(14, 333); btnVacunas.Size = new Size(196, 44); btnVacunas.Text = "Vacunas"; btnVacunas.BackColor = Color.White; btnVacunas.FlatStyle = FlatStyle.Flat; btnVacunas.FlatAppearance.BorderSize = 0; btnVacunas.Font = new Font("Segoe UI", 10F, FontStyle.Bold); btnVacunas.ForeColor = Color.FromArgb(8, 52, 90); btnVacunas.TextAlign = ContentAlignment.MiddleLeft;
+        btnVeterinarios.Location = new Point(14, 382); btnVeterinarios.Size = new Size(196, 44); btnVeterinarios.Text = "Veterinarios"; btnVeterinarios.BackColor = Color.White; btnVeterinarios.FlatStyle = FlatStyle.Flat; btnVeterinarios.FlatAppearance.BorderSize = 0; btnVeterinarios.Font = new Font("Segoe UI", 10F, FontStyle.Bold); btnVeterinarios.ForeColor = Color.FromArgb(8, 52, 90); btnVeterinarios.TextAlign = ContentAlignment.MiddleLeft;
+        // El módulo de reportes se agregará en otro entregable.
+        // btnReportes.Location = new Point(14, 431);
+        // btnReportes.Size = new Size(196, 44);
+        // btnReportes.Text = "Reportes";
+        btnCerrarSesion.Location = new Point(14, 617); btnCerrarSesion.Size = new Size(196, 44); btnCerrarSesion.Text = "Cerrar sesión"; btnCerrarSesion.BackColor = Color.White; btnCerrarSesion.FlatStyle = FlatStyle.Flat; btnCerrarSesion.FlatAppearance.BorderSize = 0; btnCerrarSesion.Font = new Font("Segoe UI", 10F, FontStyle.Bold); btnCerrarSesion.ForeColor = Color.FromArgb(8, 52, 90); btnCerrarSesion.TextAlign = ContentAlignment.MiddleLeft;
         panelEncabezado.Resize += PanelEncabezado_Resize;
         panelMenu.Resize += PanelMenu_Resize;
-        panelContenido.BackColor = Tema.Fondo;
+        panelContenido.BackColor = Color.FromArgb(248, 250, 252);
         panelContenido.Padding = new Padding(18);
         panelContenido.Dock = DockStyle.Fill;
         btnInicio.Click += BtnInicio_Click;
@@ -132,11 +124,10 @@ partial class FrmPrincipal
         btnConsultas.Click += BtnConsultas_Click;
         btnVacunas.Click += BtnVacunas_Click;
         btnVeterinarios.Click += BtnVeterinarios_Click;
-        btnReportes.Click += BtnReportes_Click;
+        // btnReportes.Click += BtnReportes_Click;
         btnCerrarSesion.Click += BtnCerrarSesion_Click;
         timerReloj.Interval = 1000;
         timerReloj.Tick += TimerReloj_Tick;
-        timerReloj.Start();
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(1200, 720);
@@ -155,20 +146,4 @@ partial class FrmPrincipal
         ResumeLayout(false);
     }
 
-    private static void ConfigurarBotonMenu(Button boton, string texto, int posicionY)
-    {
-        boton.BackColor = Color.Transparent;
-        boton.Cursor = Cursors.Hand;
-        boton.FlatStyle = FlatStyle.Flat;
-        boton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        boton.ForeColor = Tema.AzulOscuro;
-        boton.Location = new Point(14, posicionY);
-        boton.Size = new Size(196, 44);
-        boton.Text = texto;
-        boton.TextAlign = ContentAlignment.MiddleLeft;
-        boton.UseVisualStyleBackColor = false;
-        boton.FlatAppearance.BorderSize = 0;
-        boton.FlatAppearance.MouseOverBackColor = Tema.NaranjaClaro;
-        boton.FlatAppearance.MouseDownBackColor = Color.FromArgb(255, 224, 190);
-    }
 }
