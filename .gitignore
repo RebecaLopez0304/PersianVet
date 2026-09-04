@@ -1,0 +1,122 @@
+## Archivos de usuario de Visual Studio
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+## Directorios de compilación
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+build/
+bld/
+[Oo]ut/
+[Tt]emp/
+artifacts/
+
+## Carpeta de Visual Studio
+.vs/
+.vscode/
+*.VisualState.xml
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+## Resultados de pruebas
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.coveragexml
+
+## Resultados de profiling y depuración
+*.dbmdl
+*.dbproj.schemaview
+*.jfm
+*.pfx
+*.publishsettings
+*.psess
+*.vsp
+*.vspx
+*.sap
+*.e2e
+
+## NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+
+## Publicación / ClickOnce
+publish/
+*.[Pp]ublish.xml
+*.azurePubxml
+*.pubxml
+*.publishproj
+PublishScripts/
+*.appx
+*.appxbundle
+*.appxupload
+
+## Entity Framework
+*.edmx.diagram
+*.edmx.sql
+Migrations/*_*.Designer.cs.bak
+
+## Base de datos local / archivos temporales
+*.mdf
+*.ldf
+*.ndf
+*.sdf
+*.opendb
+*.db-shm
+*.db-wal
+UpgradeLog*.htm
+UpgradeLog*.XML
+_UpgradeReport_Files/
+Backup*/
+
+## ReSharper / Rider / JetBrains
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+.idea/
+*.sln.iml
+
+## Archivos del sistema operativo
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+## Secretos y configuración local
+appsettings.*.local.json
+*.local.json
+secrets.json
+.env
+.env.local

@@ -1,0 +1,67 @@
+namespace PersianVet.Controles;
+
+partial class UcMascotas
+{
+    private Label lblTitulo = null!, lblDescripcion = null!, lblBuscar = null!;
+    private ComboBox cboPropietario = null!;
+    private TextBox txtNombre = null!;
+    private ComboBox cboEspecie = null!;
+    private TextBox txtRaza = null!;
+    private ComboBox cboSexo = null!;
+    private DateTimePicker dtpNacimiento = null!;
+    private TextBox txtColor = null!;
+    private NumericUpDown numPeso = null!;
+    private TextBox txtObservaciones = null!;
+    private TextBox txtBuscar = null!;
+    private Button btnNuevo = null!;
+    private Button btnGuardar = null!;
+    private Button btnEditar = null!;
+    private Button btnDesactivar = null!;
+    private DataGridView tablaMascotas = null!;
+    private CheckBox chkMostrarInactivas = null!;
+
+    private void InitializeComponent()
+    {
+        lblTitulo = new Label(); lblDescripcion = new Label(); lblBuscar = new Label();
+        lblTitulo.AutoSize = true; lblTitulo.Font = new Font("Segoe UI", 24F, FontStyle.Bold); lblTitulo.ForeColor = Color.FromArgb(8, 52, 90); lblTitulo.Location = new Point(28, 18); lblTitulo.Text = "Registro de mascotas";
+        lblDescripcion.AutoSize = true; lblDescripcion.ForeColor = Color.FromArgb(104, 115, 125); lblDescripcion.Location = new Point(31, 62); lblDescripcion.Text = "Administra las mascotas registradas en la clínica";
+        lblBuscar.AutoSize = true; lblBuscar.Font = new Font("Segoe UI", 9F, FontStyle.Bold); lblBuscar.Location = new Point(765, 7); lblBuscar.Text = "Buscar";
+        txtBuscar = new TextBox(); txtBuscar.Font = new Font("Segoe UI", 10F); txtBuscar.Location = new Point(765, 27); txtBuscar.Size = new Size(240, 30);
+        txtBuscar.PlaceholderText = "Buscar mascota...";
+        cboPropietario = new ComboBox(); cboPropietario.DropDownStyle = ComboBoxStyle.DropDownList; cboPropietario.Location = new Point(30, 122); cboPropietario.Size = new Size(310, 30);
+        txtNombre = new TextBox(); txtNombre.Font = new Font("Segoe UI", 10F); txtNombre.Location = new Point(360, 122); txtNombre.Size = new Size(180, 30);
+        cboEspecie = new ComboBox(); cboEspecie.DropDownStyle = ComboBoxStyle.DropDownList; cboEspecie.Location = new Point(560, 122); cboEspecie.Size = new Size(180, 30);
+        cboEspecie.Items.AddRange(new object[] { "Felino", "Canino" });
+        cboEspecie.SelectedIndex = 0;
+        txtRaza = new TextBox(); txtRaza.Font = new Font("Segoe UI", 10F); txtRaza.Location = new Point(760, 122); txtRaza.Size = new Size(245, 30);
+        cboSexo = new ComboBox(); cboSexo.DropDownStyle = ComboBoxStyle.DropDownList; cboSexo.Location = new Point(30, 188); cboSexo.Size = new Size(160, 30);
+        cboSexo.Items.AddRange(new object[] { "Macho", "Hembra" });
+        dtpNacimiento = new DateTimePicker(); dtpNacimiento.Format = DateTimePickerFormat.Short; dtpNacimiento.Location = new Point(210, 188); dtpNacimiento.Size = new Size(210, 30);
+        txtColor = new TextBox(); txtColor.Font = new Font("Segoe UI", 10F); txtColor.Location = new Point(440, 188); txtColor.Size = new Size(200, 30);
+        numPeso = new NumericUpDown(); numPeso.DecimalPlaces = 2; numPeso.Minimum = 0.01M; numPeso.Maximum = 200; numPeso.Value = 1; numPeso.Location = new Point(660, 188); numPeso.Size = new Size(110, 30);
+        txtObservaciones = new TextBox(); txtObservaciones.Font = new Font("Segoe UI", 10F); txtObservaciones.Location = new Point(790, 188); txtObservaciones.Size = new Size(215, 30);
+        btnNuevo = new Button(); btnNuevo.Location = new Point(30, 100); btnNuevo.Size = new Size(105, 38); btnNuevo.Text = "Nuevo";
+        btnGuardar = new Button(); btnGuardar.Location = new Point(145, 100); btnGuardar.Size = new Size(105, 38); btnGuardar.Text = "Guardar";
+        btnGuardar.Visible = false;
+        btnEditar = new Button(); btnEditar.Location = new Point(145, 100); btnEditar.Size = new Size(120, 38); btnEditar.Text = "Modificar";
+        btnDesactivar = new Button(); btnDesactivar.Location = new Point(275, 100); btnDesactivar.Size = new Size(120, 38); btnDesactivar.Text = "Desactivar";
+        chkMostrarInactivas = new CheckBox();
+        chkMostrarInactivas.AutoSize = true; chkMostrarInactivas.Location = new Point(425, 111); chkMostrarInactivas.Text = "Mostrar desactivadas";
+        tablaMascotas = new DataGridView();
+        tablaMascotas.Location = new Point(30, 160); tablaMascotas.Size = new Size(975, 470); tablaMascotas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        tablaMascotas.AllowUserToAddRows = false; tablaMascotas.AllowUserToDeleteRows = false; tablaMascotas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; tablaMascotas.BackgroundColor = Color.White; tablaMascotas.ReadOnly = true; tablaMascotas.RowHeadersVisible = false; tablaMascotas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        txtBuscar.TextChanged += TxtBuscar_TextChanged;
+        btnNuevo.Click += BtnNuevo_Click;
+        btnGuardar.Click += BtnGuardar_Click;
+        btnEditar.Click += BtnEditar_Click;
+        btnDesactivar.Click += BtnDesactivar_Click;
+        tablaMascotas.SelectionChanged += TablaMascotas_SelectionChanged;
+        chkMostrarInactivas.CheckedChanged += ChkMostrarInactivas_CheckedChanged;
+        Controls.AddRange(new Control[] { lblTitulo, lblDescripcion, lblBuscar, txtBuscar,
+            btnNuevo, btnEditar, btnDesactivar, chkMostrarInactivas, tablaMascotas });
+        BackColor = Color.FromArgb(248, 250, 252);
+        Font = new Font("Segoe UI", 9F);
+        Size = new Size(1040, 680);
+    }
+
+}
