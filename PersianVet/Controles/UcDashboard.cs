@@ -5,18 +5,27 @@ using PersianVet.Utilidades;
 namespace PersianVet.Controles;
 
 /// <summary>
-/// Muestra un resumen general de la veterinaria.
+/// Muestra un resumen general de la veterinaria con accesos rápidos.
 /// </summary>
 public partial class UcDashboard : UserControl
 {
     private readonly DashboardServicio dashboardServicio;
     private CancellationTokenSource? cancelacion;
 
+    /// <summary>
+    /// Se dispara cuando el usuario pide ir a otro módulo (tarjeta, botón o aviso).
+    /// </summary>
+    public event Action<string>? NavegarSolicitado;
+
     public UcDashboard()
     {
         InitializeComponent();
-        EstiloControles.ConfigurarBotonSecundario(btnActualizar);
         EstiloControles.ConfigurarTabla(tablaCitas);
+        ConfigurarBotones();
+        HacerClicable(tarjetaMascotas, "Mascotas");
+        HacerClicable(tarjetaCitas, "Citas");
+        HacerClicable(tarjetaVacunas, "Vacunas");
+        HacerClicable(tarjetaConsultas, "Consultas");
         dashboardServicio = null!;
     }
 
@@ -34,6 +43,44 @@ public partial class UcDashboard : UserControl
     private async void BtnActualizar_Click(object? sender, EventArgs e)
     {
         await CargarDatosAsync();
+    }
+
+    private void Navegar(string destino)
+    {
+        NavegarSolicitado?.Invoke(destino);
+    }
+
+    private void ListaAlertas_DoubleClick(object? sender, EventArgs e)
+    {
+        if (listaAlertas.SelectedItem is Alerta alerta && alerta.Modulo != "Inicio")
+        {
+            Navegar(alerta.Modulo);
+        }
+    }
+
+    private void ConfigurarBotones()
+    {
+        Button[] principales = [btnNuevaCita, btnNuevoCliente, btnNuevaMascota, btnNuevaConsulta, btnNuevaVacuna];
+        foreach (Button boton in principales)
+        {
+            EstiloControles.ConfigurarBotonPrincipal(boton);
+        }
+
+        EstiloControles.ConfigurarBotonSecundario(btnCalendario);
+        EstiloControles.ConfigurarBotonSecundario(btnActualizar);
+    }
+
+    /// <summary>
+    /// Hace que toda la tarjeta (y sus etiquetas) responda al clic y muestre cursor de mano.
+    /// </summary>
+    private void HacerClicable(Control control, string destino)
+    {
+        control.Cursor = Cursors.Hand;
+        control.Click += (_, _) => Navegar(destino);
+        foreach (Control hijo in control.Controls)
+        {
+            HacerClicable(hijo, destino);
+        }
     }
 
     /// <summary>
@@ -56,10 +103,12 @@ public partial class UcDashboard : UserControl
 
         try
         {
-            // El resumen y las citas se consultan al mismo tiempo, fuera del hilo de la interfaz.
+            // Las cuatro consultas se lanzan a la vez y corren fuera del hilo de la interfaz.
             Task<ResumenDashboard> tareaResumen = dashboardServicio.ObtenerResumenAsync(actual.Token);
             Task<List<Cita>> tareaCitas = dashboardServicio.ListarProximasCitasAsync(actual.Token);
-            await Task.WhenAll(tareaResumen, tareaCitas);
+            Task<List<Alerta>> tareaAlertas = dashboardServicio.ListarAlertasAsync(actual.Token);
+            Task<List<PuntoGrafico>> tareaGrafico = dashboardServicio.ContarCitasProximosDiasAsync(7, actual.Token);
+            await Task.WhenAll(tareaResumen, tareaCitas, tareaAlertas, tareaGrafico);
 
             ResumenDashboard resumen = tareaResumen.Result;
             lblMascotasValor.Text = resumen.MascotasRegistradas.ToString();
@@ -68,6 +117,9 @@ public partial class UcDashboard : UserControl
             lblConsultasValor.Text = resumen.ConsultasMes.ToString();
             tablaCitas.DataSource = tareaCitas.Result;
             OcultarColumnas();
+
+            listaAlertas.DataSource = tareaAlertas.Result;
+            graficoCitas.AsignarDatos(tareaGrafico.Result);
             lblEstado.Text = "La información está actualizada.";
         }
         catch (OperationCanceledException)

@@ -17,6 +17,7 @@ partial class UcMascotas
     private Button btnGuardar = null!;
     private Button btnEditar = null!;
     private Button btnDesactivar = null!;
+    private Button btnFicha = null!;
     private DataGridView tablaMascotas = null!;
     private CheckBox chkMostrarInactivas = null!;
 
@@ -45,8 +46,9 @@ partial class UcMascotas
         btnGuardar.Visible = false;
         btnEditar = new Button(); btnEditar.Location = new Point(145, 100); btnEditar.Size = new Size(120, 38); btnEditar.Text = "Modificar";
         btnDesactivar = new Button(); btnDesactivar.Location = new Point(275, 100); btnDesactivar.Size = new Size(120, 38); btnDesactivar.Text = "Desactivar";
+        btnFicha = new Button(); btnFicha.Location = new Point(405, 100); btnFicha.Size = new Size(120, 38); btnFicha.Text = "Ver ficha";
         chkMostrarInactivas = new CheckBox();
-        chkMostrarInactivas.AutoSize = true; chkMostrarInactivas.Location = new Point(425, 111); chkMostrarInactivas.Text = "Mostrar desactivadas";
+        chkMostrarInactivas.AutoSize = true; chkMostrarInactivas.Location = new Point(545, 111); chkMostrarInactivas.Text = "Mostrar desactivadas";
         tablaMascotas = new DataGridView();
         tablaMascotas.Location = new Point(30, 160); tablaMascotas.Size = new Size(975, 470); tablaMascotas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         tablaMascotas.AllowUserToAddRows = false; tablaMascotas.AllowUserToDeleteRows = false; tablaMascotas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; tablaMascotas.BackgroundColor = Color.White; tablaMascotas.ReadOnly = true; tablaMascotas.RowHeadersVisible = false; tablaMascotas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -55,10 +57,12 @@ partial class UcMascotas
         btnGuardar.Click += BtnGuardar_Click;
         btnEditar.Click += BtnEditar_Click;
         btnDesactivar.Click += BtnDesactivar_Click;
+        btnFicha.Click += BtnFicha_Click;
+        tablaMascotas.CellDoubleClick += TablaMascotas_CellDoubleClick;
         tablaMascotas.SelectionChanged += TablaMascotas_SelectionChanged;
         chkMostrarInactivas.CheckedChanged += ChkMostrarInactivas_CheckedChanged;
         Controls.AddRange(new Control[] { lblTitulo, lblDescripcion, lblBuscar, txtBuscar,
-            btnNuevo, btnEditar, btnDesactivar, chkMostrarInactivas, tablaMascotas });
+            btnNuevo, btnEditar, btnDesactivar, btnFicha, chkMostrarInactivas, tablaMascotas });
         BackColor = Color.FromArgb(248, 250, 252);
         Font = new Font("Segoe UI", 9F);
         Size = new Size(1040, 680);

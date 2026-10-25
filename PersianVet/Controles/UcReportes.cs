@@ -68,6 +68,7 @@ public partial class UcReportes : UserControl
 
             tablaVeterinarios.DataSource = veterinarios;
             tablaEspecies.DataSource = especies;
+            graficoEspecies.AsignarDatos(especies.Select(e => new PuntoGrafico { Etiqueta = e.Especie, Valor = e.Mascotas }));
             lblEstado.Text = $"Reporte generado: {veterinarios.Sum(v => v.Consultas)} consultas y "
                 + $"{veterinarios.Sum(v => v.Citas)} citas entre {dtpDesde.Value:dd/MM/yyyy} y {dtpHasta.Value:dd/MM/yyyy}.";
         }

@@ -12,6 +12,7 @@ partial class FrmPrincipal
     private Label lblFechaHora = null!;
     private Label lblUsuario = null!;
     private Label lblRol = null!;
+    private TextBox txtBusqueda = null!;
     private Button btnInicio = null!;
     private Button btnClientes = null!;
     private Button btnMascotas = null!;
@@ -46,6 +47,7 @@ partial class FrmPrincipal
         lblFechaHora = new Label();
         lblUsuario = new Label();
         lblRol = new Label();
+        txtBusqueda = new TextBox();
         pictureMascota = new PictureBox();
         btnInicio = new Button();
         btnClientes = new Button();
@@ -67,6 +69,7 @@ partial class FrmPrincipal
         panelEncabezado.Controls.Add(lblFechaHora);
         panelEncabezado.Controls.Add(lblUsuario);
         panelEncabezado.Controls.Add(lblRol);
+        panelEncabezado.Controls.Add(txtBusqueda);
         panelEncabezado.Dock = DockStyle.Top;
         panelEncabezado.Height = 92;
         lblMarca.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
@@ -93,6 +96,12 @@ partial class FrmPrincipal
         lblRol.Location = new Point(1050, 38);
         lblRol.Size = new Size(130, 20);
         lblRol.TextAlign = ContentAlignment.MiddleRight;
+        txtBusqueda.BorderStyle = BorderStyle.FixedSingle;
+        txtBusqueda.Font = new Font("Segoe UI", 10F);
+        txtBusqueda.Location = new Point(705, 56);
+        txtBusqueda.PlaceholderText = "Buscar cliente, mascota o cita y presione Enter";
+        txtBusqueda.Size = new Size(330, 25);
+        txtBusqueda.KeyDown += TxtBusqueda_KeyDown;
         panelMenu.BackColor = Color.White;
         panelMenu.Controls.AddRange(new Control[] { btnInicio, btnClientes, btnMascotas, btnCitas, btnConsultas, btnVacunas, btnVeterinarios, btnReportes, btnCerrarSesion, pictureMascota });
         panelMenu.Dock = DockStyle.Left;

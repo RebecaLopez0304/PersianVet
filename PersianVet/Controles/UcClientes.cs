@@ -37,7 +37,12 @@ public partial class UcClientes : UserControl
 
     private void ChkMostrarInactivos_CheckedChanged(object? sender, EventArgs e) => CargarClientes();
 
-    private void BtnNuevo_Click(object? sender, EventArgs e)
+    private void BtnNuevo_Click(object? sender, EventArgs e) => NuevoRegistro();
+
+    /// <summary>
+    /// Abre el formulario para registrar un cliente (también se usa desde las acciones rápidas).
+    /// </summary>
+    public void NuevoRegistro()
     {
         using FrmClienteEdicion formulario = new();
         if (formulario.ShowDialog(this) == DialogResult.OK)

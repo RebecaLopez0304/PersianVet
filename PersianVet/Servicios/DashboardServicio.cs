@@ -24,4 +24,14 @@ public class DashboardServicio
     {
         return dashboardDatos.ListarProximasCitasAsync(cancelacion);
     }
+
+    public Task<List<Alerta>> ListarAlertasAsync(CancellationToken cancelacion = default)
+    {
+        return dashboardDatos.ListarAlertasAsync(cancelacion);
+    }
+
+    public Task<List<PuntoGrafico>> ContarCitasProximosDiasAsync(int dias, CancellationToken cancelacion = default)
+    {
+        return dashboardDatos.ContarCitasProximosDiasAsync(dias, cancelacion);
+    }
 }

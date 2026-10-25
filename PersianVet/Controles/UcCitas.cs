@@ -1,3 +1,4 @@
+using PersianVet.Formularios;
 using PersianVet.Modelos;
 using PersianVet.Servicios;
 using PersianVet.Utilidades;
@@ -21,6 +22,7 @@ public partial class UcCitas : UserControl
         EstiloControles.ConfigurarBotonSecundario(btnReprogramar);
         EstiloControles.ConfigurarBotonSecundario(btnCancelar);
         EstiloControles.ConfigurarBotonSecundario(btnFiltrar);
+        EstiloControles.ConfigurarBotonSecundario(btnCalendario);
         EstiloControles.ConfigurarTabla(tablaCitas);
         citaServicio = null!;
         mascotaServicio = null!;
@@ -44,6 +46,12 @@ public partial class UcCitas : UserControl
     private void BtnProgramar_Click(object? sender, EventArgs e) => Ejecutar(() => citaServicio.Guardar(CrearCita()));
     private void BtnReprogramar_Click(object? sender, EventArgs e) => Ejecutar(() => citaServicio.Actualizar(CrearCita()));
     private void BtnFiltrar_Click(object? sender, EventArgs e) => CargarCitas();
+
+    private void BtnCalendario_Click(object? sender, EventArgs e)
+    {
+        using FrmCalendarioCitas calendario = new(citaServicio);
+        calendario.ShowDialog(this);
+    }
     private void ChkFiltrar_CheckedChanged(object? sender, EventArgs e) { dtpFiltro.Enabled = chkFiltrar.Checked; CargarCitas(); }
 
     private void BtnCancelar_Click(object? sender, EventArgs e)

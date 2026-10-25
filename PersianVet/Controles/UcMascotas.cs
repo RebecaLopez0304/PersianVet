@@ -14,6 +14,11 @@ public partial class UcMascotas : UserControl
     private readonly ClienteServicio clienteServicio;
     private int idSeleccionado;
 
+    /// <summary>
+    /// Se dispara cuando el usuario pide ver la ficha completa de una mascota.
+    /// </summary>
+    public event Action<Mascota>? FichaSolicitada;
+
     public UcMascotas()
     {
         InitializeComponent();
@@ -22,6 +27,7 @@ public partial class UcMascotas : UserControl
         EstiloControles.ConfigurarBotonPrincipal(btnGuardar);
         EstiloControles.ConfigurarBotonSecundario(btnEditar);
         EstiloControles.ConfigurarBotonSecundario(btnDesactivar);
+        EstiloControles.ConfigurarBotonSecundario(btnFicha);
         mascotaServicio = null!;
         clienteServicio = null!;
     }
@@ -41,7 +47,29 @@ public partial class UcMascotas : UserControl
 
     private void TxtBuscar_TextChanged(object? sender, EventArgs e) => CargarMascotas();
     private void ChkMostrarInactivas_CheckedChanged(object? sender, EventArgs e) => CargarMascotas();
-    private void BtnNuevo_Click(object? sender, EventArgs e)
+    private void BtnNuevo_Click(object? sender, EventArgs e) => NuevoRegistro();
+
+    private void BtnFicha_Click(object? sender, EventArgs e) => AbrirFicha();
+    private void TablaMascotas_CellDoubleClick(object? sender, DataGridViewCellEventArgs e)
+    {
+        if (e.RowIndex >= 0) AbrirFicha();
+    }
+
+    private void AbrirFicha()
+    {
+        if (tablaMascotas.CurrentRow?.DataBoundItem is not Mascota seleccionada)
+        {
+            MessageBox.Show("Seleccione una mascota de la lista.", "PersianVet");
+            return;
+        }
+
+        FichaSolicitada?.Invoke(seleccionada);
+    }
+
+    /// <summary>
+    /// Abre el formulario para registrar una mascota (también se usa desde las acciones rápidas).
+    /// </summary>
+    public void NuevoRegistro()
     {
         using FrmMascotaEdicion formulario = new(clienteServicio.Listar(string.Empty));
         if (formulario.ShowDialog(this) == DialogResult.OK)

@@ -7,7 +7,7 @@ partial class UcCitas
     private ComboBox cboMascota = null!, cboVeterinario = null!, cboEstado = null!;
     private DateTimePicker dtpFecha = null!, dtpHora = null!, dtpFiltro = null!;
     private TextBox txtMotivo = null!;
-    private Button btnProgramar = null!, btnReprogramar = null!, btnCancelar = null!, btnFiltrar = null!;
+    private Button btnProgramar = null!, btnReprogramar = null!, btnCancelar = null!, btnFiltrar = null!, btnCalendario = null!;
     private CheckBox chkFiltrar = null!;
     private DataGridView tablaCitas = null!;
 
@@ -41,11 +41,12 @@ partial class UcCitas
         btnCancelar.Location = new Point(830, 195); btnCancelar.Size = new Size(140, 38); btnCancelar.Text = "Cancelar";
         chkFiltrar.AutoSize = true; chkFiltrar.Location = new Point(600, 282); chkFiltrar.Text = "Filtrar por fecha";
         dtpFiltro.Enabled = false; dtpFiltro.Format = DateTimePickerFormat.Short; dtpFiltro.Location = new Point(720, 276); dtpFiltro.Size = new Size(150, 30);
+        btnCalendario = new Button(); btnCalendario.Location = new Point(240, 274); btnCalendario.Size = new Size(150, 38); btnCalendario.Text = "Ver calendario"; btnCalendario.Click += BtnCalendario_Click;
         btnFiltrar.Location = new Point(885, 274); btnFiltrar.Size = new Size(120, 38); btnFiltrar.Text = "Consultar";
         tablaCitas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right; tablaCitas.Location = new Point(30, 325); tablaCitas.Size = new Size(975, 305);
         btnProgramar.Click += BtnProgramar_Click; btnReprogramar.Click += BtnReprogramar_Click; btnCancelar.Click += BtnCancelar_Click; btnFiltrar.Click += BtnFiltrar_Click;
         chkFiltrar.CheckedChanged += ChkFiltrar_CheckedChanged; tablaCitas.SelectionChanged += TablaCitas_SelectionChanged;
-        Controls.AddRange(new Control[] { lblTitulo, lblDescripcion, lblMascota, lblVeterinario, lblFecha, lblHora, lblEstadoCita, lblMotivo, lblLista, cboMascota, cboVeterinario, cboEstado, dtpFecha, dtpHora, txtMotivo, btnProgramar, btnReprogramar, btnCancelar, chkFiltrar, dtpFiltro, btnFiltrar, tablaCitas });
+        Controls.AddRange(new Control[] { lblTitulo, lblDescripcion, lblMascota, lblVeterinario, lblFecha, lblHora, lblEstadoCita, lblMotivo, lblLista, cboMascota, cboVeterinario, cboEstado, dtpFecha, dtpHora, txtMotivo, btnProgramar, btnReprogramar, btnCancelar, chkFiltrar, dtpFiltro, btnFiltrar, btnCalendario, tablaCitas });
         BackColor = Color.FromArgb(245, 247, 250); Font = new Font("Segoe UI", 9F); Name = "UcCitas"; Size = new Size(1040, 680);
         ((System.ComponentModel.ISupportInitialize)tablaCitas).EndInit(); ResumeLayout(false); PerformLayout();
     }

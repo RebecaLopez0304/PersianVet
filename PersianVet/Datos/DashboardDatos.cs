@@ -68,6 +68,89 @@ public class DashboardDatos : IDashboardDatos
             .ToListAsync(cancelacion);
     }
 
+    public async Task<List<Alerta>> ListarAlertasAsync(CancellationToken cancelacion)
+    {
+        DateTime hoy = DateTime.Today;
+        DateTime ahora = DateTime.Now;
+        await using PersianVetContext contexto = conexionBD.CrearContexto();
+        List<Alerta> alertas = [];
+
+        // 1. Vacunas cuya próxima dosis vence en los próximos 7 días (o venció hace poco).
+        var vacunas = await contexto.Vacunas.AsNoTracking()
+            .Where(v => v.ProximaDosis >= hoy.AddDays(-30) && v.ProximaDosis <= hoy.AddDays(7))
+            .OrderBy(v => v.ProximaDosis)
+            .Take(4)
+            .Select(v => new { v.NombreVacuna, Mascota = v.Mascota.Nombre, v.ProximaDosis })
+            .ToListAsync(cancelacion);
+
+        alertas.AddRange(vacunas.Select(v => new Alerta
+        {
+            Tipo = v.ProximaDosis < hoy ? "Vacuna vencida" : "Vacuna próxima",
+            Mensaje = $"{v.NombreVacuna} de {v.Mascota} ({v.ProximaDosis:dd/MM})",
+            Modulo = "Vacunas"
+        }));
+
+        // 2. Citas de las próximas 48 horas que todavía están sin confirmar.
+        var citas = await contexto.Citas.AsNoTracking()
+            .Where(c => c.Estado == "Programada" && c.FechaHora >= ahora && c.FechaHora <= ahora.AddDays(2))
+            .OrderBy(c => c.FechaHora)
+            .Take(4)
+            .Select(c => new { Mascota = c.Mascota.Nombre, c.FechaHora })
+            .ToListAsync(cancelacion);
+
+        alertas.AddRange(citas.Select(c => new Alerta
+        {
+            Tipo = "Cita sin confirmar",
+            Mensaje = $"{c.Mascota} ({c.FechaHora:dd/MM HH:mm})",
+            Modulo = "Citas"
+        }));
+
+        // 3. Mascotas activas sin ninguna consulta en los últimos 6 meses.
+        DateTime limite = hoy.AddMonths(-6);
+        List<string> sinConsulta = await contexto.Mascotas.AsNoTracking()
+            .Where(m => m.Activa && !m.Consultas.Any(c => c.FechaHora >= limite))
+            .OrderBy(m => m.Nombre)
+            .Take(3)
+            .Select(m => m.Nombre)
+            .ToListAsync(cancelacion);
+
+        alertas.AddRange(sinConsulta.Select(nombre => new Alerta
+        {
+            Tipo = "Sin consulta en 6 meses",
+            Mensaje = nombre,
+            Modulo = "Mascotas"
+        }));
+
+        if (alertas.Count == 0)
+        {
+            alertas.Add(new Alerta { Tipo = "Todo en orden", Mensaje = "No hay avisos pendientes." });
+        }
+
+        return alertas;
+    }
+
+    public async Task<List<PuntoGrafico>> ContarCitasProximosDiasAsync(int dias, CancellationToken cancelacion)
+    {
+        DateTime hoy = DateTime.Today;
+        DateTime fin = hoy.AddDays(dias);
+        await using PersianVetContext contexto = conexionBD.CrearContexto();
+
+        List<DateTime> fechas = await contexto.Citas.AsNoTracking()
+            .Where(c => c.FechaHora >= hoy && c.FechaHora < fin && c.Estado != "Cancelada")
+            .Select(c => c.FechaHora)
+            .ToListAsync(cancelacion);
+
+        // Una barra por día, incluso si ese día no tiene citas.
+        return Enumerable.Range(0, dias)
+            .Select(i => hoy.AddDays(i))
+            .Select(dia => new PuntoGrafico
+            {
+                Etiqueta = dia.ToString("ddd d"),
+                Valor = fechas.Count(f => f.Date == dia)
+            })
+            .ToList();
+    }
+
     private async Task<int> ContarAsync(Func<PersianVetContext, Task<int>> consulta)
     {
         await using PersianVetContext contexto = conexionBD.CrearContexto();

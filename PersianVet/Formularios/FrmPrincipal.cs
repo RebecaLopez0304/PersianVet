@@ -20,6 +20,7 @@ public partial class FrmPrincipal : Form
     private readonly ConsultaServicio consultaServicio;
     private readonly VacunaServicio vacunaServicio;
     private readonly ReporteServicio reporteServicio;
+    private readonly BusquedaServicio busquedaServicio;
     private bool cerrandoSesion;
 
     /// <summary>
@@ -42,6 +43,7 @@ public partial class FrmPrincipal : Form
         consultaServicio = null!;
         vacunaServicio = null!;
         reporteServicio = null!;
+        busquedaServicio = null!;
     }
 
     public FrmPrincipal(Usuario usuario, ConexionBD conexionBD) : this()
@@ -56,6 +58,7 @@ public partial class FrmPrincipal : Form
         vacunaServicio = new VacunaServicio(new VacunaDatos(conexionBD));
         dashboardServicio = new DashboardServicio(new DashboardDatos(conexionBD));
         reporteServicio = new ReporteServicio(new ReporteDatos(conexionBD));
+        busquedaServicio = new BusquedaServicio(new BusquedaDatos(conexionBD));
 
         lblUsuario.Text = usuario.NombreUsuario;
         lblRol.Text = usuario.Rol;
@@ -87,46 +90,128 @@ public partial class FrmPrincipal : Form
         }
     }
 
-    private void MostrarDashboard()
+    private void MostrarDashboard() => Navegar("Inicio");
+
+    private void BtnInicio_Click(object? sender, EventArgs e) => Navegar("Inicio");
+    private void BtnClientes_Click(object? sender, EventArgs e) => Navegar("Clientes");
+    private void BtnMascotas_Click(object? sender, EventArgs e) => Navegar("Mascotas");
+    private void BtnCitas_Click(object? sender, EventArgs e) => Navegar("Citas");
+    private void BtnConsultas_Click(object? sender, EventArgs e) => Navegar("Consultas");
+    private void BtnVacunas_Click(object? sender, EventArgs e) => Navegar("Vacunas");
+    private void BtnVeterinarios_Click(object? sender, EventArgs e) => Navegar("Veterinarios");
+    private void BtnReportes_Click(object? sender, EventArgs e) => Navegar("Reportes");
+
+    /// <summary>
+    /// Punto único de navegación: el menú, el dashboard y la búsqueda usan este método.
+    /// </summary>
+    private void Navegar(string destino)
     {
-        MostrarControl(new UcDashboard(dashboardServicio), btnInicio);
+        switch (destino)
+        {
+            case "Inicio":
+                UcDashboard dashboard = new(dashboardServicio);
+                // BeginInvoke evita destruir el dashboard mientras todavía atiende el clic.
+                dashboard.NavegarSolicitado += solicitado => BeginInvoke(() => Navegar(solicitado));
+                MostrarControl(dashboard, btnInicio);
+                break;
+            case "Clientes":
+                MostrarControl(new UcClientes(clienteServicio), btnClientes);
+                break;
+            case "NuevoCliente":
+                UcClientes clientes = new(clienteServicio);
+                MostrarControl(clientes, btnClientes);
+                BeginInvoke(clientes.NuevoRegistro);
+                break;
+            case "Mascotas":
+                MostrarControl(CrearMascotas(), btnMascotas);
+                break;
+            case "NuevaMascota":
+                UcMascotas mascotas = CrearMascotas();
+                MostrarControl(mascotas, btnMascotas);
+                BeginInvoke(mascotas.NuevoRegistro);
+                break;
+            case "Citas":
+                MostrarControl(new UcCitas(citaServicio, mascotaServicio, veterinarioServicio), btnCitas);
+                break;
+            case "Calendario":
+                using (FrmCalendarioCitas calendario = new(citaServicio))
+                {
+                    calendario.ShowDialog(this);
+                }
+
+                break;
+            case "Consultas":
+                MostrarControl(new UcConsultas(consultaServicio, mascotaServicio, veterinarioServicio), btnConsultas);
+                break;
+            case "Vacunas":
+                MostrarControl(new UcVacunas(vacunaServicio, mascotaServicio), btnVacunas);
+                break;
+            case "Veterinarios":
+                MostrarControl(new UcVeterinarios(veterinarioServicio), btnVeterinarios);
+                break;
+            case "Reportes":
+                MostrarControl(new UcReportes(reporteServicio), btnReportes);
+                break;
+        }
     }
 
-    private void BtnInicio_Click(object? sender, EventArgs e) => MostrarDashboard();
-
-    private void BtnClientes_Click(object? sender, EventArgs e)
+    private UcMascotas CrearMascotas()
     {
-        MostrarControl(new UcClientes(clienteServicio), btnClientes);
+        UcMascotas mascotas = new(mascotaServicio, clienteServicio);
+        mascotas.FichaSolicitada += AbrirFicha;
+        return mascotas;
     }
 
-    private void BtnMascotas_Click(object? sender, EventArgs e)
+    private void AbrirFicha(Mascota mascota)
     {
-        MostrarControl(new UcMascotas(mascotaServicio, clienteServicio), btnMascotas);
+        using FrmFichaMascota ficha = new(mascota, consultaServicio, vacunaServicio, citaServicio);
+        ficha.ShowDialog(this);
     }
 
-    private void BtnCitas_Click(object? sender, EventArgs e)
+    private void TxtBusqueda_KeyDown(object? sender, KeyEventArgs e)
     {
-        MostrarControl(new UcCitas(citaServicio, mascotaServicio, veterinarioServicio), btnCitas);
+        if (e.KeyCode != Keys.Enter)
+        {
+            return;
+        }
+
+        // Evita el "ding" de Windows al pulsar Enter en un cuadro de una sola línea.
+        e.SuppressKeyPress = true;
+        string texto = txtBusqueda.Text.Trim();
+        if (texto.Length < 2)
+        {
+            MessageBox.Show("Escriba al menos 2 letras para buscar.", "PersianVet");
+            return;
+        }
+
+        using FrmBusquedaGlobal busqueda = new(busquedaServicio, texto);
+        if (busqueda.ShowDialog(this) == DialogResult.OK && busqueda.Seleccion is { } resultado)
+        {
+            txtBusqueda.Clear();
+            AbrirResultado(resultado);
+        }
     }
 
-    private void BtnConsultas_Click(object? sender, EventArgs e)
+    private void AbrirResultado(ResultadoBusqueda resultado)
     {
-        MostrarControl(new UcConsultas(consultaServicio, mascotaServicio, veterinarioServicio), btnConsultas);
-    }
+        switch (resultado.Tipo)
+        {
+            case "Cliente":
+                Navegar("Clientes");
+                break;
+            case "Cita":
+                Navegar("Citas");
+                break;
+            case "Mascota":
+                Mascota? mascota = mascotaServicio.Listar(string.Empty, false)
+                    .FirstOrDefault(m => m.IdMascota == resultado.Id);
+                if (mascota is not null)
+                {
+                    AbrirFicha(mascota);
+                }
 
-    private void BtnVacunas_Click(object? sender, EventArgs e)
-    {
-        MostrarControl(new UcVacunas(vacunaServicio, mascotaServicio), btnVacunas);
-    }
-
-    private void BtnVeterinarios_Click(object? sender, EventArgs e)
-    {
-        MostrarControl(new UcVeterinarios(veterinarioServicio), btnVeterinarios);
-    }
-
-    private void BtnReportes_Click(object? sender, EventArgs e)
-    {
-        MostrarControl(new UcReportes(reporteServicio), btnReportes);
+                break;
+        }
     }
 
     private void BtnCerrarSesion_Click(object? sender, EventArgs e)
@@ -188,12 +273,19 @@ public partial class FrmPrincipal : Form
         lblFechaHora.Location = new Point(Math.Max(540, panelEncabezado.ClientSize.Width - 505), 22);
         lblUsuario.Location = new Point(Math.Max(880, panelEncabezado.ClientSize.Width - 165), 17);
         lblRol.Location = new Point(Math.Max(880, panelEncabezado.ClientSize.Width - 165), 43);
+        txtBusqueda.Location = new Point(lblFechaHora.Left, 56);
     }
 
     private void AcomodarMenu()
     {
         btnCerrarSesion.Location = new Point(14, Math.Max(520, panelMenu.ClientSize.Height - 58));
-        pictureMascota.Location = new Point(34, Math.Max(400, panelMenu.ClientSize.Height - 190));
+
+        // La mascota ocupa el espacio libre entre el último botón y "Cerrar sesión".
+        int arriba = btnReportes.Bottom + 8;
+        int disponible = btnCerrarSesion.Top - 8 - arriba;
+        pictureMascota.Visible = disponible >= 60;
+        pictureMascota.Size = new Size(155, Math.Min(120, Math.Max(0, disponible)));
+        pictureMascota.Location = new Point(34, arriba);
     }
 
     private void AsignarIconos()
