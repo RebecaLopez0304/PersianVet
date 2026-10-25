@@ -58,12 +58,11 @@ public static class Iconos
                 dibujo.DrawLine(lapiz, 17, 2, 17, 8);
                 dibujo.DrawLine(lapiz, 14, 5, 20, 5);
                 break;
-            // El icono de Reportes se habilitará en otro entregable.
-            // case "Reportes":
-            //     dibujo.DrawRectangle(lapiz, 3, 12, 3, 7);
-            //     dibujo.DrawRectangle(lapiz, 9, 8, 3, 11);
-            //     dibujo.DrawRectangle(lapiz, 15, 3, 3, 16);
-            //     break;
+            case "Reportes":
+                dibujo.DrawRectangle(lapiz, 3, 12, 3, 7);
+                dibujo.DrawRectangle(lapiz, 9, 8, 3, 11);
+                dibujo.DrawRectangle(lapiz, 15, 3, 3, 16);
+                break;
             default:
                 dibujo.DrawRectangle(lapiz, 4, 3, 10, 16);
                 dibujo.DrawLine(lapiz, 9, 11, 20, 11);

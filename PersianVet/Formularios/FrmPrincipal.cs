@@ -19,6 +19,7 @@ public partial class FrmPrincipal : Form
     private readonly CitaServicio citaServicio;
     private readonly ConsultaServicio consultaServicio;
     private readonly VacunaServicio vacunaServicio;
+    private readonly ReporteServicio reporteServicio;
     private bool cerrandoSesion;
 
     /// <summary>
@@ -40,6 +41,7 @@ public partial class FrmPrincipal : Form
         citaServicio = null!;
         consultaServicio = null!;
         vacunaServicio = null!;
+        reporteServicio = null!;
     }
 
     public FrmPrincipal(Usuario usuario, ConexionBD conexionBD) : this()
@@ -53,6 +55,7 @@ public partial class FrmPrincipal : Form
         consultaServicio = new ConsultaServicio(new ConsultaDatos(conexionBD));
         vacunaServicio = new VacunaServicio(new VacunaDatos(conexionBD));
         dashboardServicio = new DashboardServicio(new DashboardDatos(conexionBD));
+        reporteServicio = new ReporteServicio(new ReporteDatos(conexionBD));
 
         lblUsuario.Text = usuario.NombreUsuario;
         lblRol.Text = usuario.Rol;
@@ -121,15 +124,10 @@ public partial class FrmPrincipal : Form
         MostrarControl(new UcVeterinarios(veterinarioServicio), btnVeterinarios);
     }
 
-    // El módulo de reportes se desarrollará en otro entregable.
-    // private void BtnReportes_Click(object? sender, EventArgs e)
-    // {
-    //     MessageBox.Show(
-    //         "El módulo de reportes se incluirá en el siguiente entregable.",
-    //         "PersianVet",
-    //         MessageBoxButtons.OK,
-    //         MessageBoxIcon.Information);
-    // }
+    private void BtnReportes_Click(object? sender, EventArgs e)
+    {
+        MostrarControl(new UcReportes(reporteServicio), btnReportes);
+    }
 
     private void BtnCerrarSesion_Click(object? sender, EventArgs e)
     {
@@ -200,8 +198,7 @@ public partial class FrmPrincipal : Form
 
     private void AsignarIconos()
     {
-        Button[] botones = [btnInicio, btnClientes, btnMascotas, btnCitas, btnConsultas, btnVacunas, btnVeterinarios, btnCerrarSesion];
-        // Cuando se implemente Reportes, btnReportes debe agregarse a esta lista.
+        Button[] botones = [btnInicio, btnClientes, btnMascotas, btnCitas, btnConsultas, btnVacunas, btnVeterinarios, btnReportes, btnCerrarSesion];
         foreach (Button boton in botones)
         {
             boton.Image = Iconos.Crear(boton.Text, Tema.AzulOscuro);

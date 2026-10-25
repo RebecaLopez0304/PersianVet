@@ -1,11 +1,12 @@
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using PersianVet.Entidades;
 using PersianVet.Interfaces;
 using PersianVet.Modelos;
 
 namespace PersianVet.Datos;
 
 /// <summary>
-/// Realiza las operaciones de vacunas en SQL Server.
+/// Realiza las operaciones de vacunas mediante Entity Framework Core.
 /// </summary>
 public class VacunaDatos : IVacunaDatos
 {
@@ -18,58 +19,40 @@ public class VacunaDatos : IVacunaDatos
 
     public List<Vacuna> Listar(int? idMascota = null, bool soloProximas = false)
     {
-        const string sql = """
-            SELECT v.IdVacuna, v.IdMascota, m.Nombre, v.NombreVacuna,
-                   v.FechaAplicacion, v.ProximaDosis, v.Lote
-            FROM Vacunas v
-            INNER JOIN Mascotas m ON m.IdMascota = v.IdMascota
-            WHERE (@IdMascota IS NULL OR v.IdMascota = @IdMascota)
-              AND (@SoloProximas = 0 OR v.ProximaDosis BETWEEN CAST(GETDATE() AS DATE) AND DATEADD(DAY, 30, CAST(GETDATE() AS DATE)))
-            ORDER BY v.FechaAplicacion DESC;
-            """;
+        DateTime hoy = DateTime.Today;
+        DateTime limite = hoy.AddDays(30);
+        using PersianVetContext contexto = conexionBD.CrearContexto();
 
-        List<Vacuna> vacunas = [];
-        using SqlConnection conexion = conexionBD.CrearConexion();
-        using SqlCommand comando = new(sql, conexion);
-        comando.Parameters.AddWithValue("@IdMascota", idMascota.HasValue ? idMascota.Value : DBNull.Value);
-        comando.Parameters.AddWithValue("@SoloProximas", soloProximas);
-        conexion.Open();
-
-        using SqlDataReader lector = comando.ExecuteReader();
-        while (lector.Read())
-        {
-            vacunas.Add(new Vacuna
+        return contexto.Vacunas.AsNoTracking()
+            .Where(v => (idMascota == null || v.IdMascota == idMascota)
+                && (!soloProximas || (v.ProximaDosis >= hoy && v.ProximaDosis <= limite)))
+            .OrderByDescending(v => v.FechaAplicacion)
+            .Select(v => new Vacuna
             {
-                IdVacuna = lector.GetInt32(0),
-                IdMascota = lector.GetInt32(1),
-                Mascota = lector.GetString(2),
-                NombreVacuna = lector.GetString(3),
-                FechaAplicacion = lector.GetDateTime(4),
-                ProximaDosis = lector.IsDBNull(5) ? null : lector.GetDateTime(5),
-                Lote = lector.GetString(6)
-            });
-        }
-
-        return vacunas;
+                IdVacuna = v.IdVacuna,
+                IdMascota = v.IdMascota,
+                Mascota = v.Mascota.Nombre,
+                NombreVacuna = v.NombreVacuna,
+                FechaAplicacion = v.FechaAplicacion,
+                ProximaDosis = v.ProximaDosis,
+                Lote = v.Lote
+            })
+            .ToList();
     }
 
     public int Guardar(Vacuna vacuna)
     {
-        const string sql = """
-            INSERT INTO Vacunas (IdMascota, NombreVacuna, FechaAplicacion, ProximaDosis, Lote)
-            VALUES (@IdMascota, @NombreVacuna, @FechaAplicacion, @ProximaDosis, @Lote);
-            SELECT CAST(SCOPE_IDENTITY() AS INT);
-            """;
-
-        using SqlConnection conexion = conexionBD.CrearConexion();
-        using SqlCommand comando = new(sql, conexion);
-        comando.Parameters.AddWithValue("@IdMascota", vacuna.IdMascota);
-        comando.Parameters.AddWithValue("@NombreVacuna", vacuna.NombreVacuna.Trim());
-        comando.Parameters.AddWithValue("@FechaAplicacion", vacuna.FechaAplicacion.Date);
-        comando.Parameters.AddWithValue("@ProximaDosis", vacuna.ProximaDosis.HasValue ? vacuna.ProximaDosis.Value.Date : DBNull.Value);
-        comando.Parameters.AddWithValue("@Lote", vacuna.Lote.Trim());
-        conexion.Open();
-        return (int)comando.ExecuteScalar()!;
+        using PersianVetContext contexto = conexionBD.CrearContexto();
+        VacunaEntidad entidad = new()
+        {
+            IdMascota = vacuna.IdMascota,
+            NombreVacuna = vacuna.NombreVacuna.Trim(),
+            FechaAplicacion = vacuna.FechaAplicacion.Date,
+            ProximaDosis = vacuna.ProximaDosis?.Date,
+            Lote = vacuna.Lote.Trim()
+        };
+        contexto.Vacunas.Add(entidad);
+        contexto.SaveChanges();
+        return entidad.IdVacuna;
     }
 }
-

@@ -1,11 +1,12 @@
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using PersianVet.Entidades;
 using PersianVet.Interfaces;
 using PersianVet.Modelos;
 
 namespace PersianVet.Datos;
 
 /// <summary>
-/// Realiza las operaciones de citas en SQL Server.
+/// Realiza las operaciones de citas mediante Entity Framework Core.
 /// </summary>
 public class CitaDatos : ICitaDatos
 {
@@ -18,119 +19,78 @@ public class CitaDatos : ICitaDatos
 
     public List<Cita> Listar(DateTime? fecha = null)
     {
-        const string sql = """
-            SELECT ci.IdCita, ci.IdMascota, ci.IdVeterinario, ci.FechaHora,
-                   ci.Motivo, ci.Estado, m.Nombre AS Mascota,
-                   c.Nombres + ' ' + c.Apellidos AS Cliente,
-                   v.Nombres + ' ' + v.Apellidos AS Veterinario
-            FROM Citas ci
-            INNER JOIN Mascotas m ON m.IdMascota = ci.IdMascota
-            INNER JOIN Clientes c ON c.IdCliente = m.IdCliente
-            INNER JOIN Veterinarios v ON v.IdVeterinario = ci.IdVeterinario
-            WHERE @Fecha IS NULL OR CAST(ci.FechaHora AS DATE) = @Fecha
-            ORDER BY ci.FechaHora;
-            """;
+        using PersianVetContext contexto = conexionBD.CrearContexto();
+        IQueryable<CitaEntidad> consulta = contexto.Citas.AsNoTracking();
 
-        List<Cita> citas = [];
-        using SqlConnection conexion = conexionBD.CrearConexion();
-        using SqlCommand comando = new(sql, conexion);
-        comando.Parameters.AddWithValue("@Fecha", fecha.HasValue ? fecha.Value.Date : DBNull.Value);
-        conexion.Open();
-
-        using SqlDataReader lector = comando.ExecuteReader();
-        while (lector.Read())
+        if (fecha.HasValue)
         {
-            citas.Add(LeerCita(lector));
+            DateTime inicio = fecha.Value.Date;
+            DateTime fin = inicio.AddDays(1);
+            consulta = consulta.Where(c => c.FechaHora >= inicio && c.FechaHora < fin);
         }
 
-        return citas;
+        return consulta
+            .OrderBy(c => c.FechaHora)
+            .Select(c => new Cita
+            {
+                IdCita = c.IdCita,
+                IdMascota = c.IdMascota,
+                IdVeterinario = c.IdVeterinario,
+                FechaHora = c.FechaHora,
+                Motivo = c.Motivo,
+                Estado = c.Estado,
+                Mascota = c.Mascota.Nombre,
+                Cliente = c.Mascota.Cliente.Nombres + " " + c.Mascota.Cliente.Apellidos,
+                Veterinario = c.Veterinario.Nombres + " " + c.Veterinario.Apellidos
+            })
+            .ToList();
     }
 
     public bool ExisteCruce(Cita cita)
     {
-        const string sql = """
-            SELECT COUNT(*)
-            FROM Citas
-            WHERE IdVeterinario = @IdVeterinario
-              AND FechaHora = @FechaHora
-              AND Estado <> 'Cancelada'
-              AND IdCita <> @IdCita;
-            """;
-
-        using SqlConnection conexion = conexionBD.CrearConexion();
-        using SqlCommand comando = new(sql, conexion);
-        comando.Parameters.AddWithValue("@IdVeterinario", cita.IdVeterinario);
-        comando.Parameters.AddWithValue("@FechaHora", cita.FechaHora);
-        comando.Parameters.AddWithValue("@IdCita", cita.IdCita);
-        conexion.Open();
-        return (int)comando.ExecuteScalar()! > 0;
+        using PersianVetContext contexto = conexionBD.CrearContexto();
+        return contexto.Citas.Any(c => c.IdVeterinario == cita.IdVeterinario
+            && c.FechaHora == cita.FechaHora
+            && c.Estado != "Cancelada"
+            && c.IdCita != cita.IdCita);
     }
 
     public int Guardar(Cita cita)
     {
-        const string sql = """
-            INSERT INTO Citas (IdMascota, IdVeterinario, FechaHora, Motivo, Estado)
-            VALUES (@IdMascota, @IdVeterinario, @FechaHora, @Motivo, @Estado);
-            SELECT CAST(SCOPE_IDENTITY() AS INT);
-            """;
-
-        using SqlConnection conexion = conexionBD.CrearConexion();
-        using SqlCommand comando = CrearComando(sql, conexion, cita);
-        conexion.Open();
-        return (int)comando.ExecuteScalar()!;
+        using PersianVetContext contexto = conexionBD.CrearContexto();
+        CitaEntidad entidad = new();
+        AsignarCampos(entidad, cita);
+        contexto.Citas.Add(entidad);
+        contexto.SaveChanges();
+        return entidad.IdCita;
     }
 
     public void Actualizar(Cita cita)
     {
-        const string sql = """
-            UPDATE Citas
-            SET IdMascota = @IdMascota, IdVeterinario = @IdVeterinario,
-                FechaHora = @FechaHora, Motivo = @Motivo, Estado = @Estado
-            WHERE IdCita = @IdCita;
-            """;
+        using PersianVetContext contexto = conexionBD.CrearContexto();
+        CitaEntidad? entidad = contexto.Citas.Find(cita.IdCita);
+        if (entidad is null)
+        {
+            return;
+        }
 
-        using SqlConnection conexion = conexionBD.CrearConexion();
-        using SqlCommand comando = CrearComando(sql, conexion, cita);
-        comando.Parameters.AddWithValue("@IdCita", cita.IdCita);
-        conexion.Open();
-        comando.ExecuteNonQuery();
+        AsignarCampos(entidad, cita);
+        contexto.SaveChanges();
     }
 
     public void Cancelar(int idCita)
     {
-        const string sql = "UPDATE Citas SET Estado = 'Cancelada' WHERE IdCita = @IdCita;";
-        using SqlConnection conexion = conexionBD.CrearConexion();
-        using SqlCommand comando = new(sql, conexion);
-        comando.Parameters.AddWithValue("@IdCita", idCita);
-        conexion.Open();
-        comando.ExecuteNonQuery();
+        using PersianVetContext contexto = conexionBD.CrearContexto();
+        contexto.Citas.Where(c => c.IdCita == idCita)
+            .ExecuteUpdate(c => c.SetProperty(x => x.Estado, "Cancelada"));
     }
 
-    private static SqlCommand CrearComando(string sql, SqlConnection conexion, Cita cita)
+    private static void AsignarCampos(CitaEntidad entidad, Cita cita)
     {
-        SqlCommand comando = new(sql, conexion);
-        comando.Parameters.AddWithValue("@IdMascota", cita.IdMascota);
-        comando.Parameters.AddWithValue("@IdVeterinario", cita.IdVeterinario);
-        comando.Parameters.AddWithValue("@FechaHora", cita.FechaHora);
-        comando.Parameters.AddWithValue("@Motivo", cita.Motivo.Trim());
-        comando.Parameters.AddWithValue("@Estado", cita.Estado);
-        return comando;
-    }
-
-    private static Cita LeerCita(SqlDataReader lector)
-    {
-        return new Cita
-        {
-            IdCita = lector.GetInt32(0),
-            IdMascota = lector.GetInt32(1),
-            IdVeterinario = lector.GetInt32(2),
-            FechaHora = lector.GetDateTime(3),
-            Motivo = lector.GetString(4),
-            Estado = lector.GetString(5),
-            Mascota = lector.GetString(6),
-            Cliente = lector.GetString(7),
-            Veterinario = lector.GetString(8)
-        };
+        entidad.IdMascota = cita.IdMascota;
+        entidad.IdVeterinario = cita.IdVeterinario;
+        entidad.FechaHora = cita.FechaHora;
+        entidad.Motivo = cita.Motivo.Trim();
+        entidad.Estado = cita.Estado;
     }
 }
-

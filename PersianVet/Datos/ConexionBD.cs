@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace PersianVet.Datos;
 
@@ -24,6 +25,17 @@ public class ConexionBD
     public SqlConnection CrearConexion()
     {
         return new SqlConnection(CadenaConexion);
+    }
+
+    /// <summary>
+    /// Crea un contexto de Entity Framework Core de vida corta (uno por operación).
+    /// </summary>
+    public PersianVetContext CrearContexto()
+    {
+        DbContextOptions<PersianVetContext> opciones = new DbContextOptionsBuilder<PersianVetContext>()
+            .UseSqlServer(CadenaConexion)
+            .Options;
+        return new PersianVetContext(opciones);
     }
 
     private static string LeerCadenaConexion()

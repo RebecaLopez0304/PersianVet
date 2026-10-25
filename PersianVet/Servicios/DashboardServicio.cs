@@ -15,13 +15,13 @@ public class DashboardServicio
         this.dashboardDatos = dashboardDatos;
     }
 
-    public ResumenDashboard ObtenerResumen()
+    public Task<ResumenDashboard> ObtenerResumenAsync(CancellationToken cancelacion = default)
     {
-        return dashboardDatos.ObtenerResumen();
+        return dashboardDatos.ObtenerResumenAsync(cancelacion);
     }
 
-    public List<Cita> ListarProximasCitas()
+    public Task<List<Cita>> ListarProximasCitasAsync(CancellationToken cancelacion = default)
     {
-        return dashboardDatos.ListarProximasCitas();
+        return dashboardDatos.ListarProximasCitasAsync(cancelacion);
     }
 }

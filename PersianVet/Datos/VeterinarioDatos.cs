@@ -1,11 +1,12 @@
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using PersianVet.Entidades;
 using PersianVet.Interfaces;
 using PersianVet.Modelos;
 
 namespace PersianVet.Datos;
 
 /// <summary>
-/// Realiza las operaciones de veterinarios en SQL Server.
+/// Realiza las operaciones de veterinarios mediante Entity Framework Core.
 /// </summary>
 public class VeterinarioDatos : IVeterinarioDatos
 {
@@ -18,87 +19,63 @@ public class VeterinarioDatos : IVeterinarioDatos
 
     public List<Veterinario> Listar(string filtro, bool soloActivos = true)
     {
-        const string sql = """
-            SELECT IdVeterinario, Nombres, Apellidos, Especialidad, Telefono, Activo
-            FROM Veterinarios
-            WHERE (@SoloActivos = 0 OR Activo = 1)
-              AND (@Filtro = '' OR Nombres LIKE '%' + @Filtro + '%'
-                   OR Apellidos LIKE '%' + @Filtro + '%'
-                   OR Especialidad LIKE '%' + @Filtro + '%')
-            ORDER BY IdVeterinario DESC;
-            """;
+        string texto = filtro.Trim();
+        using PersianVetContext contexto = conexionBD.CrearContexto();
 
-        List<Veterinario> veterinarios = [];
-        using SqlConnection conexion = conexionBD.CrearConexion();
-        using SqlCommand comando = new(sql, conexion);
-        comando.Parameters.AddWithValue("@Filtro", filtro.Trim());
-        comando.Parameters.AddWithValue("@SoloActivos", soloActivos);
-        conexion.Open();
-
-        using SqlDataReader lector = comando.ExecuteReader();
-        while (lector.Read())
-        {
-            veterinarios.Add(new Veterinario
+        return contexto.Veterinarios.AsNoTracking()
+            .Where(v => (!soloActivos || v.Activo)
+                && (texto == ""
+                    || v.Nombres.Contains(texto)
+                    || v.Apellidos.Contains(texto)
+                    || v.Especialidad.Contains(texto)))
+            .OrderByDescending(v => v.IdVeterinario)
+            .Select(v => new Veterinario
             {
-                IdVeterinario = lector.GetInt32(0),
-                Nombres = lector.GetString(1),
-                Apellidos = lector.GetString(2),
-                Especialidad = lector.GetString(3),
-                Telefono = lector.GetString(4),
-                Activo = lector.GetBoolean(5)
-            });
-        }
-
-        return veterinarios;
+                IdVeterinario = v.IdVeterinario,
+                Nombres = v.Nombres,
+                Apellidos = v.Apellidos,
+                Especialidad = v.Especialidad,
+                Telefono = v.Telefono,
+                Activo = v.Activo
+            })
+            .ToList();
     }
 
     public int Guardar(Veterinario veterinario)
     {
-        const string sql = """
-            INSERT INTO Veterinarios (Nombres, Apellidos, Especialidad, Telefono, Activo)
-            VALUES (@Nombres, @Apellidos, @Especialidad, @Telefono, 1);
-            SELECT CAST(SCOPE_IDENTITY() AS INT);
-            """;
-
-        using SqlConnection conexion = conexionBD.CrearConexion();
-        using SqlCommand comando = CrearComando(sql, conexion, veterinario);
-        conexion.Open();
-        return (int)comando.ExecuteScalar()!;
+        using PersianVetContext contexto = conexionBD.CrearContexto();
+        VeterinarioEntidad entidad = new() { Activo = true };
+        AsignarCampos(entidad, veterinario);
+        contexto.Veterinarios.Add(entidad);
+        contexto.SaveChanges();
+        return entidad.IdVeterinario;
     }
 
     public void Actualizar(Veterinario veterinario)
     {
-        const string sql = """
-            UPDATE Veterinarios
-            SET Nombres = @Nombres, Apellidos = @Apellidos,
-                Especialidad = @Especialidad, Telefono = @Telefono
-            WHERE IdVeterinario = @IdVeterinario;
-            """;
+        using PersianVetContext contexto = conexionBD.CrearContexto();
+        VeterinarioEntidad? entidad = contexto.Veterinarios.Find(veterinario.IdVeterinario);
+        if (entidad is null)
+        {
+            return;
+        }
 
-        using SqlConnection conexion = conexionBD.CrearConexion();
-        using SqlCommand comando = CrearComando(sql, conexion, veterinario);
-        comando.Parameters.AddWithValue("@IdVeterinario", veterinario.IdVeterinario);
-        conexion.Open();
-        comando.ExecuteNonQuery();
+        AsignarCampos(entidad, veterinario);
+        contexto.SaveChanges();
     }
 
     public void Desactivar(int idVeterinario)
     {
-        const string sql = "UPDATE Veterinarios SET Activo = 0 WHERE IdVeterinario = @IdVeterinario;";
-        using SqlConnection conexion = conexionBD.CrearConexion();
-        using SqlCommand comando = new(sql, conexion);
-        comando.Parameters.AddWithValue("@IdVeterinario", idVeterinario);
-        conexion.Open();
-        comando.ExecuteNonQuery();
+        using PersianVetContext contexto = conexionBD.CrearContexto();
+        contexto.Veterinarios.Where(v => v.IdVeterinario == idVeterinario)
+            .ExecuteUpdate(v => v.SetProperty(x => x.Activo, false));
     }
 
-    private static SqlCommand CrearComando(string sql, SqlConnection conexion, Veterinario veterinario)
+    private static void AsignarCampos(VeterinarioEntidad entidad, Veterinario veterinario)
     {
-        SqlCommand comando = new(sql, conexion);
-        comando.Parameters.AddWithValue("@Nombres", veterinario.Nombres.Trim());
-        comando.Parameters.AddWithValue("@Apellidos", veterinario.Apellidos.Trim());
-        comando.Parameters.AddWithValue("@Especialidad", veterinario.Especialidad.Trim());
-        comando.Parameters.AddWithValue("@Telefono", veterinario.Telefono.Trim());
-        return comando;
+        entidad.Nombres = veterinario.Nombres.Trim();
+        entidad.Apellidos = veterinario.Apellidos.Trim();
+        entidad.Especialidad = veterinario.Especialidad.Trim();
+        entidad.Telefono = veterinario.Telefono.Trim();
     }
 }

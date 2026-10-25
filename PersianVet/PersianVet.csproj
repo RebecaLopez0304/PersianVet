@@ -12,6 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.11" />
   </ItemGroup>
   <ItemGroup>
     <None Update="configuracion.json">
@@ -27,6 +28,7 @@
     <Compile Update="Controles\UcConsultas.cs"><SubType>UserControl</SubType></Compile>
     <Compile Update="Controles\UcDashboard.cs"><SubType>UserControl</SubType></Compile>
     <Compile Update="Controles\UcMascotas.cs"><SubType>UserControl</SubType></Compile>
+    <Compile Update="Controles\UcReportes.cs"><SubType>UserControl</SubType></Compile>
     <Compile Update="Controles\UcVacunas.cs"><SubType>UserControl</SubType></Compile>
     <Compile Update="Controles\UcVeterinarios.cs"><SubType>UserControl</SubType></Compile>
     <Compile Update="Formularios\FrmLogin.cs"><SubType>Form</SubType></Compile>

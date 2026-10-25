@@ -1,12 +1,12 @@
-using System.Data;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using PersianVet.Entidades;
 using PersianVet.Interfaces;
 using PersianVet.Modelos;
 
 namespace PersianVet.Datos;
 
 /// <summary>
-/// Guarda consultas y tratamientos en SQL Server.
+/// Guarda consultas y tratamientos mediante Entity Framework Core.
 /// </summary>
 public class ConsultaDatos : IConsultaDatos
 {
@@ -19,92 +19,62 @@ public class ConsultaDatos : IConsultaDatos
 
     public List<Consulta> ListarPorMascota(int idMascota)
     {
-        List<Consulta> consultas = [];
-        using SqlConnection conexion = conexionBD.CrearConexion();
-        using SqlCommand comando = new("sp_HistorialMascota", conexion);
-        comando.CommandType = CommandType.StoredProcedure;
-        comando.Parameters.AddWithValue("@IdMascota", idMascota);
-        conexion.Open();
+        using PersianVetContext contexto = conexionBD.CrearContexto();
 
-        using SqlDataReader lector = comando.ExecuteReader();
-        while (lector.Read())
-        {
-            consultas.Add(new Consulta
+        // Los tratamientos se concatenan en memoria porque string.Join no se traduce a SQL.
+        var filas = contexto.Consultas.AsNoTracking()
+            .Where(c => c.IdMascota == idMascota)
+            .OrderByDescending(c => c.FechaHora)
+            .Select(c => new
             {
-                IdConsulta = lector.GetInt32(0),
-                FechaHora = lector.GetDateTime(1),
-                Motivo = lector.GetString(2),
-                Diagnostico = lector.GetString(3),
-                Observaciones = lector.IsDBNull(4) ? string.Empty : lector.GetString(4),
-                Veterinario = lector.GetString(5),
-                Tratamientos = lector.IsDBNull(6) ? string.Empty : lector.GetString(6)
-            });
-        }
+                c.IdConsulta,
+                c.FechaHora,
+                c.Motivo,
+                c.Diagnostico,
+                c.Observaciones,
+                Veterinario = c.Veterinario.Nombres + " " + c.Veterinario.Apellidos,
+                Tratamientos = c.Tratamientos.Select(t => t.Medicamento + " - " + t.Dosis).ToList()
+            })
+            .ToList();
 
-        return consultas;
+        return filas.Select(f => new Consulta
+        {
+            IdConsulta = f.IdConsulta,
+            IdMascota = idMascota,
+            FechaHora = f.FechaHora,
+            Motivo = f.Motivo,
+            Diagnostico = f.Diagnostico,
+            Observaciones = f.Observaciones ?? string.Empty,
+            Veterinario = f.Veterinario,
+            Tratamientos = string.Join("; ", f.Tratamientos)
+        }).ToList();
     }
 
     public int GuardarConTratamientos(Consulta consulta)
     {
-        using SqlConnection conexion = conexionBD.CrearConexion();
-        conexion.Open();
-        using SqlTransaction transaccion = conexion.BeginTransaction();
+        using PersianVetContext contexto = conexionBD.CrearContexto();
 
-        try
+        ConsultaEntidad entidad = new()
         {
-            const string sqlConsulta = """
-                INSERT INTO Consultas
-                    (IdMascota, IdVeterinario, FechaHora, Motivo, Diagnostico, Observaciones)
-                VALUES
-                    (@IdMascota, @IdVeterinario, @FechaHora, @Motivo, @Diagnostico, @Observaciones);
-                SELECT CAST(SCOPE_IDENTITY() AS INT);
-                """;
-
-            using SqlCommand comandoConsulta = new(sqlConsulta, conexion, transaccion);
-            comandoConsulta.Parameters.AddWithValue("@IdMascota", consulta.IdMascota);
-            comandoConsulta.Parameters.AddWithValue("@IdVeterinario", consulta.IdVeterinario);
-            comandoConsulta.Parameters.AddWithValue("@FechaHora", consulta.FechaHora);
-            comandoConsulta.Parameters.AddWithValue("@Motivo", consulta.Motivo.Trim());
-            comandoConsulta.Parameters.AddWithValue("@Diagnostico", consulta.Diagnostico.Trim());
-            comandoConsulta.Parameters.AddWithValue("@Observaciones", consulta.Observaciones.Trim());
-            int idConsulta = (int)comandoConsulta.ExecuteScalar()!;
-
-            foreach (Tratamiento tratamiento in consulta.ListaTratamientos)
+            IdMascota = consulta.IdMascota,
+            IdVeterinario = consulta.IdVeterinario,
+            FechaHora = consulta.FechaHora,
+            Motivo = consulta.Motivo.Trim(),
+            Diagnostico = consulta.Diagnostico.Trim(),
+            Observaciones = consulta.Observaciones.Trim(),
+            Tratamientos = consulta.ListaTratamientos.Select(t => new TratamientoEntidad
             {
-                GuardarTratamiento(tratamiento, idConsulta, conexion, transaccion);
-            }
+                Medicamento = t.Medicamento.Trim(),
+                Dosis = t.Dosis.Trim(),
+                Frecuencia = t.Frecuencia.Trim(),
+                Duracion = t.Duracion.Trim(),
+                Indicaciones = t.Indicaciones.Trim()
+            }).ToList()
+        };
 
-            transaccion.Commit();
-            return idConsulta;
-        }
-        catch
-        {
-            transaccion.Rollback();
-            throw;
-        }
-    }
-
-    private static void GuardarTratamiento(
-        Tratamiento tratamiento,
-        int idConsulta,
-        SqlConnection conexion,
-        SqlTransaction transaccion)
-    {
-        const string sql = """
-            INSERT INTO Tratamientos
-                (IdConsulta, Medicamento, Dosis, Frecuencia, Duracion, Indicaciones)
-            VALUES
-                (@IdConsulta, @Medicamento, @Dosis, @Frecuencia, @Duracion, @Indicaciones);
-            """;
-
-        using SqlCommand comando = new(sql, conexion, transaccion);
-        comando.Parameters.AddWithValue("@IdConsulta", idConsulta);
-        comando.Parameters.AddWithValue("@Medicamento", tratamiento.Medicamento.Trim());
-        comando.Parameters.AddWithValue("@Dosis", tratamiento.Dosis.Trim());
-        comando.Parameters.AddWithValue("@Frecuencia", tratamiento.Frecuencia.Trim());
-        comando.Parameters.AddWithValue("@Duracion", tratamiento.Duracion.Trim());
-        comando.Parameters.AddWithValue("@Indicaciones", tratamiento.Indicaciones.Trim());
-        comando.ExecuteNonQuery();
+        // SaveChanges ejecuta consulta y tratamientos en una sola transacción.
+        contexto.Consultas.Add(entidad);
+        contexto.SaveChanges();
+        return entidad.IdConsulta;
     }
 }
-

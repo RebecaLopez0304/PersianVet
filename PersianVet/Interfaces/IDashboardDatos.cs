@@ -7,7 +7,6 @@ namespace PersianVet.Interfaces;
 /// </summary>
 public interface IDashboardDatos
 {
-    ResumenDashboard ObtenerResumen();
-    List<Cita> ListarProximasCitas();
+    Task<ResumenDashboard> ObtenerResumenAsync(CancellationToken cancelacion);
+    Task<List<Cita>> ListarProximasCitasAsync(CancellationToken cancelacion);
 }
-

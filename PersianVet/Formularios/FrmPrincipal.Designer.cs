@@ -19,7 +19,7 @@ partial class FrmPrincipal
     private Button btnConsultas = null!;
     private Button btnVacunas = null!;
     private Button btnVeterinarios = null!;
-    // private Button btnReportes = null!;
+    private Button btnReportes = null!;
     private Button btnCerrarSesion = null!;
     private PictureBox pictureMascota = null!;
     private System.Windows.Forms.Timer timerReloj = null!;
@@ -54,7 +54,7 @@ partial class FrmPrincipal
         btnConsultas = new Button();
         btnVacunas = new Button();
         btnVeterinarios = new Button();
-        // btnReportes = new Button();
+        btnReportes = new Button();
         btnCerrarSesion = new Button();
         timerReloj = new System.Windows.Forms.Timer(components);
         panelEncabezado.SuspendLayout();
@@ -94,7 +94,7 @@ partial class FrmPrincipal
         lblRol.Size = new Size(130, 20);
         lblRol.TextAlign = ContentAlignment.MiddleRight;
         panelMenu.BackColor = Color.White;
-        panelMenu.Controls.AddRange(new Control[] { btnInicio, btnClientes, btnMascotas, btnCitas, btnConsultas, btnVacunas, btnVeterinarios, btnCerrarSesion, pictureMascota });
+        panelMenu.Controls.AddRange(new Control[] { btnInicio, btnClientes, btnMascotas, btnCitas, btnConsultas, btnVacunas, btnVeterinarios, btnReportes, btnCerrarSesion, pictureMascota });
         panelMenu.Dock = DockStyle.Left;
         panelMenu.Width = 224;
         pictureMascota.Location = new Point(25, 490);
@@ -107,10 +107,7 @@ partial class FrmPrincipal
         btnConsultas.Location = new Point(14, 284); btnConsultas.Size = new Size(196, 44); btnConsultas.Text = "Consultas"; btnConsultas.BackColor = Color.White; btnConsultas.FlatStyle = FlatStyle.Flat; btnConsultas.FlatAppearance.BorderSize = 0; btnConsultas.Font = new Font("Segoe UI", 10F, FontStyle.Bold); btnConsultas.ForeColor = Color.FromArgb(8, 52, 90); btnConsultas.TextAlign = ContentAlignment.MiddleLeft;
         btnVacunas.Location = new Point(14, 333); btnVacunas.Size = new Size(196, 44); btnVacunas.Text = "Vacunas"; btnVacunas.BackColor = Color.White; btnVacunas.FlatStyle = FlatStyle.Flat; btnVacunas.FlatAppearance.BorderSize = 0; btnVacunas.Font = new Font("Segoe UI", 10F, FontStyle.Bold); btnVacunas.ForeColor = Color.FromArgb(8, 52, 90); btnVacunas.TextAlign = ContentAlignment.MiddleLeft;
         btnVeterinarios.Location = new Point(14, 382); btnVeterinarios.Size = new Size(196, 44); btnVeterinarios.Text = "Veterinarios"; btnVeterinarios.BackColor = Color.White; btnVeterinarios.FlatStyle = FlatStyle.Flat; btnVeterinarios.FlatAppearance.BorderSize = 0; btnVeterinarios.Font = new Font("Segoe UI", 10F, FontStyle.Bold); btnVeterinarios.ForeColor = Color.FromArgb(8, 52, 90); btnVeterinarios.TextAlign = ContentAlignment.MiddleLeft;
-        // El módulo de reportes se agregará en otro entregable.
-        // btnReportes.Location = new Point(14, 431);
-        // btnReportes.Size = new Size(196, 44);
-        // btnReportes.Text = "Reportes";
+        btnReportes.Location = new Point(14, 431); btnReportes.Size = new Size(196, 44); btnReportes.Text = "Reportes"; btnReportes.BackColor = Color.White; btnReportes.FlatStyle = FlatStyle.Flat; btnReportes.FlatAppearance.BorderSize = 0; btnReportes.Font = new Font("Segoe UI", 10F, FontStyle.Bold); btnReportes.ForeColor = Color.FromArgb(8, 52, 90); btnReportes.TextAlign = ContentAlignment.MiddleLeft;
         btnCerrarSesion.Location = new Point(14, 617); btnCerrarSesion.Size = new Size(196, 44); btnCerrarSesion.Text = "Cerrar sesión"; btnCerrarSesion.BackColor = Color.White; btnCerrarSesion.FlatStyle = FlatStyle.Flat; btnCerrarSesion.FlatAppearance.BorderSize = 0; btnCerrarSesion.Font = new Font("Segoe UI", 10F, FontStyle.Bold); btnCerrarSesion.ForeColor = Color.FromArgb(8, 52, 90); btnCerrarSesion.TextAlign = ContentAlignment.MiddleLeft;
         panelEncabezado.Resize += PanelEncabezado_Resize;
         panelMenu.Resize += PanelMenu_Resize;
@@ -124,7 +121,7 @@ partial class FrmPrincipal
         btnConsultas.Click += BtnConsultas_Click;
         btnVacunas.Click += BtnVacunas_Click;
         btnVeterinarios.Click += BtnVeterinarios_Click;
-        // btnReportes.Click += BtnReportes_Click;
+        btnReportes.Click += BtnReportes_Click;
         btnCerrarSesion.Click += BtnCerrarSesion_Click;
         timerReloj.Interval = 1000;
         timerReloj.Tick += TimerReloj_Tick;
