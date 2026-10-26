@@ -1,0 +1,38 @@
+PANTALLA: CLIENTES
+Archivos: Controles/UcClientes.cs, Formularios/FrmClienteEdicion.cs
+Acceso: roles Administrador y Recepcionista.
+
+¿PARA QUÉ SIRVE?
+Registra a los dueños de las mascotas. Cada mascota pertenece a un cliente.
+
+¿QUÉ SE PUEDE HACER?
+1. Ver la lista de clientes (nombres, apellidos, teléfono, dirección, correo,
+   fecha de registro y estado).
+2. Buscar en vivo por nombre, apellido, teléfono o correo.
+3. Nuevo: abre una ventana para registrar un cliente.
+   También se abre desde la acción rápida "Nuevo cliente" del dashboard.
+4. Modificar: se selecciona una fila y se editan sus datos en la ventana.
+5. Desactivar: pide confirmación y deja al cliente inactivo (no se borra).
+6. "Mostrar desactivados": incluye a los clientes inactivos en la lista.
+
+VALIDACIONES (se muestran todas juntas, cada una con su campo)
+- Nombres y apellidos obligatorios, máximo 80 caracteres cada uno.
+- Teléfono: solo números, espacios, guiones, + o paréntesis, y al menos 8 dígitos.
+- Correo con formato válido y dominio completo (por ejemplo @correo.com).
+- Dirección obligatoria, máximo 200 caracteres.
+- Fecha de registro que no esté en el futuro.
+- El correo no se puede repetir: se avisa con el nombre del cliente que ya lo usa.
+Ejemplo: "Teléfono: debe tener al menos 8 dígitos; tiene 5."
+Si hay errores, la ventana sigue abierta con todo lo escrito para corregirlo.
+
+¿CÓMO FUNCIONA POR DENTRO?
+UcClientes -> ClienteServicio (validaciones) -> ClienteDatos (EF Core) -> tabla Clientes.
+- La búsqueda es una consulta LINQ con varios Contains unidos con ||.
+- La ventana de edición recibe la operación de guardar (clienteServicio.Guardar) y
+  solo se cierra si sale bien.
+- El correo repetido lo revisa ClienteServicio antes de guardar; además la base tiene
+  un índice único como segunda protección.
+
+CAPTURAS
+01-modulo.png                  Lista de clientes.
+02-ventana-nuevo-cliente.png   Ventana para registrar un cliente.

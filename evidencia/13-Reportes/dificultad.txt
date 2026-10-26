@@ -1,0 +1,40 @@
+DIFICULTAD: 13 de 15
+Clasificación: ALTA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Pantalla:                              97
+- Diseño visual (Designer):              123
+- Servicio, datos y gráfico de barras:   188
+- Total aproximado:                      408
+
+¿POR QUÉ ESTÁ EN ESTE LUGAR?
+Reúne los dos temas fuertes del entregable en su forma más completa:
+- Concurrencia con cancelación real (botón Cancelar, barra de progreso, manejo de
+  OperationCanceledException).
+- LINQ de agregación sobre varias tablas relacionadas que EF Core traduce a SQL.
+
+CONCEPTOS QUE SE USAN
+- async/await, Task.WhenAll y CancellationTokenSource.
+- Manejo de excepciones por tipo: OperationCanceledException, ArgumentException y Exception.
+- LINQ de agregación: Count y Sum con filtros, SelectMany (consultas -> tratamientos),
+  GroupBy en memoria.
+- Proyección a clases de reporte (ReporteVeterinario, ReporteEspecie).
+- Tuplas con nombre para devolver dos resultados: (Veterinarios, Especies).
+- Dibujo con GDI+ en un control propio (GraficoBarras).
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+1. SQL Server no permite un SUM dentro de otro SUM. Por eso los ingresos se calculan
+   en partes: suma de consultas + suma de tratamientos (SelectMany) + suma de vacunas.
+2. Si el usuario pulsa Generar dos veces o cambia de módulo, la carga anterior se
+   cancela. La comprobación ReferenceEquals(cancelacion, actual) evita que una carga
+   vieja que termina tarde vuelva a habilitar los botones de la carga nueva.
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- ¿Cómo se cancela el reporte?
+  El botón llama a cancelacion.Cancel(); EF Core detiene la consulta y se captura
+  OperationCanceledException.
+- ¿Los reportes se calculan en C# o en SQL?
+  Las sumas y conteos los hace SQL Server (EF Core traduce el LINQ); solo el
+  agrupamiento por especie se hace en memoria.
+- ¿Por qué el total de ingresos sale del reporte por especie?
+  Porque incluye las vacunas, que no tienen veterinario asignado.

@@ -159,6 +159,57 @@ BEGIN
 END;
 GO
 
+-- Catálogo de precios en córdobas (C$) de consultas, vacunas y medicamentos.
+IF OBJECT_ID(N'dbo.Tarifas', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Tarifas
+    (
+        IdTarifa INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Tarifas PRIMARY KEY,
+        Nombre NVARCHAR(100) NOT NULL,
+        Tipo NVARCHAR(20) NOT NULL,
+        Precio DECIMAL(10,2) NOT NULL,
+        Activa BIT NOT NULL CONSTRAINT DF_Tarifas_Activa DEFAULT 1,
+        CONSTRAINT CK_Tarifas_Tipo CHECK (Tipo IN (N'Servicio', N'Vacuna', N'Medicamento')),
+        CONSTRAINT CK_Tarifas_Precio CHECK (Precio >= 0)
+    );
+
+    CREATE UNIQUE INDEX UX_Tarifas_Nombre ON dbo.Tarifas(Nombre);
+END;
+GO
+
+-- Precio cobrado en cada registro. Se guarda el valor del momento: si la tarifa cambia, el historial no cambia.
+IF COL_LENGTH(N'dbo.Citas', N'Servicio') IS NULL
+    ALTER TABLE dbo.Citas ADD Servicio NVARCHAR(100) NULL;
+IF COL_LENGTH(N'dbo.Citas', N'Precio') IS NULL
+    ALTER TABLE dbo.Citas ADD Precio DECIMAL(10,2) NOT NULL CONSTRAINT DF_Citas_Precio DEFAULT 0;
+IF COL_LENGTH(N'dbo.Consultas', N'Servicio') IS NULL
+    ALTER TABLE dbo.Consultas ADD Servicio NVARCHAR(100) NULL;
+IF COL_LENGTH(N'dbo.Consultas', N'Precio') IS NULL
+    ALTER TABLE dbo.Consultas ADD Precio DECIMAL(10,2) NOT NULL CONSTRAINT DF_Consultas_Precio DEFAULT 0;
+IF COL_LENGTH(N'dbo.Tratamientos', N'Precio') IS NULL
+    ALTER TABLE dbo.Tratamientos ADD Precio DECIMAL(10,2) NOT NULL CONSTRAINT DF_Tratamientos_Precio DEFAULT 0;
+IF COL_LENGTH(N'dbo.Vacunas', N'Precio') IS NULL
+    ALTER TABLE dbo.Vacunas ADD Precio DECIMAL(10,2) NOT NULL CONSTRAINT DF_Vacunas_Precio DEFAULT 0;
+GO
+
+-- Cada cambio de precio de una tarifa queda registrado: fecha, precio anterior, precio nuevo y usuario.
+IF OBJECT_ID(N'dbo.HistorialPrecios', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.HistorialPrecios
+    (
+        IdHistorial INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_HistorialPrecios PRIMARY KEY,
+        IdTarifa INT NOT NULL,
+        PrecioAnterior DECIMAL(10,2) NULL,
+        PrecioNuevo DECIMAL(10,2) NOT NULL,
+        Fecha DATETIME2(0) NOT NULL CONSTRAINT DF_HistorialPrecios_Fecha DEFAULT SYSDATETIME(),
+        Usuario NVARCHAR(50) NOT NULL,
+        CONSTRAINT FK_HistorialPrecios_Tarifas FOREIGN KEY (IdTarifa) REFERENCES dbo.Tarifas(IdTarifa)
+    );
+
+    CREATE INDEX IX_HistorialPrecios_IdTarifa ON dbo.HistorialPrecios(IdTarifa);
+END;
+GO
+
 CREATE OR ALTER PROCEDURE dbo.sp_ResumenDashboard
 AS
 BEGIN
@@ -230,6 +281,40 @@ BEGIN
 END;
 GO
 
+IF NOT EXISTS (SELECT 1 FROM dbo.Tarifas)
+BEGIN
+    INSERT INTO dbo.Tarifas (Nombre, Tipo, Precio)
+    VALUES
+        (N'Consulta general', N'Servicio', 400.00),
+        (N'Control y seguimiento', N'Servicio', 250.00),
+        (N'Consulta dermatológica', N'Servicio', 600.00),
+        (N'Limpieza dental', N'Servicio', 1200.00),
+        (N'Radiografía', N'Servicio', 900.00),
+        (N'Cirugía menor', N'Servicio', 2500.00),
+        (N'Aplicación de vacuna', N'Servicio', 150.00),
+        (N'Antirrábica', N'Vacuna', 350.00),
+        (N'Parvovirus', N'Vacuna', 450.00),
+        (N'Moquillo', N'Vacuna', 450.00),
+        (N'Triple felina', N'Vacuna', 500.00),
+        (N'Leptospirosis', N'Vacuna', 400.00),
+        (N'Amoxicilina', N'Medicamento', 200.00),
+        (N'Cetirizina', N'Medicamento', 120.00),
+        (N'Ketoconazol', N'Medicamento', 280.00),
+        (N'Champú medicado', N'Medicamento', 350.00),
+        (N'Clindamicina', N'Medicamento', 300.00),
+        (N'Meloxicam', N'Medicamento', 220.00),
+        (N'Glucosamina', N'Medicamento', 650.00),
+        (N'Prednisolona', N'Medicamento', 180.00);
+END;
+GO
+
+-- Precio inicial de cada tarifa que todavía no tiene historial.
+INSERT INTO dbo.HistorialPrecios (IdTarifa, PrecioAnterior, PrecioNuevo, Fecha, Usuario)
+SELECT t.IdTarifa, NULL, t.Precio, DATEADD(DAY, -90, CAST(CAST(GETDATE() AS DATE) AS DATETIME2(0))), N'admin'
+FROM dbo.Tarifas t
+WHERE NOT EXISTS (SELECT 1 FROM dbo.HistorialPrecios h WHERE h.IdTarifa = t.IdTarifa);
+GO
+
 IF NOT EXISTS (SELECT 1 FROM dbo.Clientes)
 BEGIN
     INSERT INTO dbo.Clientes (Nombres, Apellidos, Telefono, Direccion, Correo, FechaRegistro, Activo)
@@ -270,18 +355,18 @@ BEGIN
     DECLARE @VeterinariaAna INT = (SELECT TOP 1 IdVeterinario FROM dbo.Veterinarios WHERE Nombres = N'Ana');
     DECLARE @VeterinarioCarlos INT = (SELECT TOP 1 IdVeterinario FROM dbo.Veterinarios WHERE Nombres = N'Carlos');
 
-    INSERT INTO dbo.Citas (IdMascota, IdVeterinario, FechaHora, Motivo, Estado)
+    INSERT INTO dbo.Citas (IdMascota, IdVeterinario, FechaHora, Servicio, Motivo, Estado, Precio)
     VALUES
-        (@MascotaPersian, @VeterinariaAna, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 1, CAST(GETDATE() AS DATE)) AS DATETIME2)), N'Consulta general', N'Programada'),
-        (@MascotaRocky, @VeterinarioCarlos, DATEADD(HOUR, 14, CAST(DATEADD(DAY, 2, CAST(GETDATE() AS DATE)) AS DATETIME2)), N'Control de vacunación', N'Confirmada');
+        (@MascotaPersian, @VeterinariaAna, DATEADD(HOUR, 10, CAST(DATEADD(DAY, 1, CAST(GETDATE() AS DATE)) AS DATETIME2)), N'Consulta general', N'Consulta general', N'Programada', 400.00),
+        (@MascotaRocky, @VeterinarioCarlos, DATEADD(HOUR, 14, CAST(DATEADD(DAY, 2, CAST(GETDATE() AS DATE)) AS DATETIME2)), N'Aplicación de vacuna', N'Control de vacunación', N'Confirmada', 150.00);
 END;
 GO
 
 IF NOT EXISTS (SELECT 1 FROM dbo.Vacunas)
 BEGIN
     DECLARE @MascotaVacuna INT = (SELECT TOP 1 IdMascota FROM dbo.Mascotas WHERE Nombre = N'Persian');
-    INSERT INTO dbo.Vacunas (IdMascota, NombreVacuna, FechaAplicacion, ProximaDosis, Lote)
-    VALUES (@MascotaVacuna, N'Triple felina', CAST(GETDATE() AS DATE), DATEADD(DAY, 21, CAST(GETDATE() AS DATE)), N'TF-2026-01');
+    INSERT INTO dbo.Vacunas (IdMascota, NombreVacuna, FechaAplicacion, ProximaDosis, Lote, Precio)
+    VALUES (@MascotaVacuna, N'Triple felina', CAST(GETDATE() AS DATE), DATEADD(DAY, 21, CAST(GETDATE() AS DATE)), N'TF-2026-01', 500.00);
 END;
 GO
 

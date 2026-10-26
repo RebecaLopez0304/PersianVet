@@ -13,6 +13,7 @@ public partial class UcConsultas : UserControl
     private readonly ConsultaServicio consultaServicio;
     private readonly MascotaServicio mascotaServicio;
     private readonly VeterinarioServicio veterinarioServicio;
+    private readonly TarifaServicio tarifaServicio;
     private readonly BindingList<Tratamiento> tratamientos = [];
 
     public UcConsultas()
@@ -26,15 +27,24 @@ public partial class UcConsultas : UserControl
         consultaServicio = null!;
         mascotaServicio = null!;
         veterinarioServicio = null!;
+        tarifaServicio = null!;
     }
 
-    public UcConsultas(ConsultaServicio consultaServicio, MascotaServicio mascotaServicio, VeterinarioServicio veterinarioServicio) : this()
+    public UcConsultas(
+        ConsultaServicio consultaServicio,
+        MascotaServicio mascotaServicio,
+        VeterinarioServicio veterinarioServicio,
+        TarifaServicio tarifaServicio) : this()
     {
         this.consultaServicio = consultaServicio;
         this.mascotaServicio = mascotaServicio;
         this.veterinarioServicio = veterinarioServicio;
+        this.tarifaServicio = tarifaServicio;
         tablaTratamientos.DataSource = tratamientos;
+        // Agregar o quitar tratamientos recalcula el total automáticamente.
+        tratamientos.ListChanged += (_, _) => ActualizarTotal();
         EstiloControles.OcultarColumnas(tablaTratamientos, "IdTratamiento", "IdConsulta");
+        EstiloControles.FormatoMoneda(tablaTratamientos, "Precio");
         Load += UcConsultas_Load;
     }
 
@@ -46,6 +56,10 @@ public partial class UcConsultas : UserControl
             cboMascota.DisplayMember = "Nombre"; cboMascota.ValueMember = "IdMascota"; cboMascota.SelectedIndex = -1;
             cboVeterinario.DataSource = veterinarioServicio.Listar(string.Empty, true);
             cboVeterinario.DisplayMember = "NombreCompleto"; cboVeterinario.ValueMember = "IdVeterinario"; cboVeterinario.SelectedIndex = -1;
+            cboServicio.DataSource = tarifaServicio.Listar(Tarifa.Servicio);
+            cboServicio.DisplayMember = "Nombre"; cboServicio.SelectedIndex = -1;
+            cboMedicamento.DataSource = tarifaServicio.Listar(Tarifa.Medicamento);
+            cboMedicamento.DisplayMember = "Nombre"; cboMedicamento.SelectedIndex = -1;
         }
         catch (Exception excepcion) { Mensajes.MostrarError(excepcion); }
     }
@@ -54,21 +68,32 @@ public partial class UcConsultas : UserControl
 
     private void BtnAgregarTratamiento_Click(object? sender, EventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(txtMedicamento.Text) || string.IsNullOrWhiteSpace(txtDosis.Text))
+        Tarifa? medicamento = cboMedicamento.SelectedItem as Tarifa;
+        ResultadoOperacion validacion = new Validador()
+            .Seleccionado(medicamento?.Nombre, "Medicamento")
+            .Requerido(txtDosis.Text, "Dosis")
+            .LongitudMaxima(txtDosis.Text, 80, "Dosis")
+            .LongitudMaxima(txtFrecuencia.Text, 100, "Frecuencia")
+            .LongitudMaxima(txtDuracion.Text, 80, "Duración")
+            .LongitudMaxima(txtIndicaciones.Text, 300, "Indicaciones")
+            .Resultado("No se pudo agregar el tratamiento.");
+
+        if (!validacion.Exitoso || medicamento is null)
         {
-            MessageBox.Show("Escriba el medicamento y la dosis.", "PersianVet", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(validacion.Mensaje, "PersianVet", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
         tratamientos.Add(new Tratamiento
         {
-            Medicamento = txtMedicamento.Text,
+            Medicamento = medicamento.Nombre,
+            Precio = medicamento.Precio,
             Dosis = txtDosis.Text,
             Frecuencia = txtFrecuencia.Text,
             Duracion = txtDuracion.Text,
             Indicaciones = txtIndicaciones.Text
         });
-        txtMedicamento.Clear(); txtDosis.Clear(); txtFrecuencia.Clear(); txtDuracion.Clear(); txtIndicaciones.Clear();
+        cboMedicamento.SelectedIndex = -1; txtDosis.Clear(); txtFrecuencia.Clear(); txtDuracion.Clear(); txtIndicaciones.Clear();
     }
 
     private void BtnQuitarTratamiento_Click(object? sender, EventArgs e)
@@ -86,6 +111,8 @@ public partial class UcConsultas : UserControl
             IdMascota = cboMascota.SelectedValue is int idMascota ? idMascota : 0,
             IdVeterinario = cboVeterinario.SelectedValue is int idVeterinario ? idVeterinario : 0,
             FechaHora = dtpFecha.Value.Date.Add(dtpHora.Value.TimeOfDay),
+            Servicio = cboServicio.SelectedItem is Tarifa servicio ? servicio.Nombre : string.Empty,
+            Precio = PrecioServicio(),
             Motivo = txtMotivo.Text,
             Diagnostico = txtDiagnostico.Text,
             Observaciones = txtObservaciones.Text,
@@ -94,9 +121,20 @@ public partial class UcConsultas : UserControl
 
         Mensajes.EjecutarOperacion(() => consultaServicio.Guardar(consulta), () =>
         {
+            cboServicio.SelectedIndex = -1;
             txtMotivo.Clear(); txtDiagnostico.Clear(); txtObservaciones.Clear(); tratamientos.Clear();
             CargarHistorial();
         });
+    }
+
+    private void CboServicio_SelectedIndexChanged(object? sender, EventArgs e) => ActualizarTotal();
+
+    private decimal PrecioServicio() => cboServicio.SelectedItem is Tarifa servicio ? servicio.Precio : 0;
+
+    private void ActualizarTotal()
+    {
+        decimal total = PrecioServicio() + tratamientos.Sum(t => t.Precio);
+        lblTotal.Text = $"Total de la consulta: {Moneda.Formatear(total)}";
     }
 
     private void CargarHistorial()
@@ -106,6 +144,7 @@ public partial class UcConsultas : UserControl
         {
             tablaHistorial.DataSource = consultaServicio.ListarPorMascota(idMascota);
             EstiloControles.OcultarColumnas(tablaHistorial, "IdConsulta", "IdMascota", "IdVeterinario");
+            EstiloControles.FormatoMoneda(tablaHistorial, "Precio", "Total");
         }
         catch (Exception excepcion) { Mensajes.MostrarError(excepcion); }
     }

@@ -34,6 +34,16 @@ public class ClienteDatos : IClienteDatos
     }
 
     /// <inheritdoc/>
+    public string? ObtenerNombreConCorreo(string correo, int idClienteExcluido)
+    {
+        using PersianVetContext contexto = conexionBD.CrearContexto();
+        return contexto.Clientes.AsNoTracking()
+            .Where(c => c.Correo == correo && c.IdCliente != idClienteExcluido)
+            .Select(c => c.Nombres + " " + c.Apellidos)
+            .FirstOrDefault();
+    }
+
+    /// <inheritdoc/>
     public int Guardar(Cliente cliente)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();

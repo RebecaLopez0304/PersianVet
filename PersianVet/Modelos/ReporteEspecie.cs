@@ -9,4 +9,9 @@ public class ReporteEspecie
     public int Mascotas { get; set; }
     public int Consultas { get; set; }
     public int Vacunas { get; set; }
+
+    /// <summary>
+    /// Obtiene o establece lo cobrado en C$ por consultas, tratamientos y vacunas de la especie.
+    /// </summary>
+    public decimal Ingresos { get; set; }
 }

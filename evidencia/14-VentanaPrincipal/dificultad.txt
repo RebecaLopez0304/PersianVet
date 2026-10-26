@@ -1,0 +1,40 @@
+DIFICULTAD: 14 de 15
+Clasificación: ALTA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Ventana:                                    327
+- Diseño visual (Designer):                   242
+- Permisos, íconos y conexión a la base:      234
+- Total aproximado:                           803  (la pantalla con más código)
+
+¿POR QUÉ ESTÁ EN ESTE LUGAR?
+No tiene lógica clínica, pero coordina toda la aplicación: crea los servicios, abre y
+cierra módulos, aplica permisos por rol, conecta la búsqueda global y resuelve el
+escalado de pantalla. Un error aquí afecta a todos los módulos.
+
+CONCEPTOS QUE SE USAN
+- Navegación centralizada (un solo método Navegar con switch).
+- Control de acceso por roles (diccionario rol -> módulos en la clase Permisos).
+- Composición manual de dependencias: la ventana crea los servicios y los pasa a cada
+  UserControl por su constructor.
+- Eventos entre pantallas (NavegarSolicitado del dashboard, FichaSolicitada de Mascotas).
+- BeginInvoke para no destruir un control mientras todavía atiende su propio clic.
+- Diseño adaptable: FlowLayoutPanel y Dock en el menú, escalado por DPI,
+  LogicalToDeviceUnits y tamaño mínimo de ventana.
+- Imágenes recoloreadas con ColorMatrix (GDI+).
+- Timer para el reloj y liberación (Dispose) del módulo anterior.
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+1. Que se vea igual al 100 % y al 125 % de escala de Windows: se usa
+   AutoScaleMode.Dpi en todas las pantallas y medidas relativas en el encabezado.
+2. Navegar desde dentro del dashboard: el dashboard pide ir a otro módulo y la ventana
+   lo reemplaza; se usa BeginInvoke para hacerlo después de que termine el clic.
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- ¿Cómo se controla qué ve cada rol?
+  Permisos.PuedeAcceder(rol, destino) oculta botones del menú y bloquea Navegar.
+- ¿Dónde se crean los servicios y las conexiones?
+  En el constructor de FrmPrincipal, una vez por sesión; cada operación de datos abre
+  su propio DbContext de vida corta.
+- ¿Qué pasa con el módulo anterior al cambiar de pantalla?
+  Se libera con Dispose; si tenía una carga en curso, se cancela.

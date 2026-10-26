@@ -26,6 +26,7 @@ public partial class UcDashboard : UserControl
         HacerClicable(tarjetaCitas, "Citas");
         HacerClicable(tarjetaVacunas, "Vacunas");
         HacerClicable(tarjetaConsultas, "Consultas");
+        HacerClicable(tarjetaIngresos, "Reportes");
         dashboardServicio = null!;
     }
 
@@ -60,6 +61,8 @@ public partial class UcDashboard : UserControl
         tarjetaCitas.Enabled = permitido("Citas");
         tarjetaVacunas.Enabled = permitido("Vacunas");
         tarjetaConsultas.Enabled = permitido("Consultas");
+        // Los ingresos son información del administrador: solo los ve quien tiene acceso a Reportes.
+        tarjetaIngresos.Visible = permitido("Reportes");
     }
 
     private void Navegar(string destino)
@@ -138,8 +141,9 @@ public partial class UcDashboard : UserControl
             lblCitasValor.Text = resumen.CitasHoy.ToString();
             lblVacunasValor.Text = resumen.VacunasProximas.ToString();
             lblConsultasValor.Text = resumen.ConsultasMes.ToString();
+            lblIngresosValor.Text = Moneda.Formatear(resumen.IngresosMes, 0);
             tablaCitas.DataSource = tareaCitas.Result;
-            EstiloControles.OcultarColumnas(tablaCitas, "IdCita", "IdMascota", "IdVeterinario");
+            EstiloControles.OcultarColumnas(tablaCitas, "IdCita", "IdMascota", "IdVeterinario", "Motivo", "Precio");
 
             listaAlertas.DataSource = tareaAlertas.Result;
             listaAlertas.ClearSelected();

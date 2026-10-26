@@ -1,5 +1,6 @@
 using PersianVet.Interfaces;
 using PersianVet.Modelos;
+using PersianVet.Utilidades;
 
 namespace PersianVet.Servicios;
 
@@ -22,7 +23,7 @@ public class CitaServicio
     }
 
     /// <summary>
-    /// Valida la cita, que no sea en el pasado y que el veterinario no tenga otra a la misma hora, y la registra.
+    /// Valida la cita y su servicio, que no sea en el pasado y que el veterinario no tenga otra a la misma hora, y la registra.
     /// </summary>
     /// <param name="cita">Datos de la cita.</param>
     /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
@@ -32,11 +33,6 @@ public class CitaServicio
         if (!validacion.Exitoso)
         {
             return validacion;
-        }
-
-        if (citaDatos.ExisteCruce(cita))
-        {
-            return ResultadoOperacion.Error("El veterinario ya tiene una cita en esa fecha y hora.");
         }
 
         cita.IdCita = citaDatos.Guardar(cita);
@@ -61,11 +57,6 @@ public class CitaServicio
             return validacion;
         }
 
-        if (citaDatos.ExisteCruce(cita))
-        {
-            return ResultadoOperacion.Error("El veterinario ya tiene una cita en esa fecha y hora.");
-        }
-
         citaDatos.Actualizar(cita);
         return ResultadoOperacion.Correcto("La cita se reprogramó correctamente.");
     }
@@ -76,24 +67,27 @@ public class CitaServicio
         citaDatos.Cancelar(idCita);
     }
 
-    private static ResultadoOperacion Validar(Cita cita)
+    private ResultadoOperacion Validar(Cita cita)
     {
-        if (cita.IdMascota <= 0 || cita.IdVeterinario <= 0)
+        DateTime ahora = DateTime.Now;
+        Validador validador = new Validador()
+            .Seleccionado(cita.IdMascota, "Mascota")
+            .Seleccionado(cita.IdVeterinario, "Veterinario")
+            .Seleccionado(cita.Servicio, "Servicio")
+            .Regla(cita.FechaHora >= ahora.AddMinutes(-1), "Fecha y hora",
+                $"{cita.FechaHora:dd/MM/yyyy HH:mm} ya pasó; elija una fecha y hora posterior a {ahora:dd/MM/yyyy HH:mm}.")
+            .Seleccionado(cita.Estado, "Estado")
+            .Requerido(cita.Motivo, "Motivo")
+            .LongitudMaxima(cita.Motivo, 200, "Motivo");
+
+        // El cruce de horarios se revisa solo si lo demás es válido, para no consultar la base sin necesidad.
+        if (validador.EsValido)
         {
-            return ResultadoOperacion.Error("Seleccione la mascota y el veterinario.");
+            validador.Regla(!citaDatos.ExisteCruce(cita), "Horario",
+                $"el veterinario seleccionado ya tiene una cita activa el {cita.FechaHora:dd/MM/yyyy} a las " +
+                $"{cita.FechaHora:HH:mm}; elija otra hora u otro veterinario.");
         }
 
-        if (cita.FechaHora < DateTime.Now.AddMinutes(-1))
-        {
-            return ResultadoOperacion.Error("La cita no puede programarse en una fecha pasada.");
-        }
-
-        if (string.IsNullOrWhiteSpace(cita.Motivo))
-        {
-            return ResultadoOperacion.Error("Escriba el motivo de la cita.");
-        }
-
-        return ResultadoOperacion.Correcto(string.Empty);
+        return validador.Resultado();
     }
 }
-

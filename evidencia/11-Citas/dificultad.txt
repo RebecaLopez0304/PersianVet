@@ -1,0 +1,34 @@
+DIFICULTAD: 11 de 15
+Clasificación: MEDIA-ALTA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Pantalla:                  131
+- Diseño visual (Designer):  182
+- Servicio y acceso a datos: 157
+- Total aproximado:          470
+
+¿POR QUÉ ESTÁ EN ESTE LUGAR?
+Combina reglas de negocio reales (no programar en el pasado, evitar cruces de horario),
+tres relaciones cargadas a la vez (mascota, su dueño y el veterinario), el catálogo de
+precios y la edición desde la tabla. Es la base de varias partes del dashboard.
+
+CONCEPTOS QUE SE USAN
+- EF Core con Include y ThenInclude (relaciones de dos niveles: Cita -> Mascota -> Cliente).
+- Consulta de existencia con Any para el cruce de horarios.
+- Consulta construida por partes: IQueryable al que se agrega un Where solo si hay filtro.
+- Propiedades calculadas con [DisplayName] para los encabezados (Mascota, Cliente...).
+- ComboBox enlazados a listas (DisplayMember, ValueMember, SelectedValue).
+- Fecha y hora combinadas: dtpFecha.Value.Date.Add(dtpHora.Value.TimeOfDay).
+- Precio tomado del catálogo de Tarifas.
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+La validación del cruce: al reprogramar, la cita no debe chocar consigo misma; por eso
+la consulta excluye su propio Id (c.IdCita != cita.IdCita) y las citas canceladas.
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- ¿Cómo se evita que un veterinario tenga dos citas a la misma hora?
+  CitaServicio llama a ExisteCruce antes de guardar; usa Any en la base de datos.
+- ¿Qué hace ThenInclude?
+  Carga una relación de la relación: de la cita a la mascota y de la mascota al cliente.
+- ¿Por qué cancelar no borra la cita?
+  Para conservar el historial y poder contarla en los reportes como cancelada.

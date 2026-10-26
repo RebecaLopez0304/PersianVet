@@ -1,0 +1,34 @@
+DIFICULTAD: 10 de 15
+Clasificación: MEDIA-ALTA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Pantalla:                  78
+- Diseño visual (Designer):  58
+- Servicio y acceso a datos: 111
+- Total aproximado:          247
+
+¿POR QUÉ ESTÁ EN ESTE LUGAR?
+Aunque es corta, aquí la concurrencia está en la capa de datos con EF Core: tres
+consultas asíncronas en paralelo, cada una con su propio contexto, con cancelación.
+Además conecta con la navegación y los permisos de la ventana principal.
+
+CONCEPTOS QUE SE USAN
+- Métodos asíncronos de EF Core: ToListAsync con CancellationToken.
+- Task.WhenAll con tres consultas en paralelo.
+- Un DbContext por consulta paralela (DbContext no admite consultas simultáneas).
+- CancellationTokenSource que se cancela en FormClosing.
+- LINQ con Contains en varias columnas y en tablas relacionadas (dueño de la mascota).
+- Formato de fechas en memoria (ToString no se traduce a SQL).
+- Operador de propagación [.. lista1, .. lista2, .. lista3] para unir resultados.
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+Saber por qué cada consulta necesita su propio DbContext: si las tres usaran el mismo
+contexto al mismo tiempo, EF Core lanzaría un error de operaciones concurrentes.
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- ¿Por qué tres contextos y no uno?
+  DbContext no es seguro para varias consultas simultáneas; cada tarea usa el suyo.
+- ¿Qué pasa si cierro la ventana mientras busca?
+  Se cancela el token y las consultas se detienen (OperationCanceledException).
+- ¿Por qué la fecha de la cita se formatea después de ToListAsync?
+  Porque ToString("dd/MM/yyyy HH:mm") no se puede traducir a SQL; se hace en memoria.

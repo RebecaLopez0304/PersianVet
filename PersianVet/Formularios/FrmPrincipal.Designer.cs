@@ -22,6 +22,7 @@ partial class FrmPrincipal
     private Button btnVacunas = null!;
     private Button btnVeterinarios = null!;
     private Button btnReportes = null!;
+    private Button btnTarifas = null!;
     private Button btnCerrarSesion = null!;
     private PictureBox pictureMascota = null!;
     private System.Windows.Forms.Timer timerReloj = null!;
@@ -59,6 +60,7 @@ partial class FrmPrincipal
         btnVacunas = new Button();
         btnVeterinarios = new Button();
         btnReportes = new Button();
+        btnTarifas = new Button();
         btnCerrarSesion = new Button();
         timerReloj = new System.Windows.Forms.Timer(components);
         panelEncabezado.SuspendLayout();
@@ -108,7 +110,7 @@ partial class FrmPrincipal
         // Los botones de los módulos se apilan solos; la mascota y "Cerrar sesión" quedan abajo.
         panelMenu.Controls.AddRange(new Control[] { panelBotonesMenu, pictureMascota, btnCerrarSesion });
         panelMenu.Padding = new Padding(14, 0, 14, 14);
-        panelBotonesMenu.Controls.AddRange(new Control[] { btnInicio, btnClientes, btnMascotas, btnCitas, btnConsultas, btnVacunas, btnVeterinarios, btnReportes });
+        panelBotonesMenu.Controls.AddRange(new Control[] { btnInicio, btnClientes, btnMascotas, btnCitas, btnConsultas, btnVacunas, btnVeterinarios, btnReportes, btnTarifas });
         panelBotonesMenu.Dock = DockStyle.Fill;
         panelBotonesMenu.FlowDirection = FlowDirection.TopDown;
         panelBotonesMenu.Padding = new Padding(0, 24, 0, 0);
@@ -118,8 +120,8 @@ partial class FrmPrincipal
         pictureMascota.Dock = DockStyle.Bottom;
         pictureMascota.Size = new Size(196, 120);
         pictureMascota.SizeMode = PictureBoxSizeMode.Zoom;
-        btnInicio.Margin = new Padding(0, 0, 0, 5);
-        btnInicio.Size = new Size(196, 44);
+        btnInicio.Margin = new Padding(0, 0, 0, 4);
+        btnInicio.Size = new Size(196, 40);
         btnInicio.Text = "Inicio";
         btnInicio.BackColor = Color.White;
         btnInicio.FlatStyle = FlatStyle.Flat;
@@ -127,8 +129,8 @@ partial class FrmPrincipal
         btnInicio.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         btnInicio.ForeColor = Color.FromArgb(8, 52, 90);
         btnInicio.TextAlign = ContentAlignment.MiddleLeft;
-        btnClientes.Margin = new Padding(0, 0, 0, 5);
-        btnClientes.Size = new Size(196, 44);
+        btnClientes.Margin = new Padding(0, 0, 0, 4);
+        btnClientes.Size = new Size(196, 40);
         btnClientes.Text = "Clientes";
         btnClientes.BackColor = Color.White;
         btnClientes.FlatStyle = FlatStyle.Flat;
@@ -136,8 +138,8 @@ partial class FrmPrincipal
         btnClientes.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         btnClientes.ForeColor = Color.FromArgb(8, 52, 90);
         btnClientes.TextAlign = ContentAlignment.MiddleLeft;
-        btnMascotas.Margin = new Padding(0, 0, 0, 5);
-        btnMascotas.Size = new Size(196, 44);
+        btnMascotas.Margin = new Padding(0, 0, 0, 4);
+        btnMascotas.Size = new Size(196, 40);
         btnMascotas.Text = "Mascotas";
         btnMascotas.BackColor = Color.White;
         btnMascotas.FlatStyle = FlatStyle.Flat;
@@ -145,8 +147,8 @@ partial class FrmPrincipal
         btnMascotas.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         btnMascotas.ForeColor = Color.FromArgb(8, 52, 90);
         btnMascotas.TextAlign = ContentAlignment.MiddleLeft;
-        btnCitas.Margin = new Padding(0, 0, 0, 5);
-        btnCitas.Size = new Size(196, 44);
+        btnCitas.Margin = new Padding(0, 0, 0, 4);
+        btnCitas.Size = new Size(196, 40);
         btnCitas.Text = "Citas";
         btnCitas.BackColor = Color.White;
         btnCitas.FlatStyle = FlatStyle.Flat;
@@ -154,8 +156,8 @@ partial class FrmPrincipal
         btnCitas.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         btnCitas.ForeColor = Color.FromArgb(8, 52, 90);
         btnCitas.TextAlign = ContentAlignment.MiddleLeft;
-        btnConsultas.Margin = new Padding(0, 0, 0, 5);
-        btnConsultas.Size = new Size(196, 44);
+        btnConsultas.Margin = new Padding(0, 0, 0, 4);
+        btnConsultas.Size = new Size(196, 40);
         btnConsultas.Text = "Consultas";
         btnConsultas.BackColor = Color.White;
         btnConsultas.FlatStyle = FlatStyle.Flat;
@@ -163,8 +165,8 @@ partial class FrmPrincipal
         btnConsultas.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         btnConsultas.ForeColor = Color.FromArgb(8, 52, 90);
         btnConsultas.TextAlign = ContentAlignment.MiddleLeft;
-        btnVacunas.Margin = new Padding(0, 0, 0, 5);
-        btnVacunas.Size = new Size(196, 44);
+        btnVacunas.Margin = new Padding(0, 0, 0, 4);
+        btnVacunas.Size = new Size(196, 40);
         btnVacunas.Text = "Vacunas";
         btnVacunas.BackColor = Color.White;
         btnVacunas.FlatStyle = FlatStyle.Flat;
@@ -172,8 +174,8 @@ partial class FrmPrincipal
         btnVacunas.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         btnVacunas.ForeColor = Color.FromArgb(8, 52, 90);
         btnVacunas.TextAlign = ContentAlignment.MiddleLeft;
-        btnVeterinarios.Margin = new Padding(0, 0, 0, 5);
-        btnVeterinarios.Size = new Size(196, 44);
+        btnVeterinarios.Margin = new Padding(0, 0, 0, 4);
+        btnVeterinarios.Size = new Size(196, 40);
         btnVeterinarios.Text = "Veterinarios";
         btnVeterinarios.BackColor = Color.White;
         btnVeterinarios.FlatStyle = FlatStyle.Flat;
@@ -181,8 +183,8 @@ partial class FrmPrincipal
         btnVeterinarios.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         btnVeterinarios.ForeColor = Color.FromArgb(8, 52, 90);
         btnVeterinarios.TextAlign = ContentAlignment.MiddleLeft;
-        btnReportes.Margin = new Padding(0, 0, 0, 5);
-        btnReportes.Size = new Size(196, 44);
+        btnReportes.Margin = new Padding(0, 0, 0, 4);
+        btnReportes.Size = new Size(196, 40);
         btnReportes.Text = "Reportes";
         btnReportes.BackColor = Color.White;
         btnReportes.FlatStyle = FlatStyle.Flat;
@@ -190,6 +192,15 @@ partial class FrmPrincipal
         btnReportes.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         btnReportes.ForeColor = Color.FromArgb(8, 52, 90);
         btnReportes.TextAlign = ContentAlignment.MiddleLeft;
+        btnTarifas.Margin = new Padding(0, 0, 0, 4);
+        btnTarifas.Size = new Size(196, 40);
+        btnTarifas.Text = "Productos";
+        btnTarifas.BackColor = Color.White;
+        btnTarifas.FlatStyle = FlatStyle.Flat;
+        btnTarifas.FlatAppearance.BorderSize = 0;
+        btnTarifas.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        btnTarifas.ForeColor = Color.FromArgb(8, 52, 90);
+        btnTarifas.TextAlign = ContentAlignment.MiddleLeft;
         btnCerrarSesion.Dock = DockStyle.Bottom;
         btnCerrarSesion.Size = new Size(196, 44);
         btnCerrarSesion.Text = "Cerrar sesión";
@@ -212,6 +223,7 @@ partial class FrmPrincipal
         btnVacunas.Click += BtnVacunas_Click;
         btnVeterinarios.Click += BtnVeterinarios_Click;
         btnReportes.Click += BtnReportes_Click;
+        btnTarifas.Click += BtnTarifas_Click;
         btnCerrarSesion.Click += BtnCerrarSesion_Click;
         timerReloj.Interval = 1000;
         timerReloj.Tick += TimerReloj_Tick;
@@ -224,7 +236,7 @@ partial class FrmPrincipal
         Font = new Font("Segoe UI", 9F);
         StartPosition = FormStartPosition.CenterScreen;
         Text = "PersianVet - Sistema de Gestión Veterinaria";
-        WindowState = FormWindowState.Normal;
+        WindowState = FormWindowState.Maximized;
         FormClosing += FrmPrincipal_FormClosing;
         panelEncabezado.ResumeLayout(false);
         panelMenu.ResumeLayout(false);

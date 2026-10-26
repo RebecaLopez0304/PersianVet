@@ -9,8 +9,9 @@ partial class UcVacunas
     private Label lblAplicacion = null!;
     private Label lblLote = null!;
     private Label lblHistorial = null!;
+    private Label lblPrecioValor = null!;
     private ComboBox cboMascota = null!;
-    private TextBox txtNombreVacuna = null!;
+    private ComboBox cboVacuna = null!;
     private TextBox txtLote = null!;
     private DateTimePicker dtpAplicacion = null!;
     private DateTimePicker dtpProximaDosis = null!;
@@ -30,8 +31,9 @@ partial class UcVacunas
         lblAplicacion = new Label();
         lblLote = new Label();
         lblHistorial = new Label();
+        lblPrecioValor = new Label();
         cboMascota = new ComboBox();
-        txtNombreVacuna = new TextBox();
+        cboVacuna = new ComboBox();
         txtLote = new TextBox();
         dtpAplicacion = new DateTimePicker();
         dtpProximaDosis = new DateTimePicker();
@@ -75,9 +77,10 @@ partial class UcVacunas
         cboMascota.DropDownStyle = ComboBoxStyle.DropDownList;
         cboMascota.Location = new Point(30, 145);
         cboMascota.Size = new Size(225, 23);
-        txtNombreVacuna.Font = new Font("Segoe UI", 10F);
-        txtNombreVacuna.Location = new Point(275, 145);
-        txtNombreVacuna.Size = new Size(225, 25);
+        cboVacuna.DropDownStyle = ComboBoxStyle.DropDownList;
+        cboVacuna.SelectedIndexChanged += CboVacuna_SelectedIndexChanged;
+        cboVacuna.Location = new Point(275, 146);
+        cboVacuna.Size = new Size(225, 23);
         dtpAplicacion.Format = DateTimePickerFormat.Short;
         dtpAplicacion.Location = new Point(520, 145);
         dtpAplicacion.Size = new Size(145, 23);
@@ -95,6 +98,12 @@ partial class UcVacunas
         dtpProximaDosis.MinDate = DateTime.Today;
         btnGuardar.Location = new Point(370, 205);
         btnGuardar.Size = new Size(155, 38);
+        lblPrecioValor.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+        lblPrecioValor.ForeColor = Color.FromArgb(242, 140, 40);
+        lblPrecioValor.Location = new Point(545, 210);
+        lblPrecioValor.Size = new Size(250, 28);
+        lblPrecioValor.Text = "Precio: C$0.00";
+        lblPrecioValor.TextAlign = ContentAlignment.MiddleLeft;
         btnGuardar.Text = "Guardar vacuna";
         chkFiltrarMascota.AutoSize = true;
         chkFiltrarMascota.Location = new Point(430, 290);
@@ -113,7 +122,7 @@ partial class UcVacunas
         chkFiltrarMascota.CheckedChanged += CambiarFiltro;
         chkSoloProximas.CheckedChanged += CambiarFiltro;
         btnConsultar.Click += BtnConsultar_Click;
-        Controls.AddRange(new Control[] { lblTitulo, lblDescripcion, lblMascota, lblVacuna, lblAplicacion, lblLote, lblHistorial, cboMascota, txtNombreVacuna, dtpAplicacion, txtLote, chkProximaDosis, dtpProximaDosis, btnGuardar, chkFiltrarMascota, chkSoloProximas, btnConsultar, tablaVacunas });
+        Controls.AddRange(new Control[] { lblPrecioValor, lblTitulo, lblDescripcion, lblMascota, lblVacuna, lblAplicacion, lblLote, lblHistorial, cboMascota, cboVacuna, dtpAplicacion, txtLote, chkProximaDosis, dtpProximaDosis, btnGuardar, chkFiltrarMascota, chkSoloProximas, btnConsultar, tablaVacunas });
         BackColor = Color.FromArgb(245, 247, 250);
         Font = new Font("Segoe UI", 9F);
         Name = "UcVacunas";

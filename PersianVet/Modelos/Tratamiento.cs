@@ -12,5 +12,6 @@ public class Tratamiento
     public string Frecuencia { get; set; } = string.Empty;
     public string Duracion { get; set; } = string.Empty;
     public string Indicaciones { get; set; } = string.Empty;
+    public decimal Precio { get; set; }
 }
 

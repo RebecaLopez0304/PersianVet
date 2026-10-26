@@ -36,7 +36,15 @@ public class ReporteDatos : IReporteDatos
                 Tratamientos = v.Consultas
                     .Where(c => c.FechaHora >= desde && c.FechaHora < fin)
                     .SelectMany(c => c.ListaTratamientos)
-                    .Count()
+                    .Count(),
+                // SQL Server no admite un SUM dentro de otro: consultas y tratamientos se suman por separado.
+                Ingresos = v.Consultas
+                    .Where(c => c.FechaHora >= desde && c.FechaHora < fin)
+                    .Sum(c => c.Precio)
+                    + v.Consultas
+                    .Where(c => c.FechaHora >= desde && c.FechaHora < fin)
+                    .SelectMany(c => c.ListaTratamientos)
+                    .Sum(t => t.Precio)
             })
             .OrderByDescending(r => r.Consultas)
             .ThenBy(r => r.Veterinario)
@@ -50,13 +58,24 @@ public class ReporteDatos : IReporteDatos
         DateTime fin = hasta.Date.AddDays(1);
         await using PersianVetContext contexto = conexionBD.CrearContexto();
 
+        // Se incluyen las mascotas desactivadas para no perder lo que se les cobró en el período.
         var porMascota = await contexto.Mascotas.AsNoTracking()
-            .Where(m => m.Activa)
             .Select(m => new
             {
                 m.Especie,
+                m.Activa,
                 Consultas = m.Consultas.Count(c => c.FechaHora >= desde && c.FechaHora < fin),
-                Vacunas = m.Vacunas.Count(v => v.FechaAplicacion >= desde && v.FechaAplicacion < fin)
+                Vacunas = m.Vacunas.Count(v => v.FechaAplicacion >= desde && v.FechaAplicacion < fin),
+                Ingresos = m.Consultas
+                    .Where(c => c.FechaHora >= desde && c.FechaHora < fin)
+                    .Sum(c => c.Precio)
+                    + m.Consultas
+                    .Where(c => c.FechaHora >= desde && c.FechaHora < fin)
+                    .SelectMany(c => c.ListaTratamientos)
+                    .Sum(t => t.Precio)
+                    + m.Vacunas
+                    .Where(v => v.FechaAplicacion >= desde && v.FechaAplicacion < fin)
+                    .Sum(v => v.Precio)
             })
             .ToListAsync(cancelacion);
 
@@ -65,9 +84,10 @@ public class ReporteDatos : IReporteDatos
             .Select(g => new ReporteEspecie
             {
                 Especie = g.Key,
-                Mascotas = g.Count(),
+                Mascotas = g.Count(m => m.Activa),
                 Consultas = g.Sum(m => m.Consultas),
-                Vacunas = g.Sum(m => m.Vacunas)
+                Vacunas = g.Sum(m => m.Vacunas),
+                Ingresos = g.Sum(m => m.Ingresos)
             })
             .OrderByDescending(r => r.Mascotas)
             .ThenBy(r => r.Especie)

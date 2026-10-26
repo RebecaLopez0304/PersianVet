@@ -1,0 +1,44 @@
+PANTALLA: VENTANA PRINCIPAL (menú, encabezado y roles)
+Archivo: Formularios/FrmPrincipal.cs  (más Utilidades/Permisos.cs e Iconos.cs)
+Se abre maximizada después de iniciar sesión.
+
+¿PARA QUÉ SIRVE?
+Es el "marco" de la aplicación: contiene el encabezado, el menú lateral y el área
+donde se muestra cada módulo. También decide qué puede ver cada rol.
+
+PARTES DE LA VENTANA
+1. Encabezado:
+   - Nombre y eslogan de la clínica.
+   - Fecha y hora (se actualiza cada segundo con un Timer).
+   - Cuadro de búsqueda global (Enter para buscar).
+   - Usuario y rol que iniciaron sesión.
+2. Menú lateral con íconos: muestra solo los módulos permitidos para el rol; el botón
+   del módulo abierto se resalta en naranja con el ícono en blanco.
+3. Imagen de la mascota y botón "Cerrar sesión" (vuelve al inicio de sesión).
+4. Área de contenido: al elegir un módulo, el anterior se cierra y se muestra el nuevo.
+5. Al cerrar la ventana con la X pide confirmación para salir.
+
+PERMISOS POR ROL
+- Administrador: todos los módulos (Inicio, Clientes, Mascotas, Citas, Consultas,
+  Vacunas, Veterinarios, Reportes y Productos).
+- Recepcionista: Inicio, Clientes, Mascotas, Citas y Vacunas.
+- Veterinario: Inicio, Mascotas, Citas, Consultas y Vacunas.
+Si algo intenta abrir un módulo no permitido (por ejemplo desde la búsqueda o un
+aviso del dashboard), aparece "El rol X no tiene acceso a este módulo".
+
+¿CÓMO FUNCIONA POR DENTRO?
+- Todo cambio de pantalla pasa por un solo método: Navegar("Clientes"),
+  Navegar("NuevaMascota"), Navegar("Calendario")... Lo usan el menú, el dashboard,
+  los avisos y la búsqueda. Antes de abrir, consulta Permisos.PuedeAcceder(rol, destino).
+- La ventana crea una sola vez los servicios de todas las capas y se los pasa a cada
+  módulo al abrirlo.
+- Los íconos son archivos PNG (Material Icons de Google) que se recolorean al cargarse.
+- La ventana se escala según la configuración de pantalla de Windows (100 %, 125 %...)
+  y no deja achicarse por debajo del tamaño en que todo cabe.
+
+CAPTURAS
+01-menu-admin.png         Menú completo del Administrador.
+02-menu-recepcion.png     Menú de la Recepcionista (sin Consultas, Veterinarios,
+                          Reportes ni Productos).
+03-menu-veterinario.png   Menú del Veterinario (sin Clientes, Veterinarios,
+                          Reportes ni Productos).

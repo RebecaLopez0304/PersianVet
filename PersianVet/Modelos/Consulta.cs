@@ -16,9 +16,25 @@ public class Consulta
     public int IdMascota { get; set; }
     public int IdVeterinario { get; set; }
     public DateTime FechaHora { get; set; } = DateTime.Now;
+
+    /// <summary>
+    /// Obtiene o establece el nombre de la tarifa del servicio a realizar.
+    /// </summary>
+    public string Servicio { get; set; } = string.Empty;
+
     public string Motivo { get; set; } = string.Empty;
     public string Diagnostico { get; set; } = string.Empty;
     public string Observaciones { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Obtiene o establece el precio en C$ del servicio, tomado de su tarifa al registrar la consulta.
+    /// </summary>
+    public decimal Precio { get; set; }
+
+    /// <summary>
+    /// Obtiene el total en C$: precio del servicio más el de cada tratamiento.
+    /// </summary>
+    public decimal Total => Precio + ListaTratamientos.Sum(t => t.Precio);
 
     [DisplayName("Veterinario")]
     public string NombreVeterinario => Veterinario == null ? string.Empty : Veterinario.NombreCompleto;

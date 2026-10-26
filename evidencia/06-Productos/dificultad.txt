@@ -1,0 +1,51 @@
+DIFICULTAD: 06 de 15
+Clasificación: MEDIA-BAJA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Pantalla:                          222
+- Diseño visual (Designer):          197
+- Servicio, datos, modelos y Moneda: 386
+- Total aproximado:                  805
+
+¿POR QUÉ ESTÁ EN ESTE LUGAR?
+La base es un CRUD de una sola tabla, pero se suma el historial de precios (una
+segunda tabla que se llena en la misma transacción), la consulta de los últimos
+cobros en cuatro tablas distintas y el filtro por categoría en memoria. No tiene
+concurrencia ni varias ventanas, por eso queda antes de Vacunas y Citas.
+
+CONCEPTOS QUE SE USAN
+- EF Core con dos tablas relacionadas (Tarifas 1 -> N HistorialPrecios) e Include para
+  cargar el historial de cada producto.
+- Un solo SaveChanges para guardar el precio nuevo y su fila de historial
+  (transacción implícita).
+- Propiedades calculadas en el modelo: Tarifa.VigenteDesde y HistorialPrecio.Cambio
+  (EF las ignora porque solo tienen get).
+- LINQ: Where, OrderByDescending, Take, SelectMany (tratamientos dentro de consultas)
+  y Count por categoría.
+- Validación con la clase Validador, incluido el nombre único.
+- RadioButton con apariencia de botón para las categorías.
+- Formato de moneda con CultureInfo("es-NI") y DataGridViewCellStyle.Format = "C2".
+- decimal(10,2) para dinero (nunca double, por los redondeos).
+- Patrón "foto del precio": el precio se copia al registro, no se enlaza al producto.
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+1. Decidir que el precio se copia en cada registro en vez de guardar solo el Id del
+   producto. Así un cambio de precio no altera lo que ya se cobró, y el historial
+   explica por qué dos consultas iguales tienen precios distintos.
+2. Al cambiar de fila, el evento SelectionChanged llega antes de que CurrentRow se
+   actualice. Por eso se usa SelectedRows[0] para saber qué producto se eligió.
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- Si subo hoy el precio de una consulta, ¿cambian las ventas de ayer?
+  No: cada consulta guardó el precio que tenía cuando se registró. Se ve en
+  "Últimos cobros".
+- ¿Cómo sé que el cambio se aplicó?
+  El mensaje muestra el precio anterior, el nuevo y la fecha; la tabla muestra el
+  precio actual y "Vigente desde"; y el historial agrega una fila con el cambio.
+- ¿Qué pasa si falla el guardado a la mitad?
+  El precio y su historial se guardan en el mismo SaveChanges: o se guardan los dos
+  o ninguno.
+- ¿Por qué decimal y no double?
+  Porque decimal representa montos exactos; double puede producir errores de redondeo.
+- ¿Por qué solo el Administrador?
+  Definir precios es una decisión administrativa; está en la clase Permisos.

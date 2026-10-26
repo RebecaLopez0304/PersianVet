@@ -10,7 +10,7 @@ partial class UcReportes
     private DateTimePicker dtpHasta = null!;
     private Button btnGenerar = null!;
     private Button btnCancelar = null!;
-    private Button btnExportar = null!;
+    private Label lblIngresos = null!;
     private ProgressBar barraProgreso = null!;
     private Label lblVeterinarios = null!;
     private Label lblEspecies = null!;
@@ -29,7 +29,7 @@ partial class UcReportes
         dtpHasta = new DateTimePicker();
         btnGenerar = new Button();
         btnCancelar = new Button();
-        btnExportar = new Button();
+        lblIngresos = new Label();
         barraProgreso = new ProgressBar();
         lblVeterinarios = new Label();
         lblEspecies = new Label();
@@ -70,12 +70,13 @@ partial class UcReportes
         btnCancelar.Size = new Size(110, 34);
         btnCancelar.Text = "Cancelar";
         btnCancelar.Click += BtnCancelar_Click;
-        btnExportar.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        btnExportar.Enabled = false;
-        btnExportar.Location = new Point(772, 122);
-        btnExportar.Size = new Size(140, 34);
-        btnExportar.Text = "Exportar CSV";
-        btnExportar.Click += BtnExportar_Click;
+        lblIngresos.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        lblIngresos.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+        lblIngresos.ForeColor = Color.FromArgb(242, 140, 40);
+        lblIngresos.Location = new Point(592, 120);
+        lblIngresos.Size = new Size(320, 38);
+        lblIngresos.Text = "Ingresos: C$0.00";
+        lblIngresos.TextAlign = ContentAlignment.MiddleRight;
         barraProgreso.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         barraProgreso.Location = new Point(32, 166);
         barraProgreso.MarqueeAnimationSpeed = 30;
@@ -110,7 +111,7 @@ partial class UcReportes
         lblEstado.Size = new Size(884, 38);
         lblEstado.Text = "Seleccione un período y presione Generar.";
         lblEstado.TextAlign = ContentAlignment.MiddleLeft;
-        Controls.AddRange(new Control[] { lblTitulo, lblDescripcion, lblDesde, dtpDesde, lblHasta, dtpHasta, btnGenerar, btnCancelar, btnExportar, barraProgreso, lblVeterinarios, tablaVeterinarios, lblEspecies, tablaEspecies, graficoEspecies, lblEstado });
+        Controls.AddRange(new Control[] { lblTitulo, lblDescripcion, lblDesde, dtpDesde, lblHasta, dtpHasta, btnGenerar, btnCancelar, lblIngresos, barraProgreso, lblVeterinarios, tablaVeterinarios, lblEspecies, tablaEspecies, graficoEspecies, lblEstado });
         BackColor = Color.FromArgb(248, 250, 252);
         Font = new Font("Segoe UI", 9F);
         AutoScaleDimensions = new SizeF(96F, 96F);

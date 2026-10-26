@@ -1,0 +1,40 @@
+PANTALLA: VETERINARIOS
+Archivos: Controles/UcVeterinarios.cs, Formularios/FrmVeterinarioEdicion.cs
+Acceso: solo el rol Administrador.
+
+¿PARA QUÉ SIRVE?
+Mantiene la lista del personal veterinario de la clínica. Los veterinarios activos
+son los que se pueden elegir al programar citas y al registrar consultas.
+
+¿QUÉ SE PUEDE HACER?
+1. Ver la lista de veterinarios (nombre, apellidos, especialidad, teléfono y estado).
+2. Buscar: al escribir en "Buscar" la lista se filtra por nombre, apellido o especialidad.
+3. Nuevo: abre una ventana para registrar un veterinario.
+4. Modificar: se selecciona una fila y se abre la misma ventana con sus datos.
+5. Desactivar: pide confirmación y marca al veterinario como inactivo.
+   No se borra de la base de datos para conservar su historial de citas y consultas.
+6. "Mostrar desactivados": incluye en la lista a los veterinarios inactivos.
+
+VALIDACIONES (se muestran todas juntas, cada una con su campo)
+- Nombres y apellidos obligatorios, máximo 80 caracteres cada uno.
+- Especialidad obligatoria, máximo 100 caracteres.
+- Teléfono: solo números, espacios, guiones, + o paréntesis, y al menos 8 dígitos.
+Ejemplo: "Teléfono: debe tener al menos 8 dígitos; tiene 3."
+Si hay errores, la ventana sigue abierta con todo lo escrito para corregirlo.
+
+¿CÓMO FUNCIONA POR DENTRO?
+UcVeterinarios (pantalla)
+  -> VeterinarioServicio (valida los datos y devuelve un mensaje para el usuario)
+  -> VeterinarioDatos (Entity Framework Core)
+  -> tabla Veterinarios de SQL Server.
+
+- Listar usa una consulta LINQ con Where/Contains y OrderByDescending.
+- Guardar usa Add + SaveChanges.
+- Modificar usa Update, pero no toca el campo Activo (solo Desactivar lo cambia).
+- Desactivar usa ExecuteUpdate, que actualiza directamente en SQL sin cargar el registro.
+- El mensaje de éxito o error lo muestra Mensajes.EjecutarOperacion, la misma ayuda
+  que usan todos los módulos.
+
+CAPTURAS
+01-modulo.png                      Lista de veterinarios.
+02-ventana-nuevo-veterinario.png   Ventana para registrar un veterinario.

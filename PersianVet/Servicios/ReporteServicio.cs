@@ -28,7 +28,8 @@ public class ReporteServicio
     {
         if (hasta.Date < desde.Date)
         {
-            throw new ArgumentException("La fecha final no puede ser anterior a la fecha inicial.");
+            throw new ArgumentException(
+                $"Hasta: {hasta:dd/MM/yyyy} es anterior a Desde ({desde:dd/MM/yyyy}); elija un período válido.");
         }
 
         Task<List<ReporteVeterinario>> tareaVeterinarios =

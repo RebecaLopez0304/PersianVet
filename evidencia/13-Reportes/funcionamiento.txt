@@ -1,0 +1,38 @@
+PANTALLA: REPORTES
+Archivo: Controles/UcReportes.cs
+Acceso: solo el rol Administrador.
+
+¿PARA QUÉ SIRVE?
+Muestra en pantalla el resumen de la actividad clínica y los ingresos en córdobas de
+un período. Los reportes solo se visualizan; no se exportan.
+
+¿QUÉ SE PUEDE HACER?
+1. Elegir el período con "Desde" y "Hasta" (por defecto, del día 1 del mes a hoy).
+2. "Generar": crea el reporte (también se genera solo al abrir la pantalla).
+3. "Cancelar": detiene la generación si está en curso.
+4. Mientras se genera, aparece una barra de progreso y los controles se bloquean.
+
+¿QUÉ MUESTRA?
+- Ingresos del período (arriba a la derecha): consultas + tratamientos + vacunas.
+- Actividad por veterinario: citas, completadas, canceladas, consultas, tratamientos
+  e ingresos en C$.
+- Atención por especie: mascotas activas, consultas, vacunas e ingresos en C$.
+- Gráfico de barras: mascotas por especie.
+- Mensaje final con el total de consultas y citas del período.
+
+VALIDACIONES
+- La fecha final no puede ser anterior a la inicial.
+
+¿CÓMO FUNCIONA POR DENTRO?
+UcReportes -> ReporteServicio -> ReporteDatos (EF Core).
+1. ReporteServicio lanza los dos reportes AL MISMO TIEMPO y los espera con Task.WhenAll.
+2. ReporteDatos usa consultas LINQ de agregación (Count y Sum con condiciones de fecha)
+   que EF Core convierte en una sola consulta SQL por reporte.
+3. El reporte por especie agrupa en memoria con GroupBy.
+4. Un CancellationToken permite cancelar; también se cancela si el usuario cambia de
+   módulo antes de que termine.
+5. El gráfico lo dibuja la clase GraficoBarras con GDI+ (sin librerías externas).
+
+CAPTURAS
+01-reporte-del-mes.png          Reporte del mes actual.
+02-reporte-del-ultimo-anio.png  Reporte de los últimos 12 meses.

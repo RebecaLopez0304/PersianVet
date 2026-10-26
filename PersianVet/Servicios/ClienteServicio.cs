@@ -67,28 +67,28 @@ public class ClienteServicio
         clienteDatos.Desactivar(idCliente);
     }
 
-    private static ResultadoOperacion Validar(Cliente cliente)
+    private ResultadoOperacion Validar(Cliente cliente)
     {
-        if (string.IsNullOrWhiteSpace(cliente.Nombres) || string.IsNullOrWhiteSpace(cliente.Apellidos))
+        Validador validador = new Validador()
+            .Requerido(cliente.Nombres, "Nombres")
+            .LongitudMaxima(cliente.Nombres, 80, "Nombres")
+            .Requerido(cliente.Apellidos, "Apellidos")
+            .LongitudMaxima(cliente.Apellidos, 80, "Apellidos")
+            .Telefono(cliente.Telefono)
+            .Correo(cliente.Correo)
+            .Requerido(cliente.Direccion, "Dirección")
+            .LongitudMaxima(cliente.Direccion, 200, "Dirección")
+            .Regla(cliente.FechaRegistro.Date <= DateTime.Today, "Fecha de registro",
+                $"{cliente.FechaRegistro:dd/MM/yyyy} está en el futuro; use la fecha de hoy o una anterior.");
+
+        // El correo repetido se revisa solo si lo demás es válido, para no consultar la base sin necesidad.
+        if (validador.EsValido)
         {
-            return ResultadoOperacion.Error("Escriba los nombres y apellidos del cliente.");
+            string correo = cliente.Correo.Trim();
+            string? otroCliente = clienteDatos.ObtenerNombreConCorreo(correo, cliente.IdCliente);
+            validador.Regla(otroCliente is null, "Correo", $"\"{correo}\" ya está registrado para el cliente {otroCliente}.");
         }
 
-        if (!Validaciones.EsTelefonoValido(cliente.Telefono))
-        {
-            return ResultadoOperacion.Error("Escriba un teléfono válido de al menos 8 números.");
-        }
-
-        if (!Validaciones.EsCorreoValido(cliente.Correo))
-        {
-            return ResultadoOperacion.Error("Escriba un correo electrónico válido.");
-        }
-
-        if (string.IsNullOrWhiteSpace(cliente.Direccion))
-        {
-            return ResultadoOperacion.Error("Escriba la dirección del cliente.");
-        }
-
-        return ResultadoOperacion.Correcto(string.Empty);
+        return validador.Resultado();
     }
 }

@@ -34,10 +34,11 @@ public partial class UcVeterinarios : UserControl
     private void MostrarInactivos(object? sender, EventArgs e) => CargarDatos();
     private void Nuevo(object? sender, EventArgs e)
     {
-        using FrmVeterinarioEdicion formulario = new();
+        using FrmVeterinarioEdicion formulario = new(servicio.Guardar);
         if (formulario.ShowDialog(this) == DialogResult.OK)
         {
-            Ejecutar(() => servicio.Guardar(formulario.Veterinario));
+            Limpiar();
+            CargarDatos();
         }
     }
     private void Guardar(object? sender, EventArgs e) => Ejecutar(() => servicio.Guardar(Crear()));
@@ -55,10 +56,11 @@ public partial class UcVeterinarios : UserControl
             Apellidos = seleccionado.Apellidos, Especialidad = seleccionado.Especialidad,
             Telefono = seleccionado.Telefono, Activo = seleccionado.Activo
         };
-        using FrmVeterinarioEdicion formulario = new(veterinario);
+        using FrmVeterinarioEdicion formulario = new(servicio.Actualizar, veterinario);
         if (formulario.ShowDialog(this) == DialogResult.OK)
         {
-            Ejecutar(() => servicio.Actualizar(formulario.Veterinario));
+            Limpiar();
+            CargarDatos();
         }
     }
 

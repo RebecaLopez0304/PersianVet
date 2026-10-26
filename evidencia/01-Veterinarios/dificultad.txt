@@ -1,0 +1,35 @@
+DIFICULTAD: 01 de 15  (la más fácil)
+Clasificación: BAJA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Pantalla y ventana de edición: 113
+- Diseño visual (Designer):      197
+- Servicio y acceso a datos:     138
+- Total aproximado:              448
+
+¿POR QUÉ ES LA MÁS FÁCIL?
+Es un CRUD clásico (crear, leer, actualizar y "borrar" lógico) sobre una sola tabla,
+sin relaciones con otras tablas, sin precios y sin procesos en segundo plano.
+Sirve como plantilla: Clientes y Mascotas siguen exactamente el mismo patrón.
+
+CONCEPTOS QUE SE USAN
+- Arquitectura en capas: Pantalla -> Servicio -> Datos -> Base de datos.
+- Interfaz IVeterinarioDatos: el servicio no depende de EF Core directamente.
+- EF Core: Add, Update, SaveChanges y ExecuteUpdate.
+- LINQ: Where, Contains, OrderByDescending, ToList.
+- Borrado lógico (campo Activo) en lugar de DELETE.
+- Ventana modal (ShowDialog) para crear y editar.
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+Que "Modificar" no reactive a un veterinario desactivado. Se resuelve en
+VeterinarioDatos.Actualizar con:
+    contexto.Entry(veterinario).Property(v => v.Activo).IsModified = false;
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- ¿Por qué no se borra el veterinario?
+  Porque tiene citas y consultas asociadas (claves foráneas); se desactiva para
+  conservar el historial.
+- ¿Dónde se valida el teléfono?
+  En VeterinarioServicio, usando Validaciones.EsTelefonoValido.
+- ¿Qué hace ExecuteUpdate?
+  Genera un UPDATE directo en SQL, sin traer el registro a memoria.

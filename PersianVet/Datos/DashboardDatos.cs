@@ -26,22 +26,24 @@ public class DashboardDatos : IDashboardDatos
         DateTime inicioMesSiguiente = inicioMes.AddMonths(1);
 
         // DbContext no admite consultas simultáneas: cada conteo paralelo usa su propio contexto.
-        Task<int> mascotas = ContarAsync(c => c.Mascotas.CountAsync(m => m.Activa, cancelacion));
-        Task<int> citas = ContarAsync(c => c.Citas.CountAsync(
+        Task<int> mascotas = ConsultarAsync(c => c.Mascotas.CountAsync(m => m.Activa, cancelacion));
+        Task<int> citas = ConsultarAsync(c => c.Citas.CountAsync(
             ci => ci.FechaHora >= hoy && ci.FechaHora < manana && ci.Estado != "Cancelada", cancelacion));
-        Task<int> vacunas = ContarAsync(c => c.Vacunas.CountAsync(
+        Task<int> vacunas = ConsultarAsync(c => c.Vacunas.CountAsync(
             v => v.ProximaDosis >= hoy && v.ProximaDosis <= limiteVacunas, cancelacion));
-        Task<int> consultas = ContarAsync(c => c.Consultas.CountAsync(
+        Task<int> consultas = ConsultarAsync(c => c.Consultas.CountAsync(
             co => co.FechaHora >= inicioMes && co.FechaHora < inicioMesSiguiente, cancelacion));
+        Task<decimal> ingresos = ConsultarAsync(c => SumarIngresosAsync(c, inicioMes, inicioMesSiguiente, cancelacion));
 
-        await Task.WhenAll(mascotas, citas, vacunas, consultas);
+        await Task.WhenAll(mascotas, citas, vacunas, consultas, ingresos);
 
         return new ResumenDashboard
         {
             MascotasRegistradas = mascotas.Result,
             CitasHoy = citas.Result,
             VacunasProximas = vacunas.Result,
-            ConsultasMes = consultas.Result
+            ConsultasMes = consultas.Result,
+            IngresosMes = ingresos.Result
         };
     }
 
@@ -145,7 +147,22 @@ public class DashboardDatos : IDashboardDatos
             .ToList();
     }
 
-    private async Task<int> ContarAsync(Func<PersianVetContext, Task<int>> consulta)
+    /// <summary>
+    /// Suma lo cobrado en consultas, tratamientos y vacunas entre las dos fechas.
+    /// </summary>
+    private static async Task<decimal> SumarIngresosAsync(
+        PersianVetContext contexto, DateTime desde, DateTime hasta, CancellationToken cancelacion)
+    {
+        IQueryable<Consulta> consultas = contexto.Consultas.Where(c => c.FechaHora >= desde && c.FechaHora < hasta);
+        decimal servicios = await consultas.SumAsync(c => c.Precio, cancelacion);
+        decimal tratamientos = await consultas.SelectMany(c => c.ListaTratamientos).SumAsync(t => t.Precio, cancelacion);
+        decimal vacunas = await contexto.Vacunas
+            .Where(v => v.FechaAplicacion >= desde && v.FechaAplicacion < hasta)
+            .SumAsync(v => v.Precio, cancelacion);
+        return servicios + tratamientos + vacunas;
+    }
+
+    private async Task<T> ConsultarAsync<T>(Func<PersianVetContext, Task<T>> consulta)
     {
         await using PersianVetContext contexto = conexionBD.CrearContexto();
         return await consulta(contexto);

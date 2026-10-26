@@ -1,0 +1,39 @@
+PANTALLA: ADMINISTRAR USUARIOS
+Archivo: Formularios/FrmUsuarios.cs
+Se abre desde el enlace "Administrar usuarios" de la pantalla de inicio de sesión.
+
+¿PARA QUÉ SIRVE?
+Crea las cuentas que pueden entrar al sistema, cambia contraseñas y desactiva cuentas.
+
+¿QUÉ SE PUEDE HACER? (tres pestañas)
+1. Crear usuario: nombre de usuario, contraseña, confirmación y rol
+   (Administrador, Recepcionista o Veterinario).
+2. Cambiar contraseña: usuario existente, nueva contraseña y confirmación.
+3. Usuarios registrados: lista de cuentas con su rol, opción "Mostrar desactivados"
+   y botón "Desactivar usuario".
+
+VALIDACIONES
+- Nombre y contraseña obligatorios.
+- La contraseña y su confirmación deben coincidir.
+- Contraseña de al menos 4 caracteres.
+- El nombre de usuario no puede estar en uso.
+- El usuario "admin" no se puede desactivar.
+
+SEGURIDAD
+Las contraseñas no se guardan como texto: se guarda su hash SHA-256
+(clase SeguridadClave). Al iniciar sesión se calcula el hash de lo escrito y se compara.
+
+USUARIOS DE DEMOSTRACIÓN (contraseña persian123)
+admin (Administrador), recepcion (Recepcionista), veterinario (Veterinario).
+
+¿CÓMO FUNCIONA POR DENTRO?
+FrmUsuarios -> UsuarioServicio (validaciones y hash) -> UsuarioDatos (EF Core) -> tabla Usuarios.
+
+OBSERVACIÓN (posible mejora)
+Esta ventana se abre desde el inicio de sesión sin pedir credenciales. En un sistema
+real convendría permitirla solo a un Administrador ya identificado.
+
+CAPTURAS
+01-crear-usuario.png          Pestaña para crear un usuario.
+02-cambiar-contrasena.png     Pestaña para cambiar la contraseña.
+03-usuarios-registrados.png   Lista de usuarios con su rol.

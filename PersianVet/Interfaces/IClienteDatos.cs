@@ -16,6 +16,14 @@ public interface IClienteDatos
     List<Cliente> Listar(string filtro, bool soloActivos = true);
 
     /// <summary>
+    /// Busca otro cliente que ya use el correo indicado.
+    /// </summary>
+    /// <param name="correo">Correo a revisar.</param>
+    /// <param name="idClienteExcluido">Cliente que se está editando (0 si es nuevo), para no compararlo consigo mismo.</param>
+    /// <returns>El nombre completo del otro cliente, o <see langword="null"/> si el correo está libre.</returns>
+    string? ObtenerNombreConCorreo(string correo, int idClienteExcluido);
+
+    /// <summary>
     /// Registra un cliente nuevo como activo.
     /// </summary>
     /// <param name="cliente">Datos del cliente.</param>

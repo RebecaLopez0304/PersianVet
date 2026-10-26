@@ -1,0 +1,34 @@
+DIFICULTAD: 09 de 15
+Clasificación: MEDIA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Pantalla:                  91
+- Diseño visual (Designer):  82
+- Servicio reutilizado:      52
+- Total aproximado:          225  (además usa los servicios de Vacunas y Citas)
+
+¿POR QUÉ ESTÁ EN ESTE LUGAR?
+Es el ejemplo más claro de concurrencia: tres tareas en paralelo esperadas con
+Task.WhenAll. Además integra datos de tres módulos y calcula la edad de la mascota.
+
+CONCEPTOS QUE SE USAN
+- Concurrencia: varias Task en paralelo y Task.WhenAll.
+- async/await en el evento Load de la ventana.
+- Reutilización de servicios de otras capas (no se duplica código de acceso a datos).
+- TabControl con títulos dinámicos (por ejemplo "Consultas (2)").
+- Cálculo de edad con fechas (meses entre dos fechas).
+- Formato de moneda en varias tablas (EstiloControles.FormatoMoneda).
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+Entender por qué Task.WhenAll es más rápido que hacer tres await seguidos: las tres
+consultas empiezan al mismo tiempo y se espera solo a que terminen todas.
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- ¿Qué diferencia hay entre await uno por uno y Task.WhenAll?
+  Uno por uno, cada consulta espera a la anterior; con WhenAll corren en paralelo.
+- ¿Por qué Task.Run si los servicios no son async?
+  Los servicios de estos módulos son síncronos; Task.Run los ejecuta en un hilo del
+  ThreadPool para no bloquear la interfaz.
+- ¿Cómo se calcula la edad?
+  Se cuentan los meses entre la fecha de nacimiento y hoy; si son 12 o más, se
+  muestra en años.

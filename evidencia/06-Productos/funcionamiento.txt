@@ -1,0 +1,69 @@
+PANTALLA: PRODUCTOS Y PRECIOS
+Archivos: Controles/UcTarifas.cs (menú "Productos")
+Acceso: solo el rol Administrador.
+
+¿PARA QUÉ SIRVE?
+Es el catálogo de productos de la clínica con su precio en córdobas (C$). De aquí
+salen los precios que se cobran en citas, consultas, tratamientos y vacunas, y aquí
+se comprueba cómo y cuándo cambió cada precio.
+
+Categorías:
+- Servicios y consultas: se eligen al programar una cita y al registrar una consulta
+                         (Consulta general, Radiografía, Cirugía menor...).
+- Vacunas:               se eligen al registrar una vacuna (Antirrábica, Triple felina...).
+- Medicamentos:          se eligen al agregar un tratamiento en una consulta (Meloxicam...).
+
+¿QUÉ SE PUEDE HACER?
+1. Filtrar por categoría con los botones "Todos", "Servicios y consultas", "Vacunas" y
+   "Medicamentos". Cada botón muestra cuántos productos tiene.
+2. Ver cada producto con su precio actual y la fecha desde la que rige ("Vigente desde").
+3. Seleccionar un producto para ver a la derecha:
+   - "Historial de precios": cada cambio con fecha, precio anterior, precio nuevo,
+     diferencia en C$ y en %, y el usuario que lo hizo.
+   - "Últimos cobros": las últimas citas, consultas, tratamientos o vacunas donde se
+     cobró, con el precio que quedó guardado en cada registro.
+4. Agregar: escribir nombre, elegir categoría y precio, y presionar "Agregar".
+5. Modificar: seleccionar una fila, cambiar lo necesario y presionar "Modificar".
+   El mensaje confirma el cambio (por ejemplo "C$250.00 → C$275.00, vigente desde
+   25/10/2026 21:49") y el producto queda seleccionado para ver el cambio en el historial.
+6. Desactivar: el producto deja de ofrecerse al registrar, pero no se borra ni se
+   pierde su historial. "Mostrar desactivados" los vuelve a mostrar.
+7. Limpiar: vacía el formulario.
+
+REGLA IMPORTANTE: ¿UN CAMBIO DE PRECIO AFECTA LO QUE YA SE COBRÓ?
+No. Cada cita, consulta, tratamiento y vacuna guarda el precio del momento en que se
+registró. El precio nuevo solo se usa en lo que se registre desde ese momento.
+Se puede comprobar en la pantalla: después de cambiar el precio, en "Últimos cobros"
+los registros anteriores siguen mostrando el precio con que se cobraron.
+Ejemplo de los datos de prueba: "Consulta general" costaba C$350 y subió a C$400 hace
+30 días. Las consultas de antes siguen en C$350 y las nuevas en C$400.
+
+VALIDACIONES
+- Nombre obligatorio, de máximo 100 caracteres y que no se repita (incluye desactivados).
+- Categoría válida (Servicio, Vacuna o Medicamento).
+- Precio mayor que C$0.00.
+- Para modificar hay que seleccionar un producto de la lista.
+- Si solo cambia el nombre, el mensaje avisa que el precio no cambió y no se agrega
+  nada al historial.
+
+¿CÓMO FUNCIONA POR DENTRO?
+UcTarifas -> TarifaServicio -> TarifaDatos (EF Core) -> tablas Tarifas e HistorialPrecios.
+- Al agregar se guarda el precio inicial en HistorialPrecios.
+- Al modificar, si el precio cambió, se agrega una fila al historial en el mismo
+  SaveChanges (una sola transacción: o se guardan las dos cosas o ninguna).
+- Los últimos cobros se buscan por nombre en Citas, Consultas, Tratamientos o Vacunas
+  según la categoría del producto.
+- Los productos se consultan una vez; el filtro por categoría se aplica en memoria
+  con LINQ, sin volver a la base.
+- Los montos se muestran con la cultura es-NI (clase Moneda): C$1,250.00.
+
+CAPTURAS
+01-catalogo.png                          Catálogo completo con los contadores por categoría.
+02-vacunas-historial-y-cobros.png        Filtro Vacunas: Triple felina subió de C$450 a C$500
+                                         y sus cobros anteriores siguen en C$450.
+03-consulta-general-precio-cambiado.png  Consulta general: C$350 -> C$400; los cobros muestran
+                                         los dos precios según la fecha.
+04-filtro-medicamentos.png               Filtro Medicamentos.
+05-mensaje-cambio-de-precio.png          Mensaje al cambiar un precio (C$250 -> C$275).
+06-historial-tras-el-cambio.png          El cambio ya aparece en el historial y los registros
+                                         anteriores conservan C$250.

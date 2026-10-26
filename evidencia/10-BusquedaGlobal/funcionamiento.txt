@@ -1,0 +1,32 @@
+PANTALLA: BÚSQUEDA GLOBAL
+Archivo: Formularios/FrmBusquedaGlobal.cs
+Se usa desde el cuadro "Buscar cliente, mascota o cita (Enter)" del encabezado de la
+ventana principal; está disponible en todos los módulos.
+
+¿PARA QUÉ SIRVE?
+Encontrar rápidamente cualquier cliente, mascota o cita sin saber en qué módulo está.
+
+¿QUÉ SE PUEDE HACER?
+1. Escribir al menos 2 letras en el cuadro del encabezado y presionar Enter.
+2. Se abre la ventana de resultados con columnas Tipo, Título y Detalle:
+   - Cliente: busca en nombre, apellido, teléfono y correo.
+   - Mascota: busca en nombre, raza y nombre del dueño.
+   - Cita: busca en el motivo y la mascota de las citas de hoy en adelante
+     (no canceladas).
+   Se muestran como máximo 10 resultados de cada tipo.
+3. Doble clic o "Abrir" sobre un resultado:
+   - Cliente: abre el módulo Clientes.
+   - Cita: abre el módulo Citas.
+   - Mascota: abre directamente su ficha.
+   Si el rol del usuario no tiene acceso a ese módulo, aparece un aviso.
+
+¿CÓMO FUNCIONA POR DENTRO?
+1. BusquedaServicio revisa que haya al menos 2 letras (si no, no consulta la base).
+2. BusquedaDatos lanza TRES consultas LINQ a la vez (clientes, mascotas y citas),
+   cada una con su propio DbContext, y las espera con Task.WhenAll.
+3. Los tres resultados se unen en una sola lista.
+4. Si se cierra la ventana antes de terminar, un CancellationToken cancela la búsqueda.
+
+CAPTURAS
+01-buscar-valeria.png   Resultados al buscar "valeria" (un cliente y sus mascotas).
+02-buscar-bruno.png     Resultados al buscar "bruno" (mascota y sus citas).

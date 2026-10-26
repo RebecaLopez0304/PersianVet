@@ -1,0 +1,28 @@
+PANTALLA: CALENDARIO DE CITAS
+Archivo: Formularios/FrmCalendarioCitas.cs
+Se abre con el botón "Ver calendario" del módulo Citas o con la acción rápida
+"Calendario" del dashboard.
+
+¿PARA QUÉ SIRVE?
+Da una vista mensual de la agenda: permite ver de un vistazo qué días tienen citas
+y revisar el detalle de cualquier día.
+
+¿QUÉ SE PUEDE HACER?
+1. Ver el mes: los días en NEGRITA tienen al menos una cita activa (no cancelada).
+2. Moverse entre meses con las flechas del calendario.
+3. Hacer clic en un día: a la derecha aparece la lista de citas de ese día con
+   hora, mascota, servicio, cliente, veterinario, motivo, estado y precio en C$.
+4. Al abrir, muestra las citas de hoy.
+5. Abajo se indica el total de citas activas.
+
+¿CÓMO FUNCIONA POR DENTRO?
+1. Al abrir la ventana, todas las citas se cargan en segundo plano con
+   Task.Run(() => citaServicio.Listar()), así la ventana aparece de inmediato.
+2. Con LINQ se obtienen los días que tienen citas activas y se asignan a
+   calendario.BoldedDates (días en negrita).
+3. Al elegir un día, NO se vuelve a consultar la base: se filtra la lista que ya está
+   en memoria (LINQ to Objects) y se arma un objeto anónimo con las columnas a mostrar.
+
+CAPTURAS
+01-citas-de-hoy.png       Calendario abierto en el día de hoy.
+02-citas-de-manana.png    Detalle de las citas del día siguiente.

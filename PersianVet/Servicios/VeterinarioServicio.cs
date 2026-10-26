@@ -69,21 +69,14 @@ public class VeterinarioServicio
 
     private static ResultadoOperacion Validar(Veterinario veterinario)
     {
-        if (string.IsNullOrWhiteSpace(veterinario.Nombres) || string.IsNullOrWhiteSpace(veterinario.Apellidos))
-        {
-            return ResultadoOperacion.Error("Escriba los nombres y apellidos del veterinario.");
-        }
-
-        if (string.IsNullOrWhiteSpace(veterinario.Especialidad))
-        {
-            return ResultadoOperacion.Error("Escriba la especialidad del veterinario.");
-        }
-
-        if (!Validaciones.EsTelefonoValido(veterinario.Telefono))
-        {
-            return ResultadoOperacion.Error("Escriba un teléfono válido de al menos 8 números.");
-        }
-
-        return ResultadoOperacion.Correcto(string.Empty);
+        return new Validador()
+            .Requerido(veterinario.Nombres, "Nombres")
+            .LongitudMaxima(veterinario.Nombres, 80, "Nombres")
+            .Requerido(veterinario.Apellidos, "Apellidos")
+            .LongitudMaxima(veterinario.Apellidos, 80, "Apellidos")
+            .Requerido(veterinario.Especialidad, "Especialidad")
+            .LongitudMaxima(veterinario.Especialidad, 100, "Especialidad")
+            .Telefono(veterinario.Telefono)
+            .Resultado();
     }
 }

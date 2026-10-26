@@ -70,88 +70,99 @@ DECLARE @Carlos INT = (SELECT TOP 1 IdVeterinario FROM dbo.Veterinarios WHERE No
 DECLARE @Sofia INT = (SELECT TOP 1 IdVeterinario FROM dbo.Veterinarios WHERE Nombres = N'Sofía' AND Apellidos = N'Herrera');
 DECLARE @Diego INT = (SELECT TOP 1 IdVeterinario FROM dbo.Veterinarios WHERE Nombres = N'Diego' AND Apellidos = N'Castillo');
 
--- Citas pasadas (completadas y canceladas)
-INSERT INTO dbo.Citas (IdMascota, IdVeterinario, FechaHora, Motivo, Estado)
+-- Citas pasadas (completadas y canceladas); el precio sale del catálogo de tarifas
+INSERT INTO dbo.Citas (IdMascota, IdVeterinario, FechaHora, Servicio, Motivo, Estado, Precio)
 VALUES
-    (@Luna, @Ana, DATEADD(HOUR, 9, DATEADD(DAY, -60, @Hoy)), N'Consulta general', N'Completada'),
-    (@Max, @Carlos, DATEADD(HOUR, 10, DATEADD(DAY, -45, @Hoy)), N'Vacuna antirrábica', N'Completada'),
-    (@Toby, @Diego, DATEADD(HOUR, 11, DATEADD(DAY, -30, @Hoy)), N'Picazón en la piel', N'Completada'),
-    (@Coco, @Sofia, DATEADD(HOUR, 8, DATEADD(DAY, -20, @Hoy)), N'Limpieza dental', N'Completada'),
-    (@Bruno, @Ana, DATEADD(HOUR, 15, DATEADD(DAY, -12, @Hoy)), N'Dolor al caminar', N'Completada'),
-    (@Nala, @Carlos, DATEADD(HOUR, 14, DATEADD(DAY, -9, @Hoy)), N'Primera vacuna', N'Completada'),
-    (@Simba, @Ana, DATEADD(HOUR, 16, DATEADD(DAY, -5, @Hoy)), N'Revisión general', N'Cancelada'),
-    (@Rocky, @Diego, DATEADD(HOUR, 10, DATEADD(DAY, -2, @Hoy)), N'Dificultad para respirar', N'Completada');
+    (@Luna, @Ana, DATEADD(HOUR, 9, DATEADD(DAY, -60, @Hoy)), N'Consulta general', N'Consulta general', N'Completada', 350.00),
+    (@Max, @Carlos, DATEADD(HOUR, 10, DATEADD(DAY, -45, @Hoy)), N'Aplicación de vacuna', N'Vacuna antirrábica', N'Completada', 150.00),
+    (@Toby, @Diego, DATEADD(HOUR, 11, DATEADD(DAY, -30, @Hoy)), N'Consulta dermatológica', N'Picazón en la piel', N'Completada', 600.00),
+    (@Coco, @Sofia, DATEADD(HOUR, 8, DATEADD(DAY, -20, @Hoy)), N'Limpieza dental', N'Limpieza dental', N'Completada', 1200.00),
+    (@Bruno, @Ana, DATEADD(HOUR, 15, DATEADD(DAY, -12, @Hoy)), N'Radiografía', N'Dolor al caminar', N'Completada', 900.00),
+    (@Nala, @Carlos, DATEADD(HOUR, 14, DATEADD(DAY, -9, @Hoy)), N'Aplicación de vacuna', N'Primera vacuna', N'Completada', 150.00),
+    (@Simba, @Ana, DATEADD(HOUR, 16, DATEADD(DAY, -5, @Hoy)), N'Consulta general', N'Revisión general', N'Cancelada', 400.00),
+    (@Rocky, @Diego, DATEADD(HOUR, 10, DATEADD(DAY, -2, @Hoy)), N'Consulta general', N'Dificultad para respirar', N'Completada', 400.00);
 
 -- Citas de hoy
-INSERT INTO dbo.Citas (IdMascota, IdVeterinario, FechaHora, Motivo, Estado)
+INSERT INTO dbo.Citas (IdMascota, IdVeterinario, FechaHora, Servicio, Motivo, Estado, Precio)
 VALUES
-    (@Mia, @Carlos, DATEADD(HOUR, 8, @Hoy), N'Vacuna triple felina', N'Completada'),
-    (@Max, @Ana, DATEADD(HOUR, 13, @Hoy), N'Control de peso', N'Confirmada'),
-    (@Toby, @Diego, DATEADD(HOUR, 17, @Hoy), N'Revisión de piel', N'Programada'),
-    (@Coco, @Sofia, DATEADD(HOUR, 18, @Hoy), N'Control dental', N'Programada');
+    (@Mia, @Carlos, DATEADD(HOUR, 8, @Hoy), N'Aplicación de vacuna', N'Vacuna triple felina', N'Completada', 150.00),
+    (@Max, @Ana, DATEADD(HOUR, 13, @Hoy), N'Control y seguimiento', N'Control de peso', N'Confirmada', 250.00),
+    (@Toby, @Diego, DATEADD(HOUR, 17, @Hoy), N'Consulta dermatológica', N'Revisión de piel', N'Programada', 600.00),
+    (@Coco, @Sofia, DATEADD(HOUR, 18, @Hoy), N'Control y seguimiento', N'Control dental', N'Programada', 250.00);
 
 -- Citas futuras (las de mañana sin confirmar aparecen en "Requiere atención")
-INSERT INTO dbo.Citas (IdMascota, IdVeterinario, FechaHora, Motivo, Estado)
+INSERT INTO dbo.Citas (IdMascota, IdVeterinario, FechaHora, Servicio, Motivo, Estado, Precio)
 VALUES
-    (@Luna, @Ana, DATEADD(HOUR, 9, DATEADD(DAY, 1, @Hoy)), N'Control de alergia', N'Programada'),
-    (@Bruno, @Sofia, DATEADD(HOUR, 11, DATEADD(DAY, 1, @Hoy)), N'Radiografía de cadera', N'Confirmada'),
-    (@Simba, @Carlos, DATEADD(HOUR, 10, DATEADD(DAY, 2, @Hoy)), N'Castración', N'Programada'),
-    (@Nala, @Carlos, DATEADD(HOUR, 14, DATEADD(DAY, 3, @Hoy)), N'Segunda vacuna', N'Confirmada'),
-    (@Rocky, @Diego, DATEADD(HOUR, 9, DATEADD(DAY, 4, @Hoy)), N'Seguimiento respiratorio', N'Programada'),
-    (@Mia, @Ana, DATEADD(HOUR, 16, DATEADD(DAY, 6, @Hoy)), N'Desparasitación', N'Programada'),
-    (@Coco, @Sofia, DATEADD(HOUR, 10, DATEADD(DAY, 10, @Hoy)), N'Extracción dental', N'Programada'),
-    (@Max, @Carlos, DATEADD(HOUR, 15, DATEADD(DAY, 21, @Hoy)), N'Refuerzo de vacuna', N'Programada');
+    (@Luna, @Ana, DATEADD(HOUR, 9, DATEADD(DAY, 1, @Hoy)), N'Control y seguimiento', N'Control de alergia', N'Programada', 250.00),
+    (@Bruno, @Sofia, DATEADD(HOUR, 11, DATEADD(DAY, 1, @Hoy)), N'Radiografía', N'Radiografía de cadera', N'Confirmada', 900.00),
+    (@Simba, @Carlos, DATEADD(HOUR, 10, DATEADD(DAY, 2, @Hoy)), N'Cirugía menor', N'Castración', N'Programada', 2500.00),
+    (@Nala, @Carlos, DATEADD(HOUR, 14, DATEADD(DAY, 3, @Hoy)), N'Aplicación de vacuna', N'Segunda vacuna', N'Confirmada', 150.00),
+    (@Rocky, @Diego, DATEADD(HOUR, 9, DATEADD(DAY, 4, @Hoy)), N'Control y seguimiento', N'Seguimiento respiratorio', N'Programada', 250.00),
+    (@Mia, @Ana, DATEADD(HOUR, 16, DATEADD(DAY, 6, @Hoy)), N'Consulta general', N'Desparasitación', N'Programada', 400.00),
+    (@Coco, @Sofia, DATEADD(HOUR, 10, DATEADD(DAY, 10, @Hoy)), N'Cirugía menor', N'Extracción dental', N'Programada', 2500.00),
+    (@Max, @Carlos, DATEADD(HOUR, 15, DATEADD(DAY, 21, @Hoy)), N'Aplicación de vacuna', N'Refuerzo de vacuna', N'Programada', 150.00);
 
 -- Consultas pasadas y de este mes, con sus tratamientos
 DECLARE @Consulta INT;
 
-INSERT INTO dbo.Consultas (IdMascota, IdVeterinario, FechaHora, Motivo, Diagnostico, Observaciones)
-VALUES (@Luna, @Ana, DATEADD(HOUR, 9, DATEADD(DAY, -60, @Hoy)), N'Consulta general', N'Dermatitis alérgica por alimento', N'Cambiar a dieta hipoalergénica.');
+INSERT INTO dbo.Consultas (IdMascota, IdVeterinario, FechaHora, Servicio, Motivo, Diagnostico, Observaciones, Precio)
+VALUES (@Luna, @Ana, DATEADD(HOUR, 9, DATEADD(DAY, -60, @Hoy)), N'Consulta general', N'Consulta general', N'Dermatitis alérgica por alimento', N'Cambiar a dieta hipoalergénica.', 350.00);
 SET @Consulta = SCOPE_IDENTITY();
-INSERT INTO dbo.Tratamientos (IdConsulta, Medicamento, Dosis, Frecuencia, Duracion, Indicaciones)
-VALUES (@Consulta, N'Cetirizina', N'5 mg', N'Cada 24 horas', N'10 días', N'Dar con comida.');
+INSERT INTO dbo.Tratamientos (IdConsulta, Medicamento, Dosis, Frecuencia, Duracion, Indicaciones, Precio)
+VALUES (@Consulta, N'Cetirizina', N'5 mg', N'Cada 24 horas', N'10 días', N'Dar con comida.', 120.00);
 
-INSERT INTO dbo.Consultas (IdMascota, IdVeterinario, FechaHora, Motivo, Diagnostico, Observaciones)
-VALUES (@Toby, @Diego, DATEADD(HOUR, 11, DATEADD(DAY, -30, @Hoy)), N'Picazón en la piel', N'Infección por hongos', NULL);
+INSERT INTO dbo.Consultas (IdMascota, IdVeterinario, FechaHora, Servicio, Motivo, Diagnostico, Observaciones, Precio)
+VALUES (@Toby, @Diego, DATEADD(HOUR, 11, DATEADD(DAY, -30, @Hoy)), N'Consulta dermatológica', N'Picazón en la piel', N'Infección por hongos', NULL, 600.00);
 SET @Consulta = SCOPE_IDENTITY();
-INSERT INTO dbo.Tratamientos (IdConsulta, Medicamento, Dosis, Frecuencia, Duracion, Indicaciones)
+INSERT INTO dbo.Tratamientos (IdConsulta, Medicamento, Dosis, Frecuencia, Duracion, Indicaciones, Precio)
 VALUES
-    (@Consulta, N'Ketoconazol', N'100 mg', N'Cada 12 horas', N'14 días', NULL),
-    (@Consulta, N'Champú medicado', N'1 aplicación', N'Cada 3 días', N'3 semanas', N'Dejar actuar 10 minutos.');
+    (@Consulta, N'Ketoconazol', N'100 mg', N'Cada 12 horas', N'14 días', NULL, 280.00),
+    (@Consulta, N'Champú medicado', N'1 aplicación', N'Cada 3 días', N'3 semanas', N'Dejar actuar 10 minutos.', 350.00);
 
-INSERT INTO dbo.Consultas (IdMascota, IdVeterinario, FechaHora, Motivo, Diagnostico, Observaciones)
-VALUES (@Coco, @Sofia, DATEADD(HOUR, 8, DATEADD(DAY, -20, @Hoy)), N'Limpieza dental', N'Sarro moderado', N'Programar extracción de una pieza.');
+INSERT INTO dbo.Consultas (IdMascota, IdVeterinario, FechaHora, Servicio, Motivo, Diagnostico, Observaciones, Precio)
+VALUES (@Coco, @Sofia, DATEADD(HOUR, 8, DATEADD(DAY, -20, @Hoy)), N'Limpieza dental', N'Limpieza dental', N'Sarro moderado', N'Programar extracción de una pieza.', 1200.00);
 SET @Consulta = SCOPE_IDENTITY();
-INSERT INTO dbo.Tratamientos (IdConsulta, Medicamento, Dosis, Frecuencia, Duracion, Indicaciones)
-VALUES (@Consulta, N'Clindamicina', N'75 mg', N'Cada 12 horas', N'7 días', NULL);
+INSERT INTO dbo.Tratamientos (IdConsulta, Medicamento, Dosis, Frecuencia, Duracion, Indicaciones, Precio)
+VALUES (@Consulta, N'Clindamicina', N'75 mg', N'Cada 12 horas', N'7 días', NULL, 300.00);
 
-INSERT INTO dbo.Consultas (IdMascota, IdVeterinario, FechaHora, Motivo, Diagnostico, Observaciones)
-VALUES (@Bruno, @Ana, DATEADD(HOUR, 15, DATEADD(DAY, -12, @Hoy)), N'Dolor al caminar', N'Displasia de cadera leve', N'Evitar ejercicio intenso.');
+INSERT INTO dbo.Consultas (IdMascota, IdVeterinario, FechaHora, Servicio, Motivo, Diagnostico, Observaciones, Precio)
+VALUES (@Bruno, @Ana, DATEADD(HOUR, 15, DATEADD(DAY, -12, @Hoy)), N'Radiografía', N'Dolor al caminar', N'Displasia de cadera leve', N'Evitar ejercicio intenso.', 900.00);
 SET @Consulta = SCOPE_IDENTITY();
-INSERT INTO dbo.Tratamientos (IdConsulta, Medicamento, Dosis, Frecuencia, Duracion, Indicaciones)
+INSERT INTO dbo.Tratamientos (IdConsulta, Medicamento, Dosis, Frecuencia, Duracion, Indicaciones, Precio)
 VALUES
-    (@Consulta, N'Meloxicam', N'1.5 mg', N'Cada 24 horas', N'7 días', N'Suspender si vomita.'),
-    (@Consulta, N'Glucosamina', N'500 mg', N'Cada 24 horas', N'3 meses', NULL);
+    (@Consulta, N'Meloxicam', N'1.5 mg', N'Cada 24 horas', N'7 días', N'Suspender si vomita.', 220.00),
+    (@Consulta, N'Glucosamina', N'500 mg', N'Cada 24 horas', N'3 meses', NULL, 650.00);
 
-INSERT INTO dbo.Consultas (IdMascota, IdVeterinario, FechaHora, Motivo, Diagnostico, Observaciones)
-VALUES (@Rocky, @Diego, DATEADD(HOUR, 10, DATEADD(DAY, -2, @Hoy)), N'Dificultad para respirar', N'Síndrome braquicefálico', NULL);
+INSERT INTO dbo.Consultas (IdMascota, IdVeterinario, FechaHora, Servicio, Motivo, Diagnostico, Observaciones, Precio)
+VALUES (@Rocky, @Diego, DATEADD(HOUR, 10, DATEADD(DAY, -2, @Hoy)), N'Consulta general', N'Dificultad para respirar', N'Síndrome braquicefálico', NULL, 400.00);
 SET @Consulta = SCOPE_IDENTITY();
-INSERT INTO dbo.Tratamientos (IdConsulta, Medicamento, Dosis, Frecuencia, Duracion, Indicaciones)
-VALUES (@Consulta, N'Prednisolona', N'5 mg', N'Cada 24 horas', N'5 días', N'Mantener en lugar fresco.');
+INSERT INTO dbo.Tratamientos (IdConsulta, Medicamento, Dosis, Frecuencia, Duracion, Indicaciones, Precio)
+VALUES (@Consulta, N'Prednisolona', N'5 mg', N'Cada 24 horas', N'5 días', N'Mantener en lugar fresco.', 180.00);
 
-INSERT INTO dbo.Consultas (IdMascota, IdVeterinario, FechaHora, Motivo, Diagnostico, Observaciones)
-VALUES (@Mia, @Carlos, DATEADD(HOUR, 8, @Hoy), N'Vacuna triple felina', N'Paciente sano', NULL);
+INSERT INTO dbo.Consultas (IdMascota, IdVeterinario, FechaHora, Servicio, Motivo, Diagnostico, Observaciones, Precio)
+VALUES (@Mia, @Carlos, DATEADD(HOUR, 8, @Hoy), N'Aplicación de vacuna', N'Vacuna triple felina', N'Paciente sano', NULL, 150.00);
 
 -- Vacunas: vencidas, por vencer esta semana, este mes y más adelante
-INSERT INTO dbo.Vacunas (IdMascota, NombreVacuna, FechaAplicacion, ProximaDosis, Lote)
+INSERT INTO dbo.Vacunas (IdMascota, NombreVacuna, FechaAplicacion, ProximaDosis, Lote, Precio)
 VALUES
-    (@Max, N'Antirrábica', DATEADD(DAY, -45, @Hoy), DATEADD(DAY, 320, @Hoy), N'AR-2201'),
-    (@Max, N'Parvovirus', DATEADD(DAY, -380, @Hoy), DATEADD(DAY, -15, @Hoy), N'PV-1180'),
-    (@Nala, N'Triple felina', DATEADD(DAY, -9, @Hoy), DATEADD(DAY, 3, @Hoy), N'TF-3310'),
-    (@Mia, N'Triple felina', @Hoy, DATEADD(DAY, 21, @Hoy), N'TF-3311'),
-    (@Toby, N'Moquillo', DATEADD(DAY, -350, @Hoy), DATEADD(DAY, 5, @Hoy), N'MQ-0915'),
-    (@Coco, N'Antirrábica', DATEADD(DAY, -200, @Hoy), DATEADD(DAY, 25, @Hoy), N'AR-2150'),
-    (@Bruno, N'Leptospirosis', DATEADD(DAY, -90, @Hoy), NULL, N'LP-0042');
+    (@Max, N'Antirrábica', DATEADD(DAY, -45, @Hoy), DATEADD(DAY, 320, @Hoy), N'AR-2201', 350.00),
+    (@Max, N'Parvovirus', DATEADD(DAY, -380, @Hoy), DATEADD(DAY, -15, @Hoy), N'PV-1180', 450.00),
+    (@Nala, N'Triple felina', DATEADD(DAY, -9, @Hoy), DATEADD(DAY, 3, @Hoy), N'TF-3310', 450.00),
+    (@Mia, N'Triple felina', @Hoy, DATEADD(DAY, 21, @Hoy), N'TF-3311', 500.00),
+    (@Toby, N'Moquillo', DATEADD(DAY, -350, @Hoy), DATEADD(DAY, 5, @Hoy), N'MQ-0915', 450.00),
+    (@Coco, N'Antirrábica', DATEADD(DAY, -200, @Hoy), DATEADD(DAY, 25, @Hoy), N'AR-2150', 350.00),
+    (@Bruno, N'Leptospirosis', DATEADD(DAY, -90, @Hoy), NULL, N'LP-0042', 400.00);
+
+-- Cambios de precio de ejemplo: lo registrado antes de cada cambio conserva el precio anterior
+-- (la consulta de Luna de hace 60 días se cobró a C$350 y la vacuna de Nala de hace 9 días a C$450).
+DECLARE @ConsultaGeneral INT = (SELECT IdTarifa FROM dbo.Tarifas WHERE Nombre = N'Consulta general');
+DECLARE @TripleFelina INT = (SELECT IdTarifa FROM dbo.Tarifas WHERE Nombre = N'Triple felina');
+UPDATE dbo.HistorialPrecios SET PrecioNuevo = 350.00 WHERE IdTarifa = @ConsultaGeneral AND PrecioAnterior IS NULL;
+UPDATE dbo.HistorialPrecios SET PrecioNuevo = 450.00 WHERE IdTarifa = @TripleFelina AND PrecioAnterior IS NULL;
+INSERT INTO dbo.HistorialPrecios (IdTarifa, PrecioAnterior, PrecioNuevo, Fecha, Usuario)
+VALUES
+    (@ConsultaGeneral, 350.00, 400.00, DATEADD(HOUR, 8, DATEADD(DAY, -30, @Hoy)), N'admin'),
+    (@TripleFelina, 450.00, 500.00, DATEADD(HOUR, 8, DATEADD(DAY, -5, @Hoy)), N'admin');
 
 PRINT N'Datos de prueba agregados.';
 GO

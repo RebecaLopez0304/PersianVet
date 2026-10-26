@@ -8,7 +8,7 @@ namespace PersianVet.Interfaces;
 public interface IReporteDatos
 {
     /// <summary>
-    /// Resume las citas, consultas y tratamientos de cada veterinario activo en el período.
+    /// Resume las citas, consultas, tratamientos e ingresos en C$ de cada veterinario activo en el período.
     /// </summary>
     /// <param name="desde">Primer día del período.</param>
     /// <param name="hasta">Último día del período (incluido).</param>
@@ -18,7 +18,7 @@ public interface IReporteDatos
         DateTime desde, DateTime hasta, CancellationToken cancelacion);
 
     /// <summary>
-    /// Resume las mascotas activas, consultas y vacunas de cada especie en el período.
+    /// Resume las mascotas activas, consultas, vacunas e ingresos en C$ de cada especie en el período.
     /// </summary>
     /// <param name="desde">Primer día del período.</param>
     /// <param name="hasta">Último día del período (incluido).</param>

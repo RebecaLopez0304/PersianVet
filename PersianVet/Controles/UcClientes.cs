@@ -44,10 +44,11 @@ public partial class UcClientes : UserControl
     /// </summary>
     public void NuevoRegistro()
     {
-        using FrmClienteEdicion formulario = new();
+        using FrmClienteEdicion formulario = new(clienteServicio.Guardar);
         if (formulario.ShowDialog(this) == DialogResult.OK)
         {
-            EjecutarOperacion(() => clienteServicio.Guardar(formulario.Cliente));
+            LimpiarFormulario();
+            CargarClientes();
         }
     }
 
@@ -65,10 +66,11 @@ public partial class UcClientes : UserControl
         }
 
         Cliente cliente = CopiarCliente(seleccionado);
-        using FrmClienteEdicion formulario = new(cliente);
+        using FrmClienteEdicion formulario = new(clienteServicio.Actualizar, cliente);
         if (formulario.ShowDialog(this) == DialogResult.OK)
         {
-            EjecutarOperacion(() => clienteServicio.Actualizar(formulario.Cliente));
+            LimpiarFormulario();
+            CargarClientes();
         }
     }
 

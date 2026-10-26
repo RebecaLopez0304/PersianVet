@@ -1,0 +1,34 @@
+DIFICULTAD: 07 de 15
+Clasificación: MEDIA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Pantalla:                  83
+- Diseño visual (Designer):  134
+- Servicio y acceso a datos: 87
+- Total aproximado:          304
+
+¿POR QUÉ ESTÁ EN ESTE LUGAR?
+Tiene poco código, pero combina varias ideas: fechas opcionales, filtros que se
+pueden combinar, un catálogo de precios y datos que alimentan al dashboard.
+Por eso está por encima de los CRUD simples aunque sea más corta.
+
+CONCEPTOS QUE SE USAN
+- Tipo que admite nulos: DateTime? ProximaDosis (la vacuna puede no tener refuerzo).
+- LINQ con filtros opcionales:
+    (idMascota == null || v.IdMascota == idMascota) &&
+    (!soloProximas || (v.ProximaDosis >= hoy && v.ProximaDosis <= limite))
+- EF Core Include para el nombre de la mascota.
+- ComboBox enlazado a una lista de objetos Tarifa (DataSource y SelectedItem).
+- Validación de fechas coherentes en el servicio.
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+Los filtros opcionales en una sola consulta LINQ: cuando el filtro no está activo, la
+condición se vuelve "verdadera" y no limita resultados, sin escribir varios if.
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- ¿Por qué ProximaDosis es DateTime? con signo de pregunta?
+  Porque algunas vacunas no tienen refuerzo; en la base la columna admite NULL.
+- ¿De dónde sale el precio de la vacuna?
+  Del catálogo de Tarifas (tipo Vacuna); se copia al registro al guardarla.
+- ¿Cómo sabe el dashboard cuántas vacunas están próximas?
+  Cuenta las vacunas con ProximaDosis entre hoy y 30 días después.

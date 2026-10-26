@@ -1,0 +1,32 @@
+DIFICULTAD: 04 de 15
+Clasificación: MEDIA-BAJA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Pantalla:                  86
+- Diseño visual (Designer):  167
+- Servicio y acceso a datos: 192
+- Total aproximado:          445
+
+¿POR QUÉ ESTÁ EN ESTE LUGAR?
+La pantalla es sencilla, pero el servicio concentra reglas de seguridad: contraseñas
+convertidas en hash, confirmación de contraseña, nombres únicos y protección del
+usuario admin.
+
+CONCEPTOS QUE SE USAN
+- Hash SHA-256 (System.Security.Cryptography) para no guardar contraseñas en texto.
+- TabControl con tres pestañas en una sola ventana.
+- EF Core: FirstOrDefault, Any, Add, ExecuteUpdate.
+- Validaciones encadenadas que devuelven ResultadoOperacion con el mensaje.
+- Roles de usuario que luego usa la clase Permisos.
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+Entender que nunca se puede "leer" la contraseña guardada: solo se compara el hash
+de lo que escribe el usuario con el hash almacenado.
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- ¿Cómo se guarda la contraseña?
+  Como hash SHA-256 de 64 caracteres hexadecimales (columna CHAR(64)).
+- ¿Se puede recuperar una contraseña olvidada?
+  No; se asigna una nueva con "Cambiar contraseña".
+- ¿Qué pasa con el rol?
+  Define qué módulos ve el usuario en el menú (clase Permisos).

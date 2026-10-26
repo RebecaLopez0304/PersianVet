@@ -11,7 +11,7 @@ public interface IDashboardDatos
     /// Obtiene los totales de las tarjetas del dashboard.
     /// </summary>
     /// <param name="cancelacion">Permite cancelar la consulta.</param>
-    /// <returns>Mascotas activas, citas de hoy, vacunas próximas y consultas del mes.</returns>
+    /// <returns>Mascotas activas, citas de hoy, vacunas próximas, consultas e ingresos del mes.</returns>
     Task<ResumenDashboard> ObtenerResumenAsync(CancellationToken cancelacion);
 
     /// <summary>

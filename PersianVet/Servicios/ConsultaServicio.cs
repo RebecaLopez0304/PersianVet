@@ -1,5 +1,6 @@
 using PersianVet.Interfaces;
 using PersianVet.Modelos;
+using PersianVet.Utilidades;
 
 namespace PersianVet.Servicios;
 
@@ -22,33 +23,42 @@ public class ConsultaServicio
     }
 
     /// <summary>
-    /// Valida la consulta (sin fecha futura) y que cada tratamiento tenga medicamento y dosis, y la registra con sus tratamientos.
+    /// Valida la consulta (servicio y sin fecha futura) y que cada tratamiento tenga medicamento y dosis, y la registra con sus tratamientos.
     /// </summary>
     /// <param name="consulta">Consulta con la lista de tratamientos.</param>
     /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion Guardar(Consulta consulta)
     {
-        if (consulta.IdMascota <= 0 || consulta.IdVeterinario <= 0)
+        DateTime ahora = DateTime.Now;
+        Validador validador = new Validador()
+            .Seleccionado(consulta.IdMascota, "Mascota")
+            .Seleccionado(consulta.IdVeterinario, "Veterinario")
+            .Seleccionado(consulta.Servicio, "Servicio")
+            .Regla(consulta.FechaHora <= ahora.AddMinutes(1), "Fecha y hora",
+                $"{consulta.FechaHora:dd/MM/yyyy HH:mm} es posterior a ahora ({ahora:dd/MM/yyyy HH:mm}); " +
+                "una consulta se registra cuando ya ocurrió.")
+            .Requerido(consulta.Motivo, "Motivo")
+            .LongitudMaxima(consulta.Motivo, 200, "Motivo")
+            .Requerido(consulta.Diagnostico, "Diagnóstico")
+            .LongitudMaxima(consulta.Diagnostico, 500, "Diagnóstico")
+            .LongitudMaxima(consulta.Observaciones, 500, "Observaciones");
+
+        for (int i = 0; i < consulta.ListaTratamientos.Count; i++)
         {
-            return ResultadoOperacion.Error("Seleccione la mascota y el veterinario.");
+            Tratamiento tratamiento = consulta.ListaTratamientos[i];
+            string campo = $"Tratamiento {i + 1} ({tratamiento.Medicamento})";
+            validador
+                .Requerido(tratamiento.Medicamento, $"Tratamiento {i + 1} - Medicamento")
+                .Requerido(tratamiento.Dosis, $"{campo} - Dosis")
+                .LongitudMaxima(tratamiento.Dosis, 80, $"{campo} - Dosis")
+                .LongitudMaxima(tratamiento.Frecuencia, 100, $"{campo} - Frecuencia")
+                .LongitudMaxima(tratamiento.Duracion, 80, $"{campo} - Duración")
+                .LongitudMaxima(tratamiento.Indicaciones, 300, $"{campo} - Indicaciones");
         }
 
-        if (consulta.FechaHora > DateTime.Now.AddMinutes(1))
+        if (!validador.EsValido)
         {
-            return ResultadoOperacion.Error("La consulta no puede tener una fecha futura.");
-        }
-
-        if (string.IsNullOrWhiteSpace(consulta.Motivo) || string.IsNullOrWhiteSpace(consulta.Diagnostico))
-        {
-            return ResultadoOperacion.Error("Escriba el motivo y el diagnóstico.");
-        }
-
-        foreach (Tratamiento tratamiento in consulta.ListaTratamientos)
-        {
-            if (string.IsNullOrWhiteSpace(tratamiento.Medicamento) || string.IsNullOrWhiteSpace(tratamiento.Dosis))
-            {
-                return ResultadoOperacion.Error("Cada tratamiento necesita medicamento y dosis.");
-            }
+            return validador.Resultado();
         }
 
         consulta.IdConsulta = consultaDatos.GuardarConTratamientos(consulta);

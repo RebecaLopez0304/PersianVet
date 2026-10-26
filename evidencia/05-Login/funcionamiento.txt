@@ -1,0 +1,37 @@
+PANTALLA: INICIO DE SESIÓN
+Archivo: Formularios/FrmLogin.cs
+Es la primera pantalla al abrir la aplicación.
+
+¿PARA QUÉ SIRVE?
+Identifica al usuario y, según su rol, abre la ventana principal con los módulos
+que le corresponden.
+
+¿QUÉ SE PUEDE HACER?
+1. Escribir usuario y contraseña, y presionar "Ingresar".
+2. "Recordarme": guarda el nombre del último usuario para la próxima vez
+   (en %LOCALAPPDATA%\PersianVet\usuario.txt; la contraseña nunca se guarda).
+3. "Mostrar contraseña": muestra u oculta lo escrito en la contraseña.
+4. "Administrar usuarios": abre la ventana para crear usuarios y cambiar contraseñas.
+
+MENSAJES
+- Si falta un campo, se marca con un ícono de error (ErrorProvider).
+- "El usuario o la contraseña no son correctos."
+- "El usuario se encuentra inactivo."
+
+¿CÓMO FUNCIONA POR DENTRO?
+1. Al presionar "Ingresar", la validación de credenciales se ejecuta en segundo plano
+   con Task.Run, así la ventana no se congela mientras consulta la base de datos.
+   El botón cambia a "Ingresando..." y se desactiva para evitar doble clic.
+2. UsuarioServicio.IniciarSesion calcula el hash SHA-256 de la contraseña escrita y lo
+   compara con el guardado.
+3. Si es correcto, el login se oculta y se abre la ventana principal maximizada.
+4. Al "Cerrar sesión" en la ventana principal, se vuelve a mostrar el login con la
+   contraseña vacía. Si se cierra la ventana principal, termina la aplicación.
+
+CONEXIÓN A LA BASE DE DATOS
+Antes de mostrar el login, ConexionBD busca un servidor SQL Server disponible
+(el de configuracion.json, localhost, LocalDB o SQLEXPRESS) y, si la base no existe,
+la crea con los scripts de la carpeta BaseDatos.
+
+CAPTURAS
+01-inicio-de-sesion.png   Pantalla de inicio de sesión con el usuario recordado.

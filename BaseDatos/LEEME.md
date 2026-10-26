@@ -15,6 +15,11 @@ Usuarios (clave `persian123`): `admin` (Administrador), `recepcion` (Recepcionis
 - Las clases `*Datos` conservan sus interfaces; ahora usan LINQ sobre un contexto de vida corta (`ConexionBD.CrearContexto()`).
 - `Datos/ReporteDatos.cs`: consultas LINQ de agregación para los reportes.
 
+## Precios en córdobas
+- Cada cita, consulta, tratamiento y vacuna guarda el precio del momento en que se registró; cambiar un precio no altera lo ya cobrado.
+- La tabla `HistorialPrecios` guarda cada cambio (fecha, precio anterior, nuevo y usuario). `TarifaDatos.Actualizar` actualiza el precio y agrega el historial en un solo `SaveChanges`.
+- La pantalla **Productos** (`UcTarifas`) filtra por categoría y muestra el historial y los últimos cobros del producto seleccionado.
+
 ## Concurrencia
 - Dashboard (`UcDashboard`): resumen y próximas citas se consultan en paralelo con `async/await` y `Task.WhenAll`; la carga se cancela al cambiar de módulo (`CancellationToken`).
-- Reportes (`UcReportes`): generación en segundo plano con barra de progreso, botón **Cancelar**, manejo de excepciones y exportación a CSV asíncrona.
+- Reportes (`UcReportes`): generación en segundo plano con barra de progreso, botón **Cancelar** y manejo de excepciones. Los reportes solo se visualizan en pantalla, con los ingresos en córdobas.

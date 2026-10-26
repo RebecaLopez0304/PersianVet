@@ -1,0 +1,43 @@
+PANTALLA: AGENDA DE CITAS
+Archivo: Controles/UcCitas.cs
+Acceso: roles Administrador, Recepcionista y Veterinario.
+
+¿PARA QUÉ SIRVE?
+Programa y administra las citas de los pacientes con los veterinarios, con el precio
+estimado del servicio en córdobas.
+
+¿QUÉ SE PUEDE HACER?
+1. Programar una cita:
+   - Mascota y veterinario.
+   - Servicio (del catálogo de Productos; al elegirlo se muestra su precio en C$).
+   - Fecha, hora, estado (Programada, Confirmada o Completada) y motivo.
+   - Presionar "Programar".
+2. Reprogramar: se selecciona una cita de la lista (sus datos pasan al formulario),
+   se cambia lo necesario y se presiona "Reprogramar".
+3. Cancelar: se selecciona una cita y se confirma; queda en estado "Cancelada".
+4. Filtrar por fecha: marcar "Filtrar por fecha", elegir el día y "Consultar".
+5. Ver calendario: abre la vista mensual de la agenda.
+
+VALIDACIONES
+- Mascota y veterinario obligatorios.
+- No se puede programar en una fecha u hora pasada.
+- Servicio y motivo obligatorios.
+- CRUCE DE HORARIOS: un veterinario no puede tener dos citas activas a la misma
+  fecha y hora. Si ocurre: "El veterinario ya tiene una cita en esa fecha y hora".
+
+RELACIÓN CON OTRAS PANTALLAS
+- Dashboard: "Citas de hoy", "Próximas citas", gráfico de los próximos 7 días y
+  avisos de citas sin confirmar en las próximas 48 horas.
+- Reportes: cantidad de citas, completadas y canceladas por veterinario.
+- El precio de la cita es un estimado: los ingresos se cuentan desde las consultas.
+
+¿CÓMO FUNCIONA POR DENTRO?
+UcCitas -> CitaServicio (validaciones y cruce) -> CitaDatos (EF Core) -> tabla Citas.
+- La lista usa Include(Mascota).ThenInclude(Cliente) e Include(Veterinario) para
+  mostrar los nombres de la mascota, el dueño y el veterinario.
+- El cruce se revisa con Any(...) antes de guardar.
+- Cancelar usa ExecuteUpdate para cambiar solo el estado.
+
+CAPTURAS
+01-modulo.png          Agenda completa con servicio y precio.
+02-citas-de-hoy.png    Agenda filtrada por la fecha de hoy.

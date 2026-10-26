@@ -1,0 +1,46 @@
+PANTALLA: CONSULTA E HISTORIAL CLÍNICO
+Archivo: Controles/UcConsultas.cs
+Acceso: roles Administrador y Veterinario.
+
+¿PARA QUÉ SIRVE?
+Registra lo que ocurre en cada consulta médica (diagnóstico y tratamientos con sus
+precios) y muestra el historial clínico de la mascota.
+
+¿QUÉ SE PUEDE HACER?
+1. Elegir la mascota: abajo aparece su historial de consultas.
+2. Completar la consulta:
+   - Veterinario.
+   - Servicio (del catálogo de Productos, con su precio).
+   - Fecha y hora.
+   - Motivo, diagnóstico y observaciones.
+3. Agregar tratamientos (se pueden agregar varios):
+   - Medicamento (del catálogo de Productos, con su precio), dosis, frecuencia,
+     duración e indicaciones.
+   - "Agregar" lo suma a la tabla de tratamientos; "Quitar" elimina el seleccionado.
+4. "Total de la consulta" se actualiza solo: precio del servicio + precio de cada
+   tratamiento.
+5. "Guardar consulta" guarda la consulta y todos sus tratamientos juntos.
+
+VALIDACIONES
+- Mascota y veterinario obligatorios.
+- Servicio obligatorio.
+- La consulta no puede tener fecha futura.
+- Motivo y diagnóstico obligatorios.
+- Cada tratamiento necesita medicamento y dosis.
+
+EL HISTORIAL MUESTRA
+Fecha, servicio, motivo, diagnóstico, observaciones, precio del servicio, total con
+tratamientos, veterinario y la lista de tratamientos.
+
+¿CÓMO FUNCIONA POR DENTRO?
+UcConsultas -> ConsultaServicio -> ConsultaDatos (EF Core) -> tablas Consultas y Tratamientos.
+- Los tratamientos se guardan en una BindingList: al agregar o quitar, la tabla y el
+  total se actualizan solos (evento ListChanged).
+- Al guardar, la consulta lleva su lista de tratamientos; un solo SaveChanges inserta
+  la consulta y sus tratamientos en una misma transacción (todo o nada).
+- El historial usa Include(Veterinario) e Include(ListaTratamientos).
+
+CAPTURAS
+01-historial-de-bruno.png                    Historial clínico de Bruno.
+02-consulta-con-tratamientos-y-total.png     Consulta en preparación con dos
+                                             tratamientos y el total calculado.

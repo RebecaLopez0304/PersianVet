@@ -1,0 +1,34 @@
+DIFICULTAD: 05 de 15
+Clasificación: MEDIA-BAJA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Pantalla:                                   107
+- Diseño visual (Designer):                   160
+- Servicio, datos, hash y preferencias:       245
+- Total aproximado:                           512
+
+¿POR QUÉ ESTÁ EN ESTE LUGAR?
+Tiene pocos controles, pero es la primera pantalla con async/await y maneja el ciclo
+de vida de la sesión (ocultar el login, abrir la principal, volver al cerrar sesión).
+
+CONCEPTOS QUE SE USAN
+- async/await con Task.Run para no bloquear la interfaz durante la consulta.
+- Bandera ingresoEnProceso para evitar dos inicios de sesión al mismo tiempo.
+- try / catch / finally: el botón se reactiva siempre, incluso si hay error.
+- ErrorProvider para marcar campos vacíos.
+- Hash SHA-256 para comparar contraseñas.
+- Ventanas modales: Hide() del login y ShowDialog() de la principal.
+- Archivo local para "Recordarme" (Environment.SpecialFolder.LocalApplicationData).
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+El flujo del método BtnIngresar_Click: es async void (manejador de evento), consulta en
+segundo plano, abre la ventana principal y, cuando esta se cierra, decide si vuelve al
+login (cerró sesión) o termina la aplicación (cerró la ventana).
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- ¿Por qué Task.Run al iniciar sesión?
+  La consulta a SQL Server podría tardar; en segundo plano la ventana sigue respondiendo.
+- ¿Por qué async void si se recomienda async Task?
+  Porque es un manejador de evento de Windows Forms; es el único caso donde se acepta.
+- ¿Qué pasa si se presiona Ingresar dos veces rápido?
+  La bandera ingresoEnProceso y el botón desactivado lo impiden.

@@ -1,5 +1,6 @@
 using PersianVet.Interfaces;
 using PersianVet.Modelos;
+using PersianVet.Utilidades;
 
 namespace PersianVet.Servicios;
 
@@ -28,24 +29,20 @@ public class VacunaServicio
     /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion Guardar(Vacuna vacuna)
     {
-        if (vacuna.IdMascota <= 0)
-        {
-            return ResultadoOperacion.Error("Seleccione una mascota.");
-        }
+        DateTime aplicacion = vacuna.FechaAplicacion.Date;
+        Validador validador = new Validador()
+            .Seleccionado(vacuna.IdMascota, "Mascota")
+            .Seleccionado(vacuna.NombreVacuna, "Vacuna")
+            .Regla(aplicacion <= DateTime.Today, "Fecha de aplicación",
+                $"{aplicacion:dd/MM/yyyy} está en el futuro; registre la vacuna el día en que se aplica.")
+            .Requerido(vacuna.Lote, "Lote")
+            .LongitudMaxima(vacuna.Lote, 60, "Lote")
+            .Regla(vacuna.ProximaDosis is null || vacuna.ProximaDosis.Value.Date >= aplicacion, "Próxima dosis",
+                $"{vacuna.ProximaDosis:dd/MM/yyyy} es anterior a la fecha de aplicación ({aplicacion:dd/MM/yyyy}).");
 
-        if (string.IsNullOrWhiteSpace(vacuna.NombreVacuna) || string.IsNullOrWhiteSpace(vacuna.Lote))
+        if (!validador.EsValido)
         {
-            return ResultadoOperacion.Error("Escriba el nombre de la vacuna y el lote.");
-        }
-
-        if (vacuna.FechaAplicacion.Date > DateTime.Today)
-        {
-            return ResultadoOperacion.Error("La fecha de aplicación no puede estar en el futuro.");
-        }
-
-        if (vacuna.ProximaDosis.HasValue && vacuna.ProximaDosis.Value.Date < vacuna.FechaAplicacion.Date)
-        {
-            return ResultadoOperacion.Error("La próxima dosis no puede ser anterior a la aplicación.");
+            return validador.Resultado();
         }
 
         vacuna.IdVacuna = vacunaDatos.Guardar(vacuna);

@@ -1,0 +1,33 @@
+DIFICULTAD: 08 de 15
+Clasificación: MEDIA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Pantalla:                  71
+- Diseño visual (Designer):  67
+- Servicio de citas:         86
+- Total aproximado:          224
+
+¿POR QUÉ ESTÁ EN ESTE LUGAR?
+Es corta, pero usa programación asíncrona y LINQ sobre datos en memoria, dos temas
+centrales del entregable. Además usa un control (MonthCalendar) con BoldedDates,
+que no aparece en otras pantallas.
+
+CONCEPTOS QUE SE USAN
+- async/await con Task.Run para cargar sin congelar la ventana.
+- Revisar IsDisposed después del await (el usuario pudo cerrar la ventana).
+- LINQ to Objects: Where, Select, Distinct, OrderBy, ToArray.
+- Tipos anónimos (new { Hora = ..., Mascota = ... }) para elegir las columnas.
+- MonthCalendar.BoldedDates y UpdateBoldedDates.
+- Diferencia entre LINQ to Entities (se traduce a SQL) y LINQ to Objects (en memoria).
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+Entender que la consulta a la base se hace una sola vez y luego todo se filtra en
+memoria; por eso cambiar de día es instantáneo.
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- ¿Qué pasa si se cierra la ventana mientras carga?
+  Después del await se revisa IsDisposed y no se toca la ventana cerrada.
+- ¿Por qué un tipo anónimo y no la clase Cita?
+  Para mostrar solo las columnas útiles y con la hora ya formateada.
+- ¿Cuál es la diferencia entre este LINQ y el de los Datos?
+  Aquí se filtra una lista en memoria; en los Datos EF Core convierte el LINQ en SQL.

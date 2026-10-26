@@ -68,10 +68,12 @@ public partial class FrmCalendarioCitas : Form
             {
                 Hora = cita.FechaHora.ToString("HH:mm"),
                 Mascota = cita.NombreMascota,
+                cita.Servicio,
                 Cliente = cita.NombreCliente,
                 Veterinario = cita.NombreVeterinario,
                 cita.Motivo,
-                cita.Estado
+                cita.Estado,
+                Precio = Moneda.Formatear(cita.Precio)
             })
             .ToList();
     }

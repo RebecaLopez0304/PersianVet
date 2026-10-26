@@ -21,6 +21,7 @@ public partial class FrmPrincipal : Form
     private readonly VacunaServicio vacunaServicio;
     private readonly ReporteServicio reporteServicio;
     private readonly BusquedaServicio busquedaServicio;
+    private readonly TarifaServicio tarifaServicio;
     private bool cerrandoSesion;
     private readonly List<Button> botonesPermitidos = [];
     private readonly Dictionary<Button, (Image? Normal, Image? Activo)> iconosMenu = [];
@@ -46,6 +47,7 @@ public partial class FrmPrincipal : Form
         vacunaServicio = null!;
         reporteServicio = null!;
         busquedaServicio = null!;
+        tarifaServicio = null!;
     }
 
     public FrmPrincipal(Usuario usuario, ConexionBD conexionBD) : this()
@@ -61,6 +63,7 @@ public partial class FrmPrincipal : Form
         dashboardServicio = new DashboardServicio(new DashboardDatos(conexionBD));
         reporteServicio = new ReporteServicio(new ReporteDatos(conexionBD));
         busquedaServicio = new BusquedaServicio(new BusquedaDatos(conexionBD));
+        tarifaServicio = new TarifaServicio(new TarifaDatos(conexionBD));
 
         lblUsuario.Text = usuario.NombreUsuario;
         lblRol.Text = usuario.Rol;
@@ -113,6 +116,7 @@ public partial class FrmPrincipal : Form
     private void BtnVacunas_Click(object? sender, EventArgs e) => Navegar("Vacunas");
     private void BtnVeterinarios_Click(object? sender, EventArgs e) => Navegar("Veterinarios");
     private void BtnReportes_Click(object? sender, EventArgs e) => Navegar("Reportes");
+    private void BtnTarifas_Click(object? sender, EventArgs e) => Navegar("Tarifas");
 
     /// <summary>
     /// Punto único de navegación: el menú, el dashboard y la búsqueda usan este método.
@@ -155,7 +159,7 @@ public partial class FrmPrincipal : Form
                 BeginInvoke(mascotas.NuevoRegistro);
                 break;
             case "Citas":
-                MostrarControl(new UcCitas(citaServicio, mascotaServicio, veterinarioServicio), btnCitas);
+                MostrarControl(new UcCitas(citaServicio, mascotaServicio, veterinarioServicio, tarifaServicio), btnCitas);
                 break;
             case "Calendario":
                 using (FrmCalendarioCitas calendario = new(citaServicio))
@@ -165,16 +169,19 @@ public partial class FrmPrincipal : Form
 
                 break;
             case "Consultas":
-                MostrarControl(new UcConsultas(consultaServicio, mascotaServicio, veterinarioServicio), btnConsultas);
+                MostrarControl(new UcConsultas(consultaServicio, mascotaServicio, veterinarioServicio, tarifaServicio), btnConsultas);
                 break;
             case "Vacunas":
-                MostrarControl(new UcVacunas(vacunaServicio, mascotaServicio), btnVacunas);
+                MostrarControl(new UcVacunas(vacunaServicio, mascotaServicio, tarifaServicio), btnVacunas);
                 break;
             case "Veterinarios":
                 MostrarControl(new UcVeterinarios(veterinarioServicio), btnVeterinarios);
                 break;
             case "Reportes":
                 MostrarControl(new UcReportes(reporteServicio), btnReportes);
+                break;
+            case "Tarifas":
+                MostrarControl(new UcTarifas(tarifaServicio, usuario.NombreUsuario), btnTarifas);
                 break;
         }
     }
@@ -312,7 +319,8 @@ public partial class FrmPrincipal : Form
         (Button Boton, string Modulo)[] opciones =
         [
             (btnInicio, "Inicio"), (btnClientes, "Clientes"), (btnMascotas, "Mascotas"), (btnCitas, "Citas"),
-            (btnConsultas, "Consultas"), (btnVacunas, "Vacunas"), (btnVeterinarios, "Veterinarios"), (btnReportes, "Reportes")
+            (btnConsultas, "Consultas"), (btnVacunas, "Vacunas"), (btnVeterinarios, "Veterinarios"), (btnReportes, "Reportes"),
+            (btnTarifas, "Tarifas")
         ];
 
         botonesPermitidos.Clear();
@@ -341,7 +349,7 @@ public partial class FrmPrincipal : Form
         [
             (btnInicio, "inicio"), (btnClientes, "clientes"), (btnMascotas, "mascotas"), (btnCitas, "citas"),
             (btnConsultas, "consultas"), (btnVacunas, "vacunas"), (btnVeterinarios, "veterinarios"),
-            (btnReportes, "reportes"), (btnCerrarSesion, "cerrar-sesion")
+            (btnReportes, "reportes"), (btnTarifas, "tarifas"), (btnCerrarSesion, "cerrar-sesion")
         ];
 
         // Cada botón guarda dos versiones del icono: azul (normal) y blanco (botón seleccionado).

@@ -1,5 +1,6 @@
 using PersianVet.Interfaces;
 using PersianVet.Modelos;
+using PersianVet.Utilidades;
 
 namespace PersianVet.Servicios;
 
@@ -68,31 +69,24 @@ public class MascotaServicio
 
     private static ResultadoOperacion Validar(Mascota mascota)
     {
-        if (mascota.IdCliente <= 0)
-        {
-            return ResultadoOperacion.Error("Seleccione el propietario de la mascota.");
-        }
+        DateTime hoy = DateTime.Today;
+        DateTime nacimiento = mascota.FechaNacimiento.Date;
 
-        if (string.IsNullOrWhiteSpace(mascota.Nombre) || string.IsNullOrWhiteSpace(mascota.Especie))
-        {
-            return ResultadoOperacion.Error("Escriba el nombre y la especie de la mascota.");
-        }
-
-        if (string.IsNullOrWhiteSpace(mascota.Raza) || string.IsNullOrWhiteSpace(mascota.Sexo))
-        {
-            return ResultadoOperacion.Error("Escriba la raza y seleccione el sexo de la mascota.");
-        }
-
-        if (mascota.FechaNacimiento.Date > DateTime.Today)
-        {
-            return ResultadoOperacion.Error("La fecha de nacimiento no puede estar en el futuro.");
-        }
-
-        if (mascota.Peso <= 0)
-        {
-            return ResultadoOperacion.Error("El peso debe ser mayor que cero.");
-        }
-
-        return ResultadoOperacion.Correcto(string.Empty);
+        return new Validador()
+            .Seleccionado(mascota.IdCliente, "Propietario")
+            .Requerido(mascota.Nombre, "Nombre")
+            .LongitudMaxima(mascota.Nombre, 80, "Nombre")
+            .Seleccionado(mascota.Especie, "Especie")
+            .Requerido(mascota.Raza, "Raza")
+            .LongitudMaxima(mascota.Raza, 80, "Raza")
+            .Seleccionado(mascota.Sexo, "Sexo")
+            .Regla(nacimiento <= hoy, "Fecha de nacimiento",
+                $"{nacimiento:dd/MM/yyyy} es posterior a hoy ({hoy:dd/MM/yyyy}); no puede estar en el futuro.")
+            .Regla(nacimiento >= hoy.AddYears(-40), "Fecha de nacimiento",
+                $"{nacimiento:dd/MM/yyyy} indicaría más de 40 años de edad; revise el año.")
+            .LongitudMaxima(mascota.Color, 80, "Color")
+            .Regla(mascota.Peso > 0, "Peso (kg)", "debe ser mayor que 0.")
+            .LongitudMaxima(mascota.Observaciones, 500, "Observaciones")
+            .Resultado();
     }
 }

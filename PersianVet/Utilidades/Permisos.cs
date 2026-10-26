@@ -7,7 +7,7 @@ public static class Permisos
 {
     private static readonly Dictionary<string, string[]> modulosPorRol = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["Administrador"] = ["Inicio", "Clientes", "Mascotas", "Citas", "Consultas", "Vacunas", "Veterinarios", "Reportes"],
+        ["Administrador"] = ["Inicio", "Clientes", "Mascotas", "Citas", "Consultas", "Vacunas", "Veterinarios", "Reportes", "Tarifas"],
         ["Recepcionista"] = ["Inicio", "Clientes", "Mascotas", "Citas", "Vacunas"],
         ["Veterinario"] = ["Inicio", "Mascotas", "Citas", "Consultas", "Vacunas"]
     };

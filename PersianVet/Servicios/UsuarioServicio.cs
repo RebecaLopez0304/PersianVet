@@ -58,24 +58,21 @@ public class UsuarioServicio
     /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion CrearUsuario(string nombreUsuario, string clave, string confirmacion, string rol)
     {
-        if (string.IsNullOrWhiteSpace(nombreUsuario) || string.IsNullOrWhiteSpace(clave))
+        Validador validador = new Validador()
+            .Requerido(nombreUsuario, "Nombre de usuario")
+            .LongitudMaxima(nombreUsuario, 50, "Nombre de usuario");
+        ValidarClave(validador, clave, confirmacion, "Contraseña");
+
+        // El nombre repetido se revisa solo si lo demás es válido, para no consultar la base sin necesidad.
+        if (validador.EsValido)
         {
-            return ResultadoOperacion.Error("Escriba el usuario y la contraseña.");
+            validador.Regla(!usuarioDatos.Existe(nombreUsuario), "Nombre de usuario",
+                $"\"{nombreUsuario.Trim()}\" ya está registrado; elija otro.");
         }
 
-        if (clave != confirmacion)
+        if (!validador.EsValido)
         {
-            return ResultadoOperacion.Error("Las contraseñas no coinciden.");
-        }
-
-        if (clave.Length < 4)
-        {
-            return ResultadoOperacion.Error("La contraseña debe tener al menos 4 caracteres.");
-        }
-
-        if (usuarioDatos.Existe(nombreUsuario))
-        {
-            return ResultadoOperacion.Error("El nombre de usuario ya está registrado.");
+            return validador.Resultado("No se pudo crear el usuario.");
         }
 
         Usuario usuario = new()
@@ -99,24 +96,18 @@ public class UsuarioServicio
     /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion CambiarClave(string nombreUsuario, string nuevaClave, string confirmacion)
     {
-        if (string.IsNullOrWhiteSpace(nombreUsuario) || string.IsNullOrWhiteSpace(nuevaClave))
+        Validador validador = new Validador().Requerido(nombreUsuario, "Nombre de usuario");
+        ValidarClave(validador, nuevaClave, confirmacion, "Nueva contraseña");
+
+        if (validador.EsValido)
         {
-            return ResultadoOperacion.Error("Escriba el usuario y la nueva contraseña.");
+            validador.Regla(usuarioDatos.Existe(nombreUsuario), "Nombre de usuario",
+                $"\"{nombreUsuario.Trim()}\" no está registrado.");
         }
 
-        if (!usuarioDatos.Existe(nombreUsuario))
+        if (!validador.EsValido)
         {
-            return ResultadoOperacion.Error("El usuario no está registrado.");
-        }
-
-        if (nuevaClave != confirmacion)
-        {
-            return ResultadoOperacion.Error("Las contraseñas no coinciden.");
-        }
-
-        if (nuevaClave.Length < 4)
-        {
-            return ResultadoOperacion.Error("La contraseña debe tener al menos 4 caracteres.");
+            return validador.Resultado("No se pudo cambiar la contraseña.");
         }
 
         usuarioDatos.CambiarClave(nombreUsuario.Trim(), SeguridadClave.GenerarHash(nuevaClave));
@@ -148,5 +139,19 @@ public class UsuarioServicio
 
         usuarioDatos.Desactivar(usuario.IdUsuario);
         return ResultadoOperacion.Correcto("El usuario se desactivó correctamente.");
+    }
+
+    /// <summary>
+    /// Revisa que la contraseña tenga al menos 4 caracteres y que su confirmación coincida.
+    /// </summary>
+    private static void ValidarClave(Validador validador, string clave, string confirmacion, string campo)
+    {
+        validador.Requerido(clave, campo);
+        if (!string.IsNullOrEmpty(clave))
+        {
+            validador
+                .Regla(clave.Length >= 4, campo, $"debe tener al menos 4 caracteres; tiene {clave.Length}.")
+                .Regla(clave == confirmacion, "Confirmar contraseña", $"no coincide con el campo {campo}.");
+        }
     }
 }

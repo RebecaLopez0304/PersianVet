@@ -1,0 +1,44 @@
+PANTALLA: DASHBOARD (INICIO)
+Archivo: Controles/UcDashboard.cs
+Acceso: todos los roles; es lo primero que se ve después de iniciar sesión.
+
+¿PARA QUÉ SIRVE?
+Resume en una sola pantalla el estado de la clínica y da accesos rápidos a las tareas
+más comunes.
+
+¿QUÉ MUESTRA Y QUÉ SE PUEDE HACER?
+1. Tarjetas de resumen (al hacer clic se abre el módulo correspondiente):
+   - Mascotas activas.
+   - Citas de hoy (no canceladas).
+   - Vacunas próximas (próxima dosis en los siguientes 30 días).
+   - Consultas este mes.
+   - Ingresos del mes en C$ (consultas + tratamientos + vacunas). Solo la ven los
+     roles con acceso a Reportes (Administrador).
+2. Acciones rápidas: Nueva cita, Calendario, Nuevo cliente, Nueva mascota,
+   Nueva consulta, Nueva vacuna y Actualizar. Cada rol ve solo las que puede usar.
+3. Próximas citas: las siguientes 8 citas no canceladas.
+4. "Requiere atención" (doble clic en un aviso abre su módulo):
+   - Vacunas vencidas en los últimos 30 días o que vencen en los próximos 7.
+   - Citas de las próximas 48 horas que siguen sin confirmar.
+   - Mascotas activas sin consultas en los últimos 6 meses.
+5. Gráfico "Citas de los próximos 7 días": una barra por día.
+6. Barra de estado: indica si la información está actualizada.
+
+¿CÓMO FUNCIONA POR DENTRO?
+1. Al abrirse, lanza CUATRO cargas a la vez: resumen, próximas citas, avisos y gráfico,
+   y las espera con Task.WhenAll.
+2. Dentro del resumen, los cinco totales también se consultan en paralelo, cada uno con
+   su propio DbContext.
+3. Si el usuario cambia de módulo antes de que termine, un CancellationToken cancela
+   las consultas pendientes y no se muestra ningún error.
+4. Los avisos se arman con tres consultas LINQ (vacunas, citas, mascotas) y se
+   muestran como objetos Alerta en una lista.
+5. El gráfico lo dibuja la clase GraficoBarras con GDI+.
+6. Las tarjetas y botones no abren módulos directamente: disparan el evento
+   NavegarSolicitado y la ventana principal hace la navegación.
+
+CAPTURAS
+01-dashboard-administrador.png   Vista del Administrador, con la tarjeta de ingresos.
+02-dashboard-recepcionista.png   Vista de la Recepcionista: sin ingresos, sin
+                                 "Nueva consulta" y con la tarjeta de consultas
+                                 desactivada.

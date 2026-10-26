@@ -1,0 +1,36 @@
+DIFICULTAD: 12 de 15
+Clasificación: ALTA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Pantalla:                  126
+- Diseño visual (Designer):  211
+- Servicio y acceso a datos: 102
+- Total aproximado:          439
+
+¿POR QUÉ ESTÁ EN ESTE LUGAR?
+Es la pantalla con más lógica de negocio por formulario: una consulta tiene una lista
+de tratamientos (relación maestro-detalle) que se arma en memoria, se totaliza en vivo
+y se guarda en una sola transacción. Además usa dos catálogos de precios.
+
+CONCEPTOS QUE SE USAN
+- Relación maestro-detalle: Consulta (1) -> Tratamientos (muchos).
+- BindingList<Tratamiento> enlazada a la tabla, con el evento ListChanged.
+- Transacción implícita de EF Core: un SaveChanges guarda la consulta y sus
+  tratamientos; si algo falla, no se guarda nada.
+- EF Core: Add de un objeto con su lista de hijos; Include de dos relaciones.
+- Propiedades calculadas en el modelo: Total y Tratamientos (texto resumido).
+- Montos en decimal con formato de córdobas.
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+1. Mantener el total sincronizado sin código repetido: cualquier cambio en la lista
+   dispara ListChanged y se recalcula con LINQ (Sum).
+2. Guardar todo junto: antes, con ADO.NET, había que abrir una transacción a mano;
+   con EF Core basta un SaveChanges.
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- ¿Qué pasa si falla el guardado de un tratamiento?
+  No se guarda nada: SaveChanges ejecuta todo en una transacción.
+- ¿Por qué BindingList y no List?
+  BindingList avisa a la tabla cuando se agregan o quitan elementos.
+- ¿Cómo se calcula el total?
+  Precio del servicio + la suma (LINQ Sum) de los precios de los tratamientos.

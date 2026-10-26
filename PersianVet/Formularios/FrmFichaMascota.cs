@@ -74,6 +74,9 @@ public partial class FrmFichaMascota : Form
             EstiloControles.OcultarColumnas(tablaConsultas, "IdConsulta", "IdMascota", "IdVeterinario");
             EstiloControles.OcultarColumnas(tablaVacunas, "IdVacuna", "IdMascota", "NombreMascota");
             EstiloControles.OcultarColumnas(tablaCitas, "IdCita", "IdMascota", "IdVeterinario", "NombreMascota");
+            EstiloControles.FormatoMoneda(tablaConsultas, "Precio", "Total");
+            EstiloControles.FormatoMoneda(tablaVacunas, "Precio");
+            EstiloControles.FormatoMoneda(tablaCitas, "Precio");
 
             paginaConsultas.Text = $"Consultas ({tareaConsultas.Result.Count})";
             paginaVacunas.Text = $"Vacunas ({tareaVacunas.Result.Count})";

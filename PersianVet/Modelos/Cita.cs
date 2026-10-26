@@ -16,12 +16,23 @@ public class Cita
     public int IdMascota { get; set; }
     public int IdVeterinario { get; set; }
     public DateTime FechaHora { get; set; } = DateTime.Now;
+
+    /// <summary>
+    /// Obtiene o establece el nombre de la tarifa del servicio a realizar.
+    /// </summary>
+    public string Servicio { get; set; } = string.Empty;
+
     public string Motivo { get; set; } = string.Empty;
 
     /// <summary>
     /// Obtiene o establece el estado: Programada, Confirmada, Completada o Cancelada.
     /// </summary>
     public string Estado { get; set; } = "Programada";
+
+    /// <summary>
+    /// Obtiene o establece el precio estimado en C$, tomado de la tarifa del servicio al programar.
+    /// </summary>
+    public decimal Precio { get; set; }
 
     [DisplayName("Mascota")]
     public string NombreMascota => Mascota == null ? string.Empty : Mascota.Nombre;

@@ -1,0 +1,38 @@
+PANTALLA: CONTROL DE VACUNAS
+Archivo: Controles/UcVacunas.cs
+Acceso: roles Administrador, Recepcionista y Veterinario.
+
+¿PARA QUÉ SIRVE?
+Registra las vacunas aplicadas a cada mascota, su precio y la fecha de la próxima dosis.
+
+¿QUÉ SE PUEDE HACER?
+1. Registrar una vacuna:
+   - Mascota.
+   - Vacuna (se elige del catálogo de Productos; al elegirla se muestra su precio en C$).
+   - Fecha de aplicación.
+   - Lote.
+   - Opcional: "Registrar próxima dosis" con su fecha.
+   - Presionar "Guardar vacuna".
+2. Consultar el historial de vacunación con dos filtros:
+   - "Solo mascota seleccionada": muestra solo las vacunas de la mascota elegida.
+   - "Próximas dosis": muestra solo las que vencen en los próximos 30 días.
+
+VALIDACIONES
+- Mascota, vacuna y lote obligatorios.
+- La fecha de aplicación no puede estar en el futuro.
+- La próxima dosis no puede ser anterior a la fecha de aplicación.
+
+RELACIÓN CON OTRAS PANTALLAS
+- Las vacunas que vencen en los próximos 30 días se cuentan en la tarjeta
+  "Vacunas próximas" del dashboard.
+- Las vencidas o por vencer en 7 días aparecen en "Requiere atención".
+- El precio de cada vacuna suma a los ingresos del dashboard y de Reportes.
+
+¿CÓMO FUNCIONA POR DENTRO?
+UcVacunas -> VacunaServicio -> VacunaDatos (EF Core) -> tabla Vacunas.
+- La lista usa Include(v => v.Mascota) para mostrar el nombre de la mascota.
+- El filtro de próximas dosis compara ProximaDosis entre hoy y hoy + 30 días.
+
+CAPTURAS
+01-modulo.png               Historial de vacunación con precios.
+02-vacuna-con-precio.png    Vacuna elegida del catálogo con su precio.

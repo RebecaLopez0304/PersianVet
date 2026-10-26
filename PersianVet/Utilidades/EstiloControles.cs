@@ -91,6 +91,25 @@ public static class EstiloControles
     }
 
     /// <summary>
+    /// Muestra las columnas indicadas como montos en córdobas (C$) alineados a la derecha.
+    /// </summary>
+    /// <param name="tabla">Tabla con los datos ya asignados.</param>
+    /// <param name="columnas">Nombres de las propiedades que contienen montos.</param>
+    public static void FormatoMoneda(DataGridView tabla, params string[] columnas)
+    {
+        foreach (string nombre in columnas)
+        {
+            if (tabla.Columns.Contains(nombre))
+            {
+                DataGridViewCellStyle estilo = tabla.Columns[nombre].DefaultCellStyle;
+                estilo.Format = "C2";
+                estilo.FormatProvider = Moneda.Cultura;
+                estilo.Alignment = DataGridViewContentAlignment.MiddleRight;
+            }
+        }
+    }
+
+    /// <summary>
     /// Aplica el estilo general a los campos de un formulario o módulo.
     /// </summary>
     /// <param name="contenedor">Control que contiene los campos que se desean preparar.</param>

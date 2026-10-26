@@ -1,0 +1,33 @@
+PANTALLA: FICHA DE MASCOTA
+Archivo: Formularios/FrmFichaMascota.cs
+Se abre desde Mascotas (botón "Ver ficha" o doble clic en una fila) o al elegir una
+mascota en la búsqueda global.
+
+¿PARA QUÉ SIRVE?
+Reúne en una sola ventana toda la información clínica de una mascota, para no tener
+que buscarla en tres módulos distintos.
+
+¿QUÉ MUESTRA?
+1. Encabezado: nombre de la mascota.
+2. Resumen: especie, raza, sexo, edad calculada (en meses o años), peso, color,
+   propietario y observaciones.
+3. Tres pestañas, cada una con la cantidad de registros en su título:
+   - Consultas: fecha, servicio, motivo, diagnóstico, precio, total, veterinario y
+     tratamientos indicados.
+   - Vacunas: vacuna, fecha de aplicación, próxima dosis, lote y precio.
+   - Citas: fecha, servicio, motivo, estado, precio, cliente y veterinario.
+Los montos se muestran en córdobas (C$).
+
+¿CÓMO FUNCIONA POR DENTRO?
+1. Los datos de la mascota se muestran de inmediato (ya vienen de la lista).
+2. Las consultas, vacunas y citas se cargan AL MISMO TIEMPO en segundo plano:
+     Task.Run(consultas), Task.Run(vacunas), Task.Run(citas)
+     await Task.WhenAll(las tres tareas)
+   Así la espera total es la de la consulta más lenta, no la suma de las tres.
+3. Se reutilizan los servicios de Consultas, Vacunas y Citas: la ficha no tiene
+   acceso a datos propio.
+
+CAPTURAS
+01-ficha-consultas.png   Ficha de Bruno en la pestaña de consultas.
+02-ficha-vacunas.png     Pestaña de vacunas.
+03-ficha-citas.png       Pestaña de citas.

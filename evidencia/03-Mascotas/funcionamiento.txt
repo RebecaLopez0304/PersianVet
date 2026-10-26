@@ -1,0 +1,38 @@
+PANTALLA: MASCOTAS
+Archivos: Controles/UcMascotas.cs, Formularios/FrmMascotaEdicion.cs
+Acceso: roles Administrador, Recepcionista y Veterinario.
+
+¿PARA QUÉ SIRVE?
+Registra a los pacientes de la clínica y los relaciona con su dueño (cliente).
+
+¿QUÉ SE PUEDE HACER?
+1. Ver la lista de mascotas con su propietario, especie, raza, sexo, fecha de
+   nacimiento, color, peso y estado.
+2. Buscar en vivo por nombre de la mascota o por nombre/apellido del dueño.
+3. Nuevo: abre una ventana para registrar la mascota (también desde la acción
+   rápida "Nueva mascota" del dashboard).
+4. Modificar: se selecciona una fila y se editan sus datos.
+5. Desactivar: deja la mascota inactiva (no se borra).
+6. Ver ficha: abre la ficha completa de la mascota (también con doble clic en la fila).
+7. "Mostrar desactivadas": incluye las mascotas inactivas.
+
+VALIDACIONES (se muestran todas juntas, cada una con su campo)
+- Propietario obligatorio.
+- Nombre y raza obligatorios (máximo 80 caracteres); especie y sexo elegidos de la lista.
+- Fecha de nacimiento que no esté en el futuro ni indique más de 40 años de edad.
+- Peso mayor que cero.
+- Color (máximo 80) y observaciones (máximo 500) son opcionales.
+Ejemplo: "Fecha de nacimiento: 28/10/2026 es posterior a hoy (25/10/2026); no puede estar en el futuro."
+Si hay errores, la ventana sigue abierta con todo lo escrito para corregirlo.
+
+¿CÓMO FUNCIONA POR DENTRO?
+UcMascotas -> MascotaServicio -> MascotaDatos (EF Core) -> tabla Mascotas.
+- La lista usa Include(m => m.Cliente): EF Core trae el cliente en la misma consulta
+  (un JOIN) y la propiedad calculada Propietario muestra su nombre.
+- La búsqueda puede filtrar por campos del cliente: m.Cliente.Nombres.Contains(...).
+- "Ver ficha" no abre la ventana directamente: la pantalla dispara el evento
+  FichaSolicitada y la ventana principal es la que abre la ficha.
+
+CAPTURAS
+01-modulo.png                  Lista de mascotas con su propietario.
+02-ventana-nueva-mascota.png   Ventana para registrar una mascota.

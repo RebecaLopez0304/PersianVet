@@ -1,0 +1,47 @@
+DIFICULTAD: 15 de 15  (la más difícil)
+Clasificación: ALTA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Pantalla:                                   151
+- Diseño visual (Designer):                   246
+- Servicio, datos y gráfico de barras:        245
+- Total aproximado:                           642
+
+¿POR QUÉ ES LA MÁS DIFÍCIL?
+Es donde más se juntan los temas del curso en una sola pantalla:
+- Concurrencia en dos niveles: cuatro cargas en paralelo y, dentro del resumen, cinco
+  consultas en paralelo con un DbContext cada una.
+- Cancelación automática al cambiar de módulo, sin mostrar errores falsos.
+- LINQ con reglas de negocio (avisos por fechas, conteos y sumas de ingresos).
+- Un gráfico dibujado a mano con GDI+.
+- Comunicación con la ventana principal por eventos y aplicación de permisos por rol.
+- Diseño adaptable con TableLayoutPanel (tarjetas en columnas iguales).
+
+CONCEPTOS QUE SE USAN
+- async/await, Task.WhenAll, CancellationTokenSource y OperationCanceledException.
+- Método genérico ConsultarAsync<T> que crea y libera un DbContext por consulta.
+- EF Core asíncrono: CountAsync, SumAsync, ToListAsync, Include y Take.
+- Filtros de excepción: catch (Exception) when (!IsDisposed && !cancelado).
+- Eventos (event Action<string> NavegarSolicitado) y delegados Func<string, bool>.
+- Control propio GraficoBarras (OnPaint, Graphics, medidas según la letra).
+- OnHandleDestroyed para cancelar cuando se cierra la pantalla.
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+1. Las consultas paralelas: DbContext no admite varias consultas a la vez, por eso
+   ConsultarAsync<T> crea un contexto distinto para cada una.
+2. El cierre a mitad de carga: si el usuario cambia de módulo, las tareas pueden
+   terminar cuando la pantalla ya no existe. Se cancela en OnHandleDestroyed y, después
+   del await, se revisa IsDisposed antes de tocar los controles.
+3. Los ingresos: SQL Server no permite sumar dentro de otra suma, así que se suman por
+   separado consultas, tratamientos y vacunas.
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- ¿Qué parte del dashboard es concurrente?
+  Resumen, próximas citas, avisos y gráfico se cargan a la vez (Task.WhenAll), y los
+  cinco totales del resumen también.
+- ¿Qué pasa si cambio de módulo mientras carga?
+  Se cancela el token; las consultas se detienen y no aparece ningún mensaje de error.
+- ¿Cómo se decide si una vacuna aparece en "Requiere atención"?
+  Si su próxima dosis está entre 30 días atrás y 7 días adelante.
+- ¿Por qué la recepcionista no ve los ingresos?
+  La tarjeta solo se muestra a quien tiene permiso de Reportes (clase Permisos).

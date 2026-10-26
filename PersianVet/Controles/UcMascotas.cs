@@ -71,10 +71,11 @@ public partial class UcMascotas : UserControl
     /// </summary>
     public void NuevoRegistro()
     {
-        using FrmMascotaEdicion formulario = new(clienteServicio.Listar(string.Empty));
+        using FrmMascotaEdicion formulario = new(clienteServicio.Listar(string.Empty), mascotaServicio.Guardar);
         if (formulario.ShowDialog(this) == DialogResult.OK)
         {
-            Ejecutar(() => mascotaServicio.Guardar(formulario.Mascota));
+            LimpiarFormulario();
+            CargarMascotas();
         }
     }
     private void BtnGuardar_Click(object? sender, EventArgs e) => Ejecutar(() => mascotaServicio.Guardar(CrearMascota()));
@@ -86,10 +87,11 @@ public partial class UcMascotas : UserControl
             return;
         }
 
-        using FrmMascotaEdicion formulario = new(clienteServicio.Listar(string.Empty), CopiarMascota(seleccionada));
+        using FrmMascotaEdicion formulario = new(clienteServicio.Listar(string.Empty), mascotaServicio.Actualizar, CopiarMascota(seleccionada));
         if (formulario.ShowDialog(this) == DialogResult.OK)
         {
-            Ejecutar(() => mascotaServicio.Actualizar(formulario.Mascota));
+            LimpiarFormulario();
+            CargarMascotas();
         }
     }
 

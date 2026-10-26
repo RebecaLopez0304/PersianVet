@@ -1,0 +1,35 @@
+DIFICULTAD: 03 de 15
+Clasificación: BAJA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Pantalla y ventana de edición: 207
+- Diseño visual (Designer):      299
+- Servicio y acceso a datos:     151
+- Total aproximado:              657
+
+¿POR QUÉ ESTÁ EN ESTE LUGAR?
+Sigue el patrón CRUD, pero es el primer módulo con una RELACIÓN entre tablas
+(Mascota pertenece a un Cliente) y con un EVENTO para comunicarse con otra pantalla.
+
+CONCEPTOS QUE SE USAN
+- Relación uno a muchos: un Cliente tiene muchas Mascotas (clave foránea IdCliente).
+- EF Core Include para cargar datos relacionados (JOIN).
+- Propiedad calculada Propietario a partir del cliente cargado.
+- LINQ filtrando por campos de otra tabla (m.Cliente.Nombres).
+- Eventos de C# (event Action<Mascota> FichaSolicitada).
+- Atributo [Browsable(false)] para que las relaciones no aparezcan como columnas.
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+Al modificar, la mascota viene con su Cliente cargado. Si se envía así a Update,
+EF Core intentaría guardar también al cliente. Por eso MascotaDatos.Limpiar quita
+la relación antes de guardar:
+    mascota.Cliente = null!;
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- ¿Qué hace Include?
+  Indica a EF Core que traiga también el cliente de cada mascota en la misma consulta.
+- ¿Por qué la ficha se abre mediante un evento?
+  Para que el módulo Mascotas no dependa de los servicios de consultas, vacunas y
+  citas; la ventana principal ya los tiene y abre la ficha.
+- ¿Por qué solo Felino y Canino?
+  Son las especies que atiende la clínica; están en la lista desplegable.

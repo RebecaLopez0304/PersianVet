@@ -18,18 +18,22 @@ partial class UcDashboard
     private TableLayoutPanel tarjetaCitas = null!;
     private TableLayoutPanel tarjetaVacunas = null!;
     private TableLayoutPanel tarjetaConsultas = null!;
+    private TableLayoutPanel tarjetaIngresos = null!;
     private Label lblMascotasTitulo = null!;
     private Label lblCitasTitulo = null!;
     private Label lblVacunasTitulo = null!;
     private Label lblConsultasTitulo = null!;
+    private Label lblIngresosTitulo = null!;
     private Label lblMascotasValor = null!;
     private Label lblCitasValor = null!;
     private Label lblVacunasValor = null!;
     private Label lblConsultasValor = null!;
+    private Label lblIngresosValor = null!;
     private Panel barraMascotas = null!;
     private Panel barraCitas = null!;
     private Panel barraVacunas = null!;
     private Panel barraConsultas = null!;
+    private Panel barraIngresos = null!;
     private FlowLayoutPanel panelAcciones = null!;
     private Button btnNuevaCita = null!;
     private Button btnCalendario = null!;
@@ -57,10 +61,12 @@ partial class UcDashboard
         lblProximas = new Label();
         lblAlertas = new Label();
         lblEstado = new Label();
-        tarjetaMascotas = CrearTarjeta(out barraMascotas, out lblMascotasTitulo, out lblMascotasValor, "Mascotas registradas", Color.FromArgb(242, 140, 40));
+        tarjetaMascotas = CrearTarjeta(out barraMascotas, out lblMascotasTitulo, out lblMascotasValor, "Mascotas activas", Color.FromArgb(242, 140, 40));
         tarjetaCitas = CrearTarjeta(out barraCitas, out lblCitasTitulo, out lblCitasValor, "Citas de hoy", Color.FromArgb(31, 78, 121));
         tarjetaVacunas = CrearTarjeta(out barraVacunas, out lblVacunasTitulo, out lblVacunasValor, "Vacunas próximas", Color.FromArgb(91, 140, 90));
         tarjetaConsultas = CrearTarjeta(out barraConsultas, out lblConsultasTitulo, out lblConsultasValor, "Consultas este mes", Color.FromArgb(242, 140, 40));
+        tarjetaIngresos = CrearTarjeta(out barraIngresos, out lblIngresosTitulo, out lblIngresosValor, "Ingresos del mes", Color.FromArgb(91, 140, 90));
+        lblIngresosValor.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
         btnNuevaCita = new Button();
         btnCalendario = new Button();
         btnNuevoCliente = new Button();
@@ -103,18 +109,19 @@ partial class UcDashboard
         lblDescripcion.Location = new Point(4, 52);
         lblDescripcion.Text = "Resumen general de la clínica. Haga clic en una tarjeta para abrir su módulo.";
 
-        filaTarjetas.ColumnCount = 4;
+        filaTarjetas.ColumnCount = 5;
         filaTarjetas.RowCount = 1;
         filaTarjetas.Dock = DockStyle.Fill;
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 5; i++)
         {
-            filaTarjetas.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            filaTarjetas.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
         }
 
         filaTarjetas.Controls.Add(tarjetaMascotas, 0, 0);
         filaTarjetas.Controls.Add(tarjetaCitas, 1, 0);
         filaTarjetas.Controls.Add(tarjetaVacunas, 2, 0);
         filaTarjetas.Controls.Add(tarjetaConsultas, 3, 0);
+        filaTarjetas.Controls.Add(tarjetaIngresos, 4, 0);
 
         panelAcciones.Dock = DockStyle.Fill;
         panelAcciones.WrapContents = false;

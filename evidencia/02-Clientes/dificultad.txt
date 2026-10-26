@@ -1,0 +1,39 @@
+DIFICULTAD: 02 de 15
+Clasificación: BAJA
+
+TAMAÑO DEL CÓDIGO (líneas sin contar las vacías)
+- Pantalla y ventana de edición: 177
+- Diseño visual (Designer):      235
+- Servicio, datos y validaciones: 184
+- Total aproximado:              596
+
+¿POR QUÉ ESTÁ EN ESTE LUGAR?
+Es el mismo patrón CRUD que Veterinarios, pero suma dos cosas:
+- Validación de formato de correo y teléfono (clases Validador y Validaciones).
+- Un dato único (correo) que se revisa antes de guardar, con un índice único en la
+  base de datos como segunda protección.
+
+CONCEPTOS QUE SE USAN
+- Arquitectura en capas con interfaz IClienteDatos.
+- EF Core: Add, Update, SaveChanges, ExecuteUpdate.
+- LINQ: búsqueda en varios campos con Contains.
+- Clase Validador: junta todos los errores y los muestra con su campo.
+- Ventana que recibe la operación de guardar como parámetro (Func<Cliente, ResultadoOperacion>).
+- Índice único en SQL Server (UX_Clientes_Correo).
+- Propiedad calculada NombreCompleto (no se guarda en la base de datos).
+
+LO MÁS DIFÍCIL DE ESTA PANTALLA
+Que la ventana no se cierre si hay errores: antes se cerraba y luego se validaba, y se
+perdía lo escrito. Ahora la ventana llama al servicio al presionar Guardar y solo se
+cierra (DialogResult.OK) si la operación sale bien.
+
+PREGUNTAS QUE PODRÍA HACER EL DOCENTE
+- ¿Cómo se evita que dos clientes tengan el mismo correo?
+  ClienteServicio busca otro cliente con ese correo antes de guardar y avisa con su
+  nombre; el índice único de la tabla protege por si dos personas guardan a la vez.
+- ¿Qué pasa si escribo varios datos mal?
+  Se muestran todos los errores juntos y la ventana conserva lo escrito.
+- ¿Qué es NombreCompleto?
+  Una propiedad de solo lectura que junta nombres y apellidos; EF Core la ignora.
+- ¿Para qué se usa NombreCompleto?
+  Para mostrar al cliente en los combos, por ejemplo al elegir el dueño de una mascota.

@@ -12,4 +12,9 @@ public class ReporteVeterinario
     public int Canceladas { get; set; }
     public int Consultas { get; set; }
     public int Tratamientos { get; set; }
+
+    /// <summary>
+    /// Obtiene o establece lo cobrado en C$ por las consultas del veterinario y sus tratamientos.
+    /// </summary>
+    public decimal Ingresos { get; set; }
 }

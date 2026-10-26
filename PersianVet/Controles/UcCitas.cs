@@ -13,6 +13,7 @@ public partial class UcCitas : UserControl
     private readonly CitaServicio citaServicio;
     private readonly MascotaServicio mascotaServicio;
     private readonly VeterinarioServicio veterinarioServicio;
+    private readonly TarifaServicio tarifaServicio;
     private int idSeleccionado;
 
     public UcCitas()
@@ -27,13 +28,19 @@ public partial class UcCitas : UserControl
         citaServicio = null!;
         mascotaServicio = null!;
         veterinarioServicio = null!;
+        tarifaServicio = null!;
     }
 
-    public UcCitas(CitaServicio citaServicio, MascotaServicio mascotaServicio, VeterinarioServicio veterinarioServicio) : this()
+    public UcCitas(
+        CitaServicio citaServicio,
+        MascotaServicio mascotaServicio,
+        VeterinarioServicio veterinarioServicio,
+        TarifaServicio tarifaServicio) : this()
     {
         this.citaServicio = citaServicio;
         this.mascotaServicio = mascotaServicio;
         this.veterinarioServicio = veterinarioServicio;
+        this.tarifaServicio = tarifaServicio;
         Load += UcCitas_Load;
     }
 
@@ -52,6 +59,14 @@ public partial class UcCitas : UserControl
         using FrmCalendarioCitas calendario = new(citaServicio);
         calendario.ShowDialog(this);
     }
+    private void CboServicio_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        if (cboServicio.SelectedItem is Tarifa servicio)
+        {
+            lblPrecioValor.Text = Moneda.Formatear(servicio.Precio);
+        }
+    }
+
     private void ChkFiltrar_CheckedChanged(object? sender, EventArgs e) { dtpFiltro.Enabled = chkFiltrar.Checked; CargarCitas(); }
 
     private void BtnCancelar_Click(object? sender, EventArgs e)
@@ -75,6 +90,8 @@ public partial class UcCitas : UserControl
         cboVeterinario.SelectedValue = cita.IdVeterinario;
         dtpFecha.Value = cita.FechaHora.Date;
         dtpHora.Value = DateTime.Today.Add(cita.FechaHora.TimeOfDay);
+        cboServicio.SelectedValue = cita.Servicio;
+        lblPrecioValor.Text = Moneda.Formatear(cita.Precio);
         txtMotivo.Text = cita.Motivo;
         cboEstado.Text = cita.Estado;
     }
@@ -87,6 +104,8 @@ public partial class UcCitas : UserControl
             IdMascota = cboMascota.SelectedValue is int idMascota ? idMascota : 0,
             IdVeterinario = cboVeterinario.SelectedValue is int idVeterinario ? idVeterinario : 0,
             FechaHora = dtpFecha.Value.Date.Add(dtpHora.Value.TimeOfDay),
+            Servicio = cboServicio.SelectedItem is Tarifa servicio ? servicio.Nombre : string.Empty,
+            Precio = cboServicio.SelectedItem is Tarifa tarifa ? tarifa.Precio : 0,
             Motivo = txtMotivo.Text,
             Estado = cboEstado.Text
         };
@@ -103,6 +122,8 @@ public partial class UcCitas : UserControl
         cboMascota.DisplayMember = "Nombre"; cboMascota.ValueMember = "IdMascota"; cboMascota.SelectedIndex = -1;
         cboVeterinario.DataSource = veterinarioServicio.Listar(string.Empty, true);
         cboVeterinario.DisplayMember = "NombreCompleto"; cboVeterinario.ValueMember = "IdVeterinario"; cboVeterinario.SelectedIndex = -1;
+        cboServicio.DataSource = tarifaServicio.Listar(Tarifa.Servicio);
+        cboServicio.DisplayMember = "Nombre"; cboServicio.ValueMember = "Nombre"; cboServicio.SelectedIndex = -1;
     }
 
     private void CargarCitas()
@@ -111,6 +132,7 @@ public partial class UcCitas : UserControl
         {
             tablaCitas.DataSource = citaServicio.Listar(chkFiltrar.Checked ? dtpFiltro.Value.Date : null);
             EstiloControles.OcultarColumnas(tablaCitas, "IdMascota", "IdVeterinario");
+            EstiloControles.FormatoMoneda(tablaCitas, "Precio");
         }
         catch (Exception excepcion) { Mensajes.MostrarError(excepcion); }
     }
@@ -119,6 +141,7 @@ public partial class UcCitas : UserControl
     {
         idSeleccionado = 0; cboMascota.SelectedIndex = -1; cboVeterinario.SelectedIndex = -1;
         dtpFecha.Value = DateTime.Today.AddDays(1); dtpHora.Value = DateTime.Today.AddHours(9);
+        cboServicio.SelectedIndex = -1; lblPrecioValor.Text = Moneda.Formatear(0);
         txtMotivo.Clear(); cboEstado.SelectedIndex = 0; tablaCitas.ClearSelection();
     }
 }

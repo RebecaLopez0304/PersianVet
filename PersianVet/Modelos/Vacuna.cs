@@ -26,6 +26,7 @@ public class Vacuna
     public DateTime? ProximaDosis { get; set; }
 
     public string Lote { get; set; } = string.Empty;
+    public decimal Precio { get; set; }
 
     [Browsable(false)]
     public Mascota Mascota { get; set; } = null!;

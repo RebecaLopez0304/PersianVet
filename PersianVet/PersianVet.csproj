@@ -32,6 +32,7 @@
     <Compile Update="Controles\UcDashboard.cs"><SubType>UserControl</SubType></Compile>
     <Compile Update="Controles\UcMascotas.cs"><SubType>UserControl</SubType></Compile>
     <Compile Update="Controles\UcReportes.cs"><SubType>UserControl</SubType></Compile>
+    <Compile Update="Controles\UcTarifas.cs"><SubType>UserControl</SubType></Compile>
     <Compile Update="Controles\UcVacunas.cs"><SubType>UserControl</SubType></Compile>
     <Compile Update="Controles\UcVeterinarios.cs"><SubType>UserControl</SubType></Compile>
     <Compile Update="Formularios\FrmLogin.cs"><SubType>Form</SubType></Compile>

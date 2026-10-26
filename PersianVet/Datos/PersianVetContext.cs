@@ -21,6 +21,8 @@ public class PersianVetContext : DbContext
     public DbSet<Tratamiento> Tratamientos => Set<Tratamiento>();
     public DbSet<Vacuna> Vacunas => Set<Vacuna>();
     public DbSet<Usuario> Usuarios => Set<Usuario>();
+    public DbSet<Tarifa> Tarifas => Set<Tarifa>();
+    public DbSet<HistorialPrecio> HistorialPrecios => Set<HistorialPrecio>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -52,6 +54,7 @@ public class PersianVetContext : DbContext
         {
             e.ToTable("Citas");
             e.HasKey(x => x.IdCita);
+            e.Property(x => x.Servicio).IsRequired(false);
             e.HasOne(x => x.Mascota).WithMany(m => m.Citas).HasForeignKey(x => x.IdMascota);
             e.HasOne(x => x.Veterinario).WithMany(v => v.Citas).HasForeignKey(x => x.IdVeterinario);
         });
@@ -60,6 +63,7 @@ public class PersianVetContext : DbContext
         {
             e.ToTable("Consultas");
             e.HasKey(x => x.IdConsulta);
+            e.Property(x => x.Servicio).IsRequired(false);
             e.Property(x => x.Observaciones).IsRequired(false);
             e.HasOne(x => x.Mascota).WithMany(m => m.Consultas).HasForeignKey(x => x.IdMascota);
             e.HasOne(x => x.Veterinario).WithMany(v => v.Consultas).HasForeignKey(x => x.IdVeterinario);
@@ -87,5 +91,24 @@ public class PersianVetContext : DbContext
             e.ToTable("Usuarios");
             e.HasKey(x => x.IdUsuario);
         });
+
+        modelBuilder.Entity<Tarifa>(e =>
+        {
+            e.ToTable("Tarifas");
+            e.HasKey(x => x.IdTarifa);
+            e.HasMany(x => x.Historial).WithOne().HasForeignKey(h => h.IdTarifa);
+        });
+
+        modelBuilder.Entity<HistorialPrecio>(e =>
+        {
+            e.ToTable("HistorialPrecios");
+            e.HasKey(x => x.IdHistorial);
+        });
+    }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        // Los precios en córdobas usan decimal(10,2); Mascota.Peso define su propio tipo en OnModelCreating.
+        configurationBuilder.Properties<decimal>().HaveColumnType("decimal(10,2)");
     }
 }
