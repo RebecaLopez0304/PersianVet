@@ -21,7 +21,7 @@
     <Content Include="..\BaseDatos\PersianVetDB.sql" Link="BaseDatos\PersianVetDB.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Recursos\*.png">
+    <Content Include="Recursos\**\*.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

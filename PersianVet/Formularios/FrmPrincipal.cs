@@ -23,6 +23,7 @@ public partial class FrmPrincipal : Form
     private readonly BusquedaServicio busquedaServicio;
     private bool cerrandoSesion;
     private readonly List<Button> botonesPermitidos = [];
+    private readonly Dictionary<Button, (Image? Normal, Image? Activo)> iconosMenu = [];
 
     /// <summary>
     /// Indica si el usuario eligió regresar a la pantalla de acceso.
@@ -93,8 +94,13 @@ public partial class FrmPrincipal : Form
 
         foreach (Button boton in panelBotonesMenu.Controls.OfType<Button>())
         {
-            boton.BackColor = boton == botonActivo ? Tema.Naranja : Color.White;
-            boton.ForeColor = boton == botonActivo ? Color.White : Tema.AzulOscuro;
+            bool activo = boton == botonActivo;
+            boton.BackColor = activo ? Tema.Naranja : Color.White;
+            boton.ForeColor = activo ? Color.White : Tema.AzulOscuro;
+            if (iconosMenu.TryGetValue(boton, out var iconos))
+            {
+                boton.Image = activo ? iconos.Activo : iconos.Normal;
+            }
         }
     }
 
@@ -332,10 +338,19 @@ public partial class FrmPrincipal : Form
 
     private void AsignarIconos()
     {
-        Button[] botones = [btnInicio, btnClientes, btnMascotas, btnCitas, btnConsultas, btnVacunas, btnVeterinarios, btnReportes, btnCerrarSesion];
-        foreach (Button boton in botones)
+        (Button Boton, string Archivo)[] botones =
+        [
+            (btnInicio, "inicio"), (btnClientes, "clientes"), (btnMascotas, "mascotas"), (btnCitas, "citas"),
+            (btnConsultas, "consultas"), (btnVacunas, "vacunas"), (btnVeterinarios, "veterinarios"),
+            (btnReportes, "reportes"), (btnCerrarSesion, "cerrar-sesion")
+        ];
+
+        // Cada botón guarda dos versiones del icono: azul (normal) y blanco (botón seleccionado).
+        int tamano = LogicalToDeviceUnits(22);
+        foreach ((Button boton, string archivo) in botones)
         {
-            boton.Image = Iconos.Crear(boton.Text, Tema.AzulOscuro);
+            iconosMenu[boton] = (Iconos.Cargar(archivo, Tema.AzulOscuro, tamano), Iconos.Cargar(archivo, Color.White, tamano));
+            boton.Image = iconosMenu[boton].Normal;
             boton.ImageAlign = ContentAlignment.MiddleLeft;
             boton.TextImageRelation = TextImageRelation.ImageBeforeText;
             boton.Padding = new Padding(8, 0, 0, 0);
