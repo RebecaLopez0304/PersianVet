@@ -53,16 +53,10 @@ public partial class UcVacunas : UserControl
             Lote = txtLote.Text
         };
 
-        try
+        Mensajes.EjecutarOperacion(() => vacunaServicio.Guardar(vacuna), () =>
         {
-            ResultadoOperacion resultado = vacunaServicio.Guardar(vacuna);
-            MessageBox.Show(resultado.Mensaje, "PersianVet", MessageBoxButtons.OK, resultado.Exitoso ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
-            if (resultado.Exitoso)
-            {
-                txtNombreVacuna.Clear(); txtLote.Clear(); chkProximaDosis.Checked = false; CargarVacunas();
-            }
-        }
-        catch (Exception excepcion) { Mensajes.MostrarError(excepcion); }
+            txtNombreVacuna.Clear(); txtLote.Clear(); chkProximaDosis.Checked = false; CargarVacunas();
+        });
     }
 
     private void CambiarFiltro(object? sender, EventArgs e)
@@ -79,7 +73,7 @@ public partial class UcVacunas : UserControl
         {
             int? idMascota = chkFiltrarMascota.Checked && cboMascota.SelectedValue is int id ? id : null;
             tablaVacunas.DataSource = vacunaServicio.Listar(idMascota, chkSoloProximas.Checked);
-            if (tablaVacunas.Columns.Contains("IdMascota")) tablaVacunas.Columns["IdMascota"].Visible = false;
+            EstiloControles.OcultarColumnas(tablaVacunas, "IdMascota");
         }
         catch (Exception excepcion) { Mensajes.MostrarError(excepcion); }
     }

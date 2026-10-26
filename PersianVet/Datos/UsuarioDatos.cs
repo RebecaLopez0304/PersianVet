@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using PersianVet.Entidades;
 using PersianVet.Interfaces;
 using PersianVet.Modelos;
 
@@ -20,17 +19,7 @@ public class UsuarioDatos : IUsuarioDatos
     public Usuario? ObtenerPorNombre(string nombreUsuario)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
-        return contexto.Usuarios.AsNoTracking()
-            .Where(u => u.NombreUsuario == nombreUsuario)
-            .Select(u => new Usuario
-            {
-                IdUsuario = u.IdUsuario,
-                NombreUsuario = u.NombreUsuario,
-                ClaveHash = u.ClaveHash,
-                Rol = u.Rol,
-                Activo = u.Activo
-            })
-            .FirstOrDefault();
+        return contexto.Usuarios.AsNoTracking().FirstOrDefault(u => u.NombreUsuario == nombreUsuario);
     }
 
     public bool Existe(string nombreUsuario)
@@ -43,16 +32,11 @@ public class UsuarioDatos : IUsuarioDatos
     public int Crear(Usuario usuario)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
-        UsuarioEntidad entidad = new()
-        {
-            NombreUsuario = usuario.NombreUsuario.Trim(),
-            ClaveHash = usuario.ClaveHash,
-            Rol = usuario.Rol,
-            Activo = true
-        };
-        contexto.Usuarios.Add(entidad);
+        usuario.NombreUsuario = usuario.NombreUsuario.Trim();
+        usuario.Activo = true;
+        contexto.Usuarios.Add(usuario);
         contexto.SaveChanges();
-        return entidad.IdUsuario;
+        return usuario.IdUsuario;
     }
 
     public void CambiarClave(string nombreUsuario, string claveHash)
@@ -69,14 +53,6 @@ public class UsuarioDatos : IUsuarioDatos
         return contexto.Usuarios.AsNoTracking()
             .Where(u => incluirDesactivados || u.Activo)
             .OrderBy(u => u.NombreUsuario)
-            .Select(u => new Usuario
-            {
-                IdUsuario = u.IdUsuario,
-                NombreUsuario = u.NombreUsuario,
-                ClaveHash = u.ClaveHash,
-                Rol = u.Rol,
-                Activo = u.Activo
-            })
             .ToList();
     }
 

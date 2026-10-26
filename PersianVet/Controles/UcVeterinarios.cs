@@ -90,13 +90,7 @@ public partial class UcVeterinarios : UserControl
 
     private void Ejecutar(Func<ResultadoOperacion> operacion)
     {
-        try
-        {
-            ResultadoOperacion resultado = operacion();
-            MessageBox.Show(resultado.Mensaje, "PersianVet", MessageBoxButtons.OK, resultado.Exitoso ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
-            if (resultado.Exitoso) { Limpiar(); CargarDatos(); }
-        }
-        catch (Exception excepcion) { Mensajes.MostrarError(excepcion); }
+        Mensajes.EjecutarOperacion(operacion, () => { Limpiar(); CargarDatos(); });
     }
 
     private void CargarDatos()

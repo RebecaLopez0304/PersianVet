@@ -34,7 +34,7 @@ public class ReporteDatos : IReporteDatos
                 Consultas = v.Consultas.Count(c => c.FechaHora >= desde && c.FechaHora < fin),
                 Tratamientos = v.Consultas
                     .Where(c => c.FechaHora >= desde && c.FechaHora < fin)
-                    .SelectMany(c => c.Tratamientos)
+                    .SelectMany(c => c.ListaTratamientos)
                     .Count()
             })
             .OrderByDescending(r => r.Consultas)

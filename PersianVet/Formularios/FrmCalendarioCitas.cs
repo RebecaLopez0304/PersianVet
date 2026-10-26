@@ -68,9 +68,9 @@ public partial class FrmCalendarioCitas : Form
             .Select(cita => new
             {
                 Hora = cita.FechaHora.ToString("HH:mm"),
-                cita.Mascota,
-                cita.Cliente,
-                cita.Veterinario,
+                Mascota = cita.NombreMascota,
+                Cliente = cita.NombreCliente,
+                Veterinario = cita.NombreVeterinario,
                 cita.Motivo,
                 cita.Estado
             })

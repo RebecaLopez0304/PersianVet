@@ -94,13 +94,7 @@ public partial class UcCitas : UserControl
 
     private void Ejecutar(Func<ResultadoOperacion> operacion)
     {
-        try
-        {
-            ResultadoOperacion resultado = operacion();
-            MessageBox.Show(resultado.Mensaje, "PersianVet", MessageBoxButtons.OK, resultado.Exitoso ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
-            if (resultado.Exitoso) { Limpiar(); CargarCitas(); }
-        }
-        catch (Exception excepcion) { Mensajes.MostrarError(excepcion); }
+        Mensajes.EjecutarOperacion(operacion, () => { Limpiar(); CargarCitas(); });
     }
 
     private void CargarListas()
@@ -116,7 +110,7 @@ public partial class UcCitas : UserControl
         try
         {
             tablaCitas.DataSource = citaServicio.Listar(chkFiltrar.Checked ? dtpFiltro.Value.Date : null);
-            foreach (string columna in new[] { "IdMascota", "IdVeterinario" }) if (tablaCitas.Columns.Contains(columna)) tablaCitas.Columns[columna].Visible = false;
+            EstiloControles.OcultarColumnas(tablaCitas, "IdMascota", "IdVeterinario");
         }
         catch (Exception excepcion) { Mensajes.MostrarError(excepcion); }
     }

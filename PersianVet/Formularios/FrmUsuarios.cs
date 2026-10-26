@@ -50,8 +50,7 @@ public partial class FrmUsuarios : Form
         try
         {
             tablaUsuarios.DataSource = usuarioServicio.Listar(chkMostrarDesactivados.Checked);
-            if (tablaUsuarios.Columns.Contains("IdUsuario")) tablaUsuarios.Columns["IdUsuario"].Visible = false;
-            if (tablaUsuarios.Columns.Contains("ClaveHash")) tablaUsuarios.Columns["ClaveHash"].Visible = false;
+            EstiloControles.OcultarColumnas(tablaUsuarios, "IdUsuario", "ClaveHash");
         }
         catch (Exception excepcion)
         {
@@ -80,24 +79,7 @@ public partial class FrmUsuarios : Form
 
     private static void Ejecutar(Func<ResultadoOperacion> operacion, Action limpiar)
     {
-        try
-        {
-            ResultadoOperacion resultado = operacion();
-            MessageBox.Show(
-                resultado.Mensaje,
-                "PersianVet",
-                MessageBoxButtons.OK,
-                resultado.Exitoso ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
-
-            if (resultado.Exitoso)
-            {
-                limpiar();
-            }
-        }
-        catch (Exception excepcion)
-        {
-            Mensajes.MostrarError(excepcion);
-        }
+        Mensajes.EjecutarOperacion(operacion, limpiar);
     }
 
     private void LimpiarCreacion()

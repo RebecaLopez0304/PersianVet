@@ -71,9 +71,9 @@ public partial class FrmFichaMascota : Form
             tablaConsultas.DataSource = tareaConsultas.Result;
             tablaVacunas.DataSource = tareaVacunas.Result;
             tablaCitas.DataSource = tareaCitas.Result;
-            OcultarColumnas(tablaConsultas, "IdConsulta", "IdMascota", "IdVeterinario", "ListaTratamientos");
-            OcultarColumnas(tablaVacunas, "IdVacuna", "IdMascota", "Mascota");
-            OcultarColumnas(tablaCitas, "IdCita", "IdMascota", "IdVeterinario", "Mascota");
+            EstiloControles.OcultarColumnas(tablaConsultas, "IdConsulta", "IdMascota", "IdVeterinario");
+            EstiloControles.OcultarColumnas(tablaVacunas, "IdVacuna", "IdMascota", "NombreMascota");
+            EstiloControles.OcultarColumnas(tablaCitas, "IdCita", "IdMascota", "IdVeterinario", "NombreMascota");
 
             paginaConsultas.Text = $"Consultas ({tareaConsultas.Result.Count})";
             paginaVacunas.Text = $"Vacunas ({tareaVacunas.Result.Count})";
@@ -84,17 +84,6 @@ public partial class FrmFichaMascota : Form
         {
             lblEstado.Text = "No fue posible cargar el historial.";
             Mensajes.MostrarError(excepcion);
-        }
-    }
-
-    private static void OcultarColumnas(DataGridView tabla, params string[] nombres)
-    {
-        foreach (string nombre in nombres)
-        {
-            if (tabla.Columns.Contains(nombre))
-            {
-                tabla.Columns[nombre].Visible = false;
-            }
         }
     }
 

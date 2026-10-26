@@ -1,7 +1,9 @@
+using System.ComponentModel;
+
 namespace PersianVet.Modelos;
 
 /// <summary>
-/// Guarda la información de un veterinario.
+/// Guarda la información de un veterinario (tabla Veterinarios).
 /// </summary>
 public class Veterinario
 {
@@ -11,6 +13,13 @@ public class Veterinario
     public string Especialidad { get; set; } = string.Empty;
     public string Telefono { get; set; } = string.Empty;
     public bool Activo { get; set; } = true;
-    public string NombreCompleto => $"{Nombres} {Apellidos}".Trim();
-}
 
+    // Propiedad calculada: no se guarda en la base de datos.
+    public string NombreCompleto => $"{Nombres} {Apellidos}".Trim();
+
+    [Browsable(false)]
+    public List<Cita> Citas { get; set; } = [];
+
+    [Browsable(false)]
+    public List<Consulta> Consultas { get; set; } = [];
+}

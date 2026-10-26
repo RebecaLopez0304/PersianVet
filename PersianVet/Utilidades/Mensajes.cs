@@ -1,3 +1,5 @@
+using PersianVet.Modelos;
+
 namespace PersianVet.Utilidades;
 
 /// <summary>
@@ -17,6 +19,32 @@ public static class Mensajes
             : "No fue posible completar la operación. Revise la conexión con la base de datos.";
 
         MessageBox.Show(mensaje, "PersianVet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+    }
+
+    /// <summary>
+    /// Ejecuta una operación de un servicio, muestra su mensaje y, si salió bien, ejecuta la acción indicada
+    /// (por ejemplo limpiar el formulario y recargar la tabla). La usan todos los módulos.
+    /// </summary>
+    public static void EjecutarOperacion(Func<ResultadoOperacion> operacion, Action siSaleBien)
+    {
+        try
+        {
+            ResultadoOperacion resultado = operacion();
+            MessageBox.Show(
+                resultado.Mensaje,
+                "PersianVet",
+                MessageBoxButtons.OK,
+                resultado.Exitoso ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+
+            if (resultado.Exitoso)
+            {
+                siSaleBien();
+            }
+        }
+        catch (Exception excepcion)
+        {
+            MostrarError(excepcion);
+        }
     }
 
     /// <summary>

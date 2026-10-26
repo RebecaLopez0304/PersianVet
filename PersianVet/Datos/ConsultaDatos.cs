@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using PersianVet.Entidades;
 using PersianVet.Interfaces;
 using PersianVet.Modelos;
 
@@ -21,60 +20,35 @@ public class ConsultaDatos : IConsultaDatos
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
 
-        // Los tratamientos se concatenan en memoria porque string.Join no se traduce a SQL.
-        var filas = contexto.Consultas.AsNoTracking()
+        // Include trae el veterinario y los tratamientos de cada consulta.
+        return contexto.Consultas.AsNoTracking()
+            .Include(c => c.Veterinario)
+            .Include(c => c.ListaTratamientos)
             .Where(c => c.IdMascota == idMascota)
             .OrderByDescending(c => c.FechaHora)
-            .Select(c => new
-            {
-                c.IdConsulta,
-                c.FechaHora,
-                c.Motivo,
-                c.Diagnostico,
-                c.Observaciones,
-                Veterinario = c.Veterinario.Nombres + " " + c.Veterinario.Apellidos,
-                Tratamientos = c.Tratamientos.Select(t => t.Medicamento + " - " + t.Dosis).ToList()
-            })
             .ToList();
-
-        return filas.Select(f => new Consulta
-        {
-            IdConsulta = f.IdConsulta,
-            IdMascota = idMascota,
-            FechaHora = f.FechaHora,
-            Motivo = f.Motivo,
-            Diagnostico = f.Diagnostico,
-            Observaciones = f.Observaciones ?? string.Empty,
-            Veterinario = f.Veterinario,
-            Tratamientos = string.Join("; ", f.Tratamientos)
-        }).ToList();
     }
 
     public int GuardarConTratamientos(Consulta consulta)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
-
-        ConsultaEntidad entidad = new()
+        consulta.Mascota = null!;
+        consulta.Veterinario = null!;
+        consulta.Motivo = consulta.Motivo.Trim();
+        consulta.Diagnostico = consulta.Diagnostico.Trim();
+        consulta.Observaciones = (consulta.Observaciones ?? string.Empty).Trim();
+        foreach (Tratamiento tratamiento in consulta.ListaTratamientos)
         {
-            IdMascota = consulta.IdMascota,
-            IdVeterinario = consulta.IdVeterinario,
-            FechaHora = consulta.FechaHora,
-            Motivo = consulta.Motivo.Trim(),
-            Diagnostico = consulta.Diagnostico.Trim(),
-            Observaciones = consulta.Observaciones.Trim(),
-            Tratamientos = consulta.ListaTratamientos.Select(t => new TratamientoEntidad
-            {
-                Medicamento = t.Medicamento.Trim(),
-                Dosis = t.Dosis.Trim(),
-                Frecuencia = t.Frecuencia.Trim(),
-                Duracion = t.Duracion.Trim(),
-                Indicaciones = t.Indicaciones.Trim()
-            }).ToList()
-        };
+            tratamiento.Medicamento = tratamiento.Medicamento.Trim();
+            tratamiento.Dosis = tratamiento.Dosis.Trim();
+            tratamiento.Frecuencia = tratamiento.Frecuencia.Trim();
+            tratamiento.Duracion = tratamiento.Duracion.Trim();
+            tratamiento.Indicaciones = (tratamiento.Indicaciones ?? string.Empty).Trim();
+        }
 
-        // SaveChanges ejecuta consulta y tratamientos en una sola transacción.
-        contexto.Consultas.Add(entidad);
+        // SaveChanges guarda la consulta y sus tratamientos en una sola transacción.
+        contexto.Consultas.Add(consulta);
         contexto.SaveChanges();
-        return entidad.IdConsulta;
+        return consulta.IdConsulta;
     }
 }

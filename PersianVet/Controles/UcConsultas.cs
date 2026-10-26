@@ -34,8 +34,7 @@ public partial class UcConsultas : UserControl
         this.mascotaServicio = mascotaServicio;
         this.veterinarioServicio = veterinarioServicio;
         tablaTratamientos.DataSource = tratamientos;
-        if (tablaTratamientos.Columns.Contains("IdTratamiento")) tablaTratamientos.Columns["IdTratamiento"].Visible = false;
-        if (tablaTratamientos.Columns.Contains("IdConsulta")) tablaTratamientos.Columns["IdConsulta"].Visible = false;
+        EstiloControles.OcultarColumnas(tablaTratamientos, "IdTratamiento", "IdConsulta");
         Load += UcConsultas_Load;
     }
 
@@ -93,17 +92,11 @@ public partial class UcConsultas : UserControl
             ListaTratamientos = tratamientos.ToList()
         };
 
-        try
+        Mensajes.EjecutarOperacion(() => consultaServicio.Guardar(consulta), () =>
         {
-            ResultadoOperacion resultado = consultaServicio.Guardar(consulta);
-            MessageBox.Show(resultado.Mensaje, "PersianVet", MessageBoxButtons.OK, resultado.Exitoso ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
-            if (resultado.Exitoso)
-            {
-                txtMotivo.Clear(); txtDiagnostico.Clear(); txtObservaciones.Clear(); tratamientos.Clear();
-                CargarHistorial();
-            }
-        }
-        catch (Exception excepcion) { Mensajes.MostrarError(excepcion); }
+            txtMotivo.Clear(); txtDiagnostico.Clear(); txtObservaciones.Clear(); tratamientos.Clear();
+            CargarHistorial();
+        });
     }
 
     private void CargarHistorial()
@@ -112,8 +105,7 @@ public partial class UcConsultas : UserControl
         try
         {
             tablaHistorial.DataSource = consultaServicio.ListarPorMascota(idMascota);
-            foreach (string columna in new[] { "IdConsulta", "IdMascota", "IdVeterinario", "ListaTratamientos" })
-                if (tablaHistorial.Columns.Contains(columna)) tablaHistorial.Columns[columna].Visible = false;
+            EstiloControles.OcultarColumnas(tablaHistorial, "IdConsulta", "IdMascota", "IdVeterinario");
         }
         catch (Exception excepcion) { Mensajes.MostrarError(excepcion); }
     }

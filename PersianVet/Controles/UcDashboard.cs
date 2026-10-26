@@ -139,7 +139,7 @@ public partial class UcDashboard : UserControl
             lblVacunasValor.Text = resumen.VacunasProximas.ToString();
             lblConsultasValor.Text = resumen.ConsultasMes.ToString();
             tablaCitas.DataSource = tareaCitas.Result;
-            OcultarColumnas();
+            EstiloControles.OcultarColumnas(tablaCitas, "IdCita", "IdMascota", "IdVeterinario");
 
             listaAlertas.DataSource = tareaAlertas.Result;
             listaAlertas.ClearSelected();
@@ -161,18 +161,6 @@ public partial class UcDashboard : UserControl
             if (ReferenceEquals(cancelacion, actual) && !IsDisposed)
             {
                 btnActualizar.Enabled = true;
-            }
-        }
-    }
-
-    private void OcultarColumnas()
-    {
-        string[] columnas = ["IdCita", "IdMascota", "IdVeterinario"];
-        foreach (string nombre in columnas)
-        {
-            if (tablaCitas.Columns.Contains(nombre))
-            {
-                tablaCitas.Columns[nombre].Visible = false;
             }
         }
     }

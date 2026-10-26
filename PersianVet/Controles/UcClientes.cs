@@ -133,25 +133,7 @@ public partial class UcClientes : UserControl
 
     private void EjecutarOperacion(Func<ResultadoOperacion> operacion)
     {
-        try
-        {
-            ResultadoOperacion resultado = operacion();
-            MessageBox.Show(
-                resultado.Mensaje,
-                "PersianVet",
-                MessageBoxButtons.OK,
-                resultado.Exitoso ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
-
-            if (resultado.Exitoso)
-            {
-                LimpiarFormulario();
-                CargarClientes();
-            }
-        }
-        catch (Exception excepcion)
-        {
-            Mensajes.MostrarError(excepcion);
-        }
+        Mensajes.EjecutarOperacion(operacion, () => { LimpiarFormulario(); CargarClientes(); });
     }
 
     private void CargarClientes()
@@ -160,7 +142,7 @@ public partial class UcClientes : UserControl
         {
             tablaClientes.DataSource = clienteServicio.Listar(txtBuscar.Text, !chkMostrarInactivos.Checked);
             if (tablaClientes.Columns.Contains("IdCliente")) tablaClientes.Columns["IdCliente"].HeaderText = "ID";
-            if (tablaClientes.Columns.Contains("NombreCompleto")) tablaClientes.Columns["NombreCompleto"].Visible = false;
+            EstiloControles.OcultarColumnas(tablaClientes, "NombreCompleto");
         }
         catch (Exception excepcion)
         {

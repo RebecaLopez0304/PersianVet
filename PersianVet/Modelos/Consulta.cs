@@ -1,7 +1,9 @@
+using System.ComponentModel;
+
 namespace PersianVet.Modelos;
 
 /// <summary>
-/// Guarda los datos médicos registrados durante una consulta.
+/// Guarda los datos médicos registrados durante una consulta (tabla Consultas).
 /// </summary>
 public class Consulta
 {
@@ -12,8 +14,19 @@ public class Consulta
     public string Motivo { get; set; } = string.Empty;
     public string Diagnostico { get; set; } = string.Empty;
     public string Observaciones { get; set; } = string.Empty;
-    public string Veterinario { get; set; } = string.Empty;
-    public string Tratamientos { get; set; } = string.Empty;
-    public List<Tratamiento> ListaTratamientos { get; set; } = [];
-}
 
+    // Propiedades calculadas a partir de los datos cargados con Include.
+    [DisplayName("Veterinario")]
+    public string NombreVeterinario => Veterinario == null ? string.Empty : Veterinario.NombreCompleto;
+
+    public string Tratamientos => string.Join("; ", ListaTratamientos.Select(t => $"{t.Medicamento} - {t.Dosis}"));
+
+    [Browsable(false)]
+    public List<Tratamiento> ListaTratamientos { get; set; } = [];
+
+    [Browsable(false)]
+    public Mascota Mascota { get; set; } = null!;
+
+    [Browsable(false)]
+    public Veterinario Veterinario { get; set; } = null!;
+}

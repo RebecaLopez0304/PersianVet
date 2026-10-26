@@ -50,21 +50,11 @@ public class DashboardDatos : IDashboardDatos
         await using PersianVetContext contexto = conexionBD.CrearContexto();
 
         return await contexto.Citas.AsNoTracking()
+            .Include(c => c.Mascota).ThenInclude(m => m.Cliente)
+            .Include(c => c.Veterinario)
             .Where(c => c.FechaHora >= ahora && c.Estado != "Cancelada")
             .OrderBy(c => c.FechaHora)
             .Take(8)
-            .Select(c => new Cita
-            {
-                IdCita = c.IdCita,
-                IdMascota = c.IdMascota,
-                IdVeterinario = c.IdVeterinario,
-                FechaHora = c.FechaHora,
-                Motivo = c.Motivo,
-                Estado = c.Estado,
-                Mascota = c.Mascota.Nombre,
-                Cliente = c.Mascota.Cliente.Nombres + " " + c.Mascota.Cliente.Apellidos,
-                Veterinario = c.Veterinario.Nombres + " " + c.Veterinario.Apellidos
-            })
             .ToListAsync(cancelacion);
     }
 

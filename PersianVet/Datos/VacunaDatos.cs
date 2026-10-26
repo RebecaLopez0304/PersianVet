@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using PersianVet.Entidades;
 using PersianVet.Interfaces;
 using PersianVet.Modelos;
 
@@ -24,35 +23,23 @@ public class VacunaDatos : IVacunaDatos
         using PersianVetContext contexto = conexionBD.CrearContexto();
 
         return contexto.Vacunas.AsNoTracking()
+            .Include(v => v.Mascota)
             .Where(v => (idMascota == null || v.IdMascota == idMascota)
                 && (!soloProximas || (v.ProximaDosis >= hoy && v.ProximaDosis <= limite)))
             .OrderByDescending(v => v.FechaAplicacion)
-            .Select(v => new Vacuna
-            {
-                IdVacuna = v.IdVacuna,
-                IdMascota = v.IdMascota,
-                Mascota = v.Mascota.Nombre,
-                NombreVacuna = v.NombreVacuna,
-                FechaAplicacion = v.FechaAplicacion,
-                ProximaDosis = v.ProximaDosis,
-                Lote = v.Lote
-            })
             .ToList();
     }
 
     public int Guardar(Vacuna vacuna)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
-        VacunaEntidad entidad = new()
-        {
-            IdMascota = vacuna.IdMascota,
-            NombreVacuna = vacuna.NombreVacuna.Trim(),
-            FechaAplicacion = vacuna.FechaAplicacion.Date,
-            ProximaDosis = vacuna.ProximaDosis?.Date,
-            Lote = vacuna.Lote.Trim()
-        };
-        contexto.Vacunas.Add(entidad);
+        vacuna.Mascota = null!;
+        vacuna.NombreVacuna = vacuna.NombreVacuna.Trim();
+        vacuna.FechaAplicacion = vacuna.FechaAplicacion.Date;
+        vacuna.ProximaDosis = vacuna.ProximaDosis?.Date;
+        vacuna.Lote = vacuna.Lote.Trim();
+        contexto.Vacunas.Add(vacuna);
         contexto.SaveChanges();
-        return entidad.IdVacuna;
+        return vacuna.IdVacuna;
     }
 }

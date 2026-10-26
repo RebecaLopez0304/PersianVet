@@ -7,7 +7,7 @@
 
 ## Entity Framework Core
 - Paquete: `Microsoft.EntityFrameworkCore.SqlServer` 8.0.11.
-- `Datos/PersianVetContext.cs`: DbContext con la configuración Fluent API de entidades y relaciones (`Entidades/`).
+- `Datos/PersianVetContext.cs`: DbContext con la configuración Fluent API. Las clases de `Modelos/` son también las entidades (una clase por tabla); las relaciones se cargan con `Include`.
 - Las clases `*Datos` conservan sus interfaces; ahora usan LINQ sobre un contexto de vida corta (`ConexionBD.CrearContexto()`).
 - `Datos/ReporteDatos.cs`: consultas LINQ de agregación para los reportes.
 

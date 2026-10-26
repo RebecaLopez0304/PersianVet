@@ -154,21 +154,7 @@ public partial class UcMascotas : UserControl
 
     private void Ejecutar(Func<ResultadoOperacion> operacion)
     {
-        try
-        {
-            ResultadoOperacion resultado = operacion();
-            MessageBox.Show(resultado.Mensaje, "PersianVet", MessageBoxButtons.OK,
-                resultado.Exitoso ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
-            if (resultado.Exitoso)
-            {
-                LimpiarFormulario();
-                CargarMascotas();
-            }
-        }
-        catch (Exception excepcion)
-        {
-            Mensajes.MostrarError(excepcion);
-        }
+        Mensajes.EjecutarOperacion(operacion, () => { LimpiarFormulario(); CargarMascotas(); });
     }
 
     private void CargarPropietarios()
@@ -184,8 +170,7 @@ public partial class UcMascotas : UserControl
         try
         {
             tablaMascotas.DataSource = mascotaServicio.Listar(txtBuscar.Text, !chkMostrarInactivas.Checked);
-            if (tablaMascotas.Columns.Contains("IdCliente")) tablaMascotas.Columns["IdCliente"].Visible = false;
-            if (tablaMascotas.Columns.Contains("Observaciones")) tablaMascotas.Columns["Observaciones"].Visible = false;
+            EstiloControles.OcultarColumnas(tablaMascotas, "IdCliente", "Observaciones");
         }
         catch (Exception excepcion)
         {
@@ -210,7 +195,7 @@ public partial class UcMascotas : UserControl
 
     private static Mascota CopiarMascota(Mascota mascota) => new()
     {
-        IdMascota = mascota.IdMascota, IdCliente = mascota.IdCliente, Propietario = mascota.Propietario,
+        IdMascota = mascota.IdMascota, IdCliente = mascota.IdCliente,
         Nombre = mascota.Nombre, Especie = mascota.Especie, Raza = mascota.Raza, Sexo = mascota.Sexo,
         FechaNacimiento = mascota.FechaNacimiento, Color = mascota.Color, Peso = mascota.Peso,
         Observaciones = mascota.Observaciones, Activa = mascota.Activa

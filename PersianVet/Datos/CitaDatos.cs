@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using PersianVet.Entidades;
 using PersianVet.Interfaces;
 using PersianVet.Modelos;
 
@@ -20,7 +19,11 @@ public class CitaDatos : ICitaDatos
     public List<Cita> Listar(DateTime? fecha = null)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
-        IQueryable<CitaEntidad> consulta = contexto.Citas.AsNoTracking();
+
+        // Include trae la mascota, su dueño y el veterinario para mostrar sus nombres.
+        IQueryable<Cita> consulta = contexto.Citas.AsNoTracking()
+            .Include(c => c.Mascota).ThenInclude(m => m.Cliente)
+            .Include(c => c.Veterinario);
 
         if (fecha.HasValue)
         {
@@ -29,21 +32,7 @@ public class CitaDatos : ICitaDatos
             consulta = consulta.Where(c => c.FechaHora >= inicio && c.FechaHora < fin);
         }
 
-        return consulta
-            .OrderBy(c => c.FechaHora)
-            .Select(c => new Cita
-            {
-                IdCita = c.IdCita,
-                IdMascota = c.IdMascota,
-                IdVeterinario = c.IdVeterinario,
-                FechaHora = c.FechaHora,
-                Motivo = c.Motivo,
-                Estado = c.Estado,
-                Mascota = c.Mascota.Nombre,
-                Cliente = c.Mascota.Cliente.Nombres + " " + c.Mascota.Cliente.Apellidos,
-                Veterinario = c.Veterinario.Nombres + " " + c.Veterinario.Apellidos
-            })
-            .ToList();
+        return consulta.OrderBy(c => c.FechaHora).ToList();
     }
 
     public bool ExisteCruce(Cita cita)
@@ -58,23 +47,17 @@ public class CitaDatos : ICitaDatos
     public int Guardar(Cita cita)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
-        CitaEntidad entidad = new();
-        AsignarCampos(entidad, cita);
-        contexto.Citas.Add(entidad);
+        Limpiar(cita);
+        contexto.Citas.Add(cita);
         contexto.SaveChanges();
-        return entidad.IdCita;
+        return cita.IdCita;
     }
 
     public void Actualizar(Cita cita)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
-        CitaEntidad? entidad = contexto.Citas.Find(cita.IdCita);
-        if (entidad is null)
-        {
-            return;
-        }
-
-        AsignarCampos(entidad, cita);
+        Limpiar(cita);
+        contexto.Citas.Update(cita);
         contexto.SaveChanges();
     }
 
@@ -85,12 +68,11 @@ public class CitaDatos : ICitaDatos
             .ExecuteUpdate(c => c.SetProperty(x => x.Estado, "Cancelada"));
     }
 
-    private static void AsignarCampos(CitaEntidad entidad, Cita cita)
+    private static void Limpiar(Cita cita)
     {
-        entidad.IdMascota = cita.IdMascota;
-        entidad.IdVeterinario = cita.IdVeterinario;
-        entidad.FechaHora = cita.FechaHora;
-        entidad.Motivo = cita.Motivo.Trim();
-        entidad.Estado = cita.Estado;
+        // Se guarda solo la cita; la mascota y el veterinario relacionados no se modifican.
+        cita.Mascota = null!;
+        cita.Veterinario = null!;
+        cita.Motivo = cita.Motivo.Trim();
     }
 }

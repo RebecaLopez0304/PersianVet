@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using PersianVet.Entidades;
 using PersianVet.Interfaces;
 using PersianVet.Modelos;
 
@@ -29,38 +28,26 @@ public class VeterinarioDatos : IVeterinarioDatos
                     || v.Apellidos.Contains(texto)
                     || v.Especialidad.Contains(texto)))
             .OrderByDescending(v => v.IdVeterinario)
-            .Select(v => new Veterinario
-            {
-                IdVeterinario = v.IdVeterinario,
-                Nombres = v.Nombres,
-                Apellidos = v.Apellidos,
-                Especialidad = v.Especialidad,
-                Telefono = v.Telefono,
-                Activo = v.Activo
-            })
             .ToList();
     }
 
     public int Guardar(Veterinario veterinario)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
-        VeterinarioEntidad entidad = new() { Activo = true };
-        AsignarCampos(entidad, veterinario);
-        contexto.Veterinarios.Add(entidad);
+        Limpiar(veterinario);
+        veterinario.Activo = true;
+        contexto.Veterinarios.Add(veterinario);
         contexto.SaveChanges();
-        return entidad.IdVeterinario;
+        return veterinario.IdVeterinario;
     }
 
     public void Actualizar(Veterinario veterinario)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
-        VeterinarioEntidad? entidad = contexto.Veterinarios.Find(veterinario.IdVeterinario);
-        if (entidad is null)
-        {
-            return;
-        }
-
-        AsignarCampos(entidad, veterinario);
+        Limpiar(veterinario);
+        contexto.Veterinarios.Update(veterinario);
+        // Modificar no cambia el estado activo/desactivado.
+        contexto.Entry(veterinario).Property(v => v.Activo).IsModified = false;
         contexto.SaveChanges();
     }
 
@@ -71,11 +58,11 @@ public class VeterinarioDatos : IVeterinarioDatos
             .ExecuteUpdate(v => v.SetProperty(x => x.Activo, false));
     }
 
-    private static void AsignarCampos(VeterinarioEntidad entidad, Veterinario veterinario)
+    private static void Limpiar(Veterinario veterinario)
     {
-        entidad.Nombres = veterinario.Nombres.Trim();
-        entidad.Apellidos = veterinario.Apellidos.Trim();
-        entidad.Especialidad = veterinario.Especialidad.Trim();
-        entidad.Telefono = veterinario.Telefono.Trim();
+        veterinario.Nombres = veterinario.Nombres.Trim();
+        veterinario.Apellidos = veterinario.Apellidos.Trim();
+        veterinario.Especialidad = veterinario.Especialidad.Trim();
+        veterinario.Telefono = veterinario.Telefono.Trim();
     }
 }

@@ -41,10 +41,7 @@ public partial class FrmBusquedaGlobal : Form
         {
             List<ResultadoBusqueda> resultados = await busquedaServicio.BuscarAsync(texto, cancelacion.Token);
             tablaResultados.DataSource = resultados;
-            if (tablaResultados.Columns.Contains("Id"))
-            {
-                tablaResultados.Columns["Id"].Visible = false;
-            }
+            EstiloControles.OcultarColumnas(tablaResultados, "Id");
 
             lblEstado.Text = resultados.Count == 0
                 ? "No se encontraron coincidencias."

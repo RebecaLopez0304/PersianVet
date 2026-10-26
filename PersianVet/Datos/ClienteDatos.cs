@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using PersianVet.Entidades;
 using PersianVet.Interfaces;
 using PersianVet.Modelos;
 
@@ -30,40 +29,26 @@ public class ClienteDatos : IClienteDatos
                     || c.Telefono.Contains(texto)
                     || c.Correo.Contains(texto)))
             .OrderByDescending(c => c.IdCliente)
-            .Select(c => new Cliente
-            {
-                IdCliente = c.IdCliente,
-                Nombres = c.Nombres,
-                Apellidos = c.Apellidos,
-                Telefono = c.Telefono,
-                Direccion = c.Direccion,
-                Correo = c.Correo,
-                FechaRegistro = c.FechaRegistro,
-                Activo = c.Activo
-            })
             .ToList();
     }
 
     public int Guardar(Cliente cliente)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
-        ClienteEntidad entidad = new() { Activo = true };
-        AsignarCampos(entidad, cliente);
-        contexto.Clientes.Add(entidad);
+        Limpiar(cliente);
+        cliente.Activo = true;
+        contexto.Clientes.Add(cliente);
         contexto.SaveChanges();
-        return entidad.IdCliente;
+        return cliente.IdCliente;
     }
 
     public void Actualizar(Cliente cliente)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
-        ClienteEntidad? entidad = contexto.Clientes.Find(cliente.IdCliente);
-        if (entidad is null)
-        {
-            return;
-        }
-
-        AsignarCampos(entidad, cliente);
+        Limpiar(cliente);
+        contexto.Clientes.Update(cliente);
+        // Modificar no cambia el estado activo/desactivado.
+        contexto.Entry(cliente).Property(c => c.Activo).IsModified = false;
         contexto.SaveChanges();
     }
 
@@ -74,13 +59,13 @@ public class ClienteDatos : IClienteDatos
             .ExecuteUpdate(c => c.SetProperty(x => x.Activo, false));
     }
 
-    private static void AsignarCampos(ClienteEntidad entidad, Cliente cliente)
+    private static void Limpiar(Cliente cliente)
     {
-        entidad.Nombres = cliente.Nombres.Trim();
-        entidad.Apellidos = cliente.Apellidos.Trim();
-        entidad.Telefono = cliente.Telefono.Trim();
-        entidad.Direccion = cliente.Direccion.Trim();
-        entidad.Correo = cliente.Correo.Trim();
-        entidad.FechaRegistro = cliente.FechaRegistro.Date;
+        cliente.Nombres = cliente.Nombres.Trim();
+        cliente.Apellidos = cliente.Apellidos.Trim();
+        cliente.Telefono = cliente.Telefono.Trim();
+        cliente.Direccion = cliente.Direccion.Trim();
+        cliente.Correo = cliente.Correo.Trim();
+        cliente.FechaRegistro = cliente.FechaRegistro.Date;
     }
 }

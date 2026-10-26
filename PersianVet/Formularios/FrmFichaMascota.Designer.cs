@@ -5,8 +5,12 @@ partial class FrmFichaMascota
     private Label lblNombre = null!;
     private Label lblResumen = null!;
     private TabControl pestanas = null!;
-    private TabPage paginaConsultas = null!, paginaVacunas = null!, paginaCitas = null!;
-    private DataGridView tablaConsultas = null!, tablaVacunas = null!, tablaCitas = null!;
+    private TabPage paginaConsultas = null!;
+    private TabPage paginaVacunas = null!;
+    private TabPage paginaCitas = null!;
+    private DataGridView tablaConsultas = null!;
+    private DataGridView tablaVacunas = null!;
+    private DataGridView tablaCitas = null!;
     private Label lblEstado = null!;
     private Button btnCerrar = null!;
 

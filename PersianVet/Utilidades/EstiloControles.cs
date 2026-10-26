@@ -63,6 +63,20 @@ public static class EstiloControles
     }
 
     /// <summary>
+    /// Oculta las columnas indicadas (por ejemplo los Id) si la tabla las tiene.
+    /// </summary>
+    public static void OcultarColumnas(DataGridView tabla, params string[] columnas)
+    {
+        foreach (string nombre in columnas)
+        {
+            if (tabla.Columns.Contains(nombre))
+            {
+                tabla.Columns[nombre].Visible = false;
+            }
+        }
+    }
+
+    /// <summary>
     /// Aplica el estilo general a los campos de un formulario o módulo.
     /// </summary>
     /// <param name="contenedor">Control que contiene los campos que se desean preparar.</param>
