@@ -39,17 +39,20 @@ public class GraficoBarras : Control
         using SolidBrush pincelTitulo = new(Tema.AzulOscuro);
         using SolidBrush pincelTexto = new(Tema.GrisOscuro);
         using SolidBrush pincelBarra = new(Tema.Naranja);
-        g.DrawString(Titulo, fuenteTitulo, pincelTitulo, 10, 8);
+        // Las medidas se calculan a partir de la letra para verse igual con cualquier escala de Windows.
+        int margen = LogicalToDeviceUnits(10);
+        g.DrawString(Titulo, fuenteTitulo, pincelTitulo, margen, margen);
 
+        int arriba = margen + fuenteTitulo.Height + Font.Height + margen;
         if (puntos.Count == 0)
         {
-            g.DrawString("Sin datos para mostrar", Font, pincelTexto, 10, 40);
+            g.DrawString("Sin datos para mostrar", Font, pincelTexto, margen, arriba);
             return;
         }
 
         // Zona de dibujo: debajo del título y por encima de las etiquetas.
-        int alturaEtiqueta = 20;
-        Rectangle zona = new(10, 56, Width - 20, Height - 56 - alturaEtiqueta);
+        int alturaEtiqueta = Font.Height + LogicalToDeviceUnits(4);
+        Rectangle zona = new(margen, arriba, Width - 2 * margen, Math.Max(1, Height - arriba - alturaEtiqueta));
         int maximo = Math.Max(1, puntos.Max(p => p.Valor));
         float anchoColumna = zona.Width / (float)puntos.Count;
 
@@ -62,7 +65,7 @@ public class GraficoBarras : Control
             float y = zona.Bottom - alto;
 
             g.FillRectangle(pincelBarra, x, y, ancho, alto);
-            g.DrawString(puntos[i].Valor.ToString(), Font, pincelTexto, x + ancho / 2, y - 18, centrado);
+            g.DrawString(puntos[i].Valor.ToString(), Font, pincelTexto, x + ancho / 2, y - Font.Height - 2, centrado);
             g.DrawString(puntos[i].Etiqueta, Font, pincelTexto, x + ancho / 2, zona.Bottom + 3, centrado);
         }
 

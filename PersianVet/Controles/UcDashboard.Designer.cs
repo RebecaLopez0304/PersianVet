@@ -159,6 +159,8 @@ partial class UcDashboard
         Controls.Add(raiz);
         BackColor = Color.FromArgb(248, 250, 252);
         Font = new Font("Segoe UI", 9F);
+        AutoScaleDimensions = new SizeF(96F, 96F);
+        AutoScaleMode = AutoScaleMode.Dpi;
         Size = new Size(940, 592);
         ((System.ComponentModel.ISupportInitialize)tablaCitas).EndInit();
         ResumeLayout(false);

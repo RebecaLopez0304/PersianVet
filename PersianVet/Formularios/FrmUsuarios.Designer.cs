@@ -40,7 +40,7 @@ partial class FrmUsuarios
         txtNuevaClave = new TextBox(); txtNuevaClave.Font = new Font("Segoe UI", 10F); txtNuevaClave.Location = new Point(42, 132); txtNuevaClave.Size = new Size(325, 25);
         txtConfirmarNueva = new TextBox(); txtConfirmarNueva.Font = new Font("Segoe UI", 10F); txtConfirmarNueva.Location = new Point(42, 196); txtConfirmarNueva.Size = new Size(325, 25);
         cboRol = new ComboBox(); cboRol.DropDownStyle = ComboBoxStyle.DropDownList; cboRol.Location = new Point(42, 260); cboRol.Size = new Size(325, 23);
-        cboRol.Items.AddRange(new object[] { "Administrador", "Recepcionista" });
+        cboRol.Items.AddRange(new object[] { "Administrador", "Recepcionista", "Veterinario" });
         cboRol.SelectedIndex = 1;
         btnCrear = new Button(); btnCrear.Location = new Point(42, 320); btnCrear.Size = new Size(325, 40); btnCrear.Text = "Crear usuario";
         btnCrear.BackColor = Color.FromArgb(242, 140, 40); btnCrear.FlatStyle = FlatStyle.Flat; btnCrear.ForeColor = Color.White; btnCrear.FlatAppearance.BorderSize = 0;

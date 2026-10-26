@@ -63,6 +63,11 @@ public partial class UcReportes : UserControl
         try
         {
             var resultado = await reporteServicio.GenerarAsync(dtpDesde.Value, dtpHasta.Value, actual.Token);
+            if (IsDisposed)
+            {
+                return;
+            }
+
             veterinarios = resultado.Veterinarios;
             especies = resultado.Especies;
 
@@ -83,7 +88,7 @@ public partial class UcReportes : UserControl
         {
             lblEstado.Text = excepcion.Message;
         }
-        catch (Exception excepcion)
+        catch (Exception excepcion) when (!IsDisposed)
         {
             lblEstado.Text = "No fue posible generar el reporte.";
             Mensajes.MostrarError(excepcion);

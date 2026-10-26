@@ -28,15 +28,15 @@ partial class UcVacunas
         dtpAplicacion.Format = DateTimePickerFormat.Short; dtpAplicacion.Location = new Point(520, 145); dtpAplicacion.Size = new Size(145, 23); dtpAplicacion.MaxDate = DateTime.Today;
         txtLote.Font = new Font("Segoe UI", 10F); txtLote.Location = new Point(685, 145); txtLote.Size = new Size(160, 25);
         chkProximaDosis.AutoSize = true; chkProximaDosis.Location = new Point(30, 215); chkProximaDosis.Text = "Registrar próxima dosis";
-        dtpProximaDosis.Enabled = false; dtpProximaDosis.Format = DateTimePickerFormat.Short; dtpProximaDosis.Location = new Point(195, 210); dtpProximaDosis.Size = new Size(145, 23); dtpProximaDosis.MinDate = DateTime.Today;
-        btnGuardar.Location = new Point(360, 205); btnGuardar.Size = new Size(155, 38); btnGuardar.Text = "Guardar vacuna";
-        chkFiltrarMascota.AutoSize = true; chkFiltrarMascota.Location = new Point(555, 290); chkFiltrarMascota.Text = "Solo mascota seleccionada";
-        chkSoloProximas.AutoSize = true; chkSoloProximas.Location = new Point(750, 290); chkSoloProximas.Text = "Próximas dosis";
-        btnConsultar.Location = new Point(885, 278); btnConsultar.Size = new Size(120, 38); btnConsultar.Text = "Consultar";
-        tablaVacunas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right; tablaVacunas.Location = new Point(30, 330); tablaVacunas.Size = new Size(975, 300);
+        dtpProximaDosis.Enabled = false; dtpProximaDosis.Format = DateTimePickerFormat.Short; dtpProximaDosis.Location = new Point(205, 210); dtpProximaDosis.Size = new Size(145, 23); dtpProximaDosis.MinDate = DateTime.Today;
+        btnGuardar.Location = new Point(370, 205); btnGuardar.Size = new Size(155, 38); btnGuardar.Text = "Guardar vacuna";
+        chkFiltrarMascota.AutoSize = true; chkFiltrarMascota.Location = new Point(430, 290); chkFiltrarMascota.Text = "Solo mascota seleccionada";
+        chkSoloProximas.AutoSize = true; chkSoloProximas.Location = new Point(625, 290); chkSoloProximas.Text = "Próximas dosis";
+        btnConsultar.Location = new Point(792, 278); btnConsultar.Size = new Size(120, 38); btnConsultar.Text = "Consultar";
+        tablaVacunas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right; tablaVacunas.Location = new Point(30, 330); tablaVacunas.Size = new Size(882, 242);
         chkProximaDosis.CheckedChanged += CambiarFiltro; btnGuardar.Click += BtnGuardar_Click; chkFiltrarMascota.CheckedChanged += CambiarFiltro; chkSoloProximas.CheckedChanged += CambiarFiltro; btnConsultar.Click += BtnConsultar_Click;
         Controls.AddRange(new Control[] { lblTitulo, lblDescripcion, lblMascota, lblVacuna, lblAplicacion, lblLote, lblHistorial, cboMascota, txtNombreVacuna, dtpAplicacion, txtLote, chkProximaDosis, dtpProximaDosis, btnGuardar, chkFiltrarMascota, chkSoloProximas, btnConsultar, tablaVacunas });
-        BackColor = Color.FromArgb(245, 247, 250); Font = new Font("Segoe UI", 9F); Name = "UcVacunas"; Size = new Size(1040, 680);
+        BackColor = Color.FromArgb(245, 247, 250); Font = new Font("Segoe UI", 9F); Name = "UcVacunas"; AutoScaleDimensions = new SizeF(96F, 96F); AutoScaleMode = AutoScaleMode.Dpi; Size = new Size(940, 592);
         ((System.ComponentModel.ISupportInitialize)tablaVacunas).EndInit(); ResumeLayout(false); PerformLayout();
     }
 

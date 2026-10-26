@@ -45,6 +45,23 @@ public partial class UcDashboard : UserControl
         await CargarDatosAsync();
     }
 
+    /// <summary>
+    /// Oculta las acciones y desactiva las tarjetas a las que el rol actual no tiene acceso.
+    /// </summary>
+    public void AplicarPermisos(Func<string, bool> permitido)
+    {
+        btnNuevaCita.Visible = permitido("Citas");
+        btnCalendario.Visible = permitido("Calendario");
+        btnNuevoCliente.Visible = permitido("NuevoCliente");
+        btnNuevaMascota.Visible = permitido("NuevaMascota");
+        btnNuevaConsulta.Visible = permitido("Consultas");
+        btnNuevaVacuna.Visible = permitido("Vacunas");
+        tarjetaMascotas.Enabled = permitido("Mascotas");
+        tarjetaCitas.Enabled = permitido("Citas");
+        tarjetaVacunas.Enabled = permitido("Vacunas");
+        tarjetaConsultas.Enabled = permitido("Consultas");
+    }
+
     private void Navegar(string destino)
     {
         NavegarSolicitado?.Invoke(destino);
@@ -110,6 +127,12 @@ public partial class UcDashboard : UserControl
             Task<List<PuntoGrafico>> tareaGrafico = dashboardServicio.ContarCitasProximosDiasAsync(7, actual.Token);
             await Task.WhenAll(tareaResumen, tareaCitas, tareaAlertas, tareaGrafico);
 
+            // Si el usuario ya cambió de módulo, no hay nada que actualizar.
+            if (IsDisposed || actual.IsCancellationRequested)
+            {
+                return;
+            }
+
             ResumenDashboard resumen = tareaResumen.Result;
             lblMascotasValor.Text = resumen.MascotasRegistradas.ToString();
             lblCitasValor.Text = resumen.CitasHoy.ToString();
@@ -119,6 +142,7 @@ public partial class UcDashboard : UserControl
             OcultarColumnas();
 
             listaAlertas.DataSource = tareaAlertas.Result;
+            listaAlertas.ClearSelected();
             graficoCitas.AsignarDatos(tareaGrafico.Result);
             lblEstado.Text = "La información está actualizada.";
         }
@@ -127,7 +151,7 @@ public partial class UcDashboard : UserControl
             // Otra carga o un cambio de módulo reemplazó esta operación.
             return;
         }
-        catch (Exception excepcion)
+        catch (Exception excepcion) when (!IsDisposed && !actual.IsCancellationRequested)
         {
             lblEstado.Text = "No fue posible cargar el resumen.";
             Mensajes.MostrarError(excepcion);

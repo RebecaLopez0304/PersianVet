@@ -21,14 +21,16 @@ partial class UcClientes
 
     private void InitializeComponent()
     {
+        // El tamaño se fija antes de agregar controles para que los anclajes se calculen bien.
+        Size = new Size(940, 592);
         lblTitulo = new Label();
         lblDescripcion = new Label();
         lblBuscar = new Label();
         lblTitulo.AutoSize = true; lblTitulo.Font = new Font("Segoe UI", 24F, FontStyle.Bold); lblTitulo.ForeColor = Color.FromArgb(8, 52, 90); lblTitulo.Location = new Point(28, 20); lblTitulo.Text = "Gestión de clientes";
         lblDescripcion.AutoSize = true; lblDescripcion.ForeColor = Color.FromArgb(104, 115, 125); lblDescripcion.Location = new Point(31, 65); lblDescripcion.Text = "Administra la información de los clientes de la clínica";
-        lblBuscar.AutoSize = true; lblBuscar.Font = new Font("Segoe UI", 9F, FontStyle.Bold); lblBuscar.Location = new Point(765, 10); lblBuscar.Text = "Buscar";
+        lblBuscar.AutoSize = true; lblBuscar.Font = new Font("Segoe UI", 9F, FontStyle.Bold); lblBuscar.Location = new Point(672, 10); lblBuscar.Anchor = AnchorStyles.Top | AnchorStyles.Right; lblBuscar.Text = "Buscar";
         txtBuscar = new TextBox();
-        txtBuscar.Font = new Font("Segoe UI", 10F); txtBuscar.Location = new Point(765, 30); txtBuscar.Size = new Size(240, 30);
+        txtBuscar.Font = new Font("Segoe UI", 10F); txtBuscar.Location = new Point(672, 30); txtBuscar.Anchor = AnchorStyles.Top | AnchorStyles.Right; txtBuscar.Size = new Size(240, 30);
         txtBuscar.PlaceholderText = "Buscar cliente...";
         txtNombres = new TextBox();
         txtNombres.Font = new Font("Segoe UI", 10F); txtNombres.Location = new Point(30, 140); txtNombres.Size = new Size(245, 30);
@@ -51,7 +53,7 @@ partial class UcClientes
         chkMostrarInactivos = new CheckBox();
         chkMostrarInactivos.AutoSize = true; chkMostrarInactivos.Location = new Point(430, 111); chkMostrarInactivos.Text = "Mostrar desactivados";
         tablaClientes = new DataGridView();
-        tablaClientes.Location = new Point(30, 160); tablaClientes.Size = new Size(975, 470); tablaClientes.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        tablaClientes.Location = new Point(30, 160); tablaClientes.Size = new Size(882, 412); tablaClientes.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         tablaClientes.AllowUserToAddRows = false; tablaClientes.AllowUserToDeleteRows = false; tablaClientes.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; tablaClientes.BackgroundColor = Color.White; tablaClientes.ReadOnly = true; tablaClientes.RowHeadersVisible = false; tablaClientes.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         txtBuscar.TextChanged += TxtBuscar_TextChanged;
         btnNuevo.Click += BtnNuevo_Click;
@@ -70,7 +72,7 @@ partial class UcClientes
         Controls.Add(tablaClientes);
         BackColor = Color.FromArgb(248, 250, 252);
         Font = new Font("Segoe UI", 9F);
-        Size = new Size(1040, 680);
+        AutoScaleDimensions = new SizeF(96F, 96F); AutoScaleMode = AutoScaleMode.Dpi;
     }
 
 }

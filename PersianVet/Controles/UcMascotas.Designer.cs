@@ -23,11 +23,13 @@ partial class UcMascotas
 
     private void InitializeComponent()
     {
+        // El tamaño se fija antes de agregar controles para que los anclajes se calculen bien.
+        Size = new Size(940, 592);
         lblTitulo = new Label(); lblDescripcion = new Label(); lblBuscar = new Label();
         lblTitulo.AutoSize = true; lblTitulo.Font = new Font("Segoe UI", 24F, FontStyle.Bold); lblTitulo.ForeColor = Color.FromArgb(8, 52, 90); lblTitulo.Location = new Point(28, 18); lblTitulo.Text = "Registro de mascotas";
         lblDescripcion.AutoSize = true; lblDescripcion.ForeColor = Color.FromArgb(104, 115, 125); lblDescripcion.Location = new Point(31, 62); lblDescripcion.Text = "Administra las mascotas registradas en la clínica";
-        lblBuscar.AutoSize = true; lblBuscar.Font = new Font("Segoe UI", 9F, FontStyle.Bold); lblBuscar.Location = new Point(765, 7); lblBuscar.Text = "Buscar";
-        txtBuscar = new TextBox(); txtBuscar.Font = new Font("Segoe UI", 10F); txtBuscar.Location = new Point(765, 27); txtBuscar.Size = new Size(240, 30);
+        lblBuscar.AutoSize = true; lblBuscar.Font = new Font("Segoe UI", 9F, FontStyle.Bold); lblBuscar.Location = new Point(672, 7); lblBuscar.Anchor = AnchorStyles.Top | AnchorStyles.Right; lblBuscar.Text = "Buscar";
+        txtBuscar = new TextBox(); txtBuscar.Font = new Font("Segoe UI", 10F); txtBuscar.Location = new Point(672, 27); txtBuscar.Anchor = AnchorStyles.Top | AnchorStyles.Right; txtBuscar.Size = new Size(240, 30);
         txtBuscar.PlaceholderText = "Buscar mascota...";
         cboPropietario = new ComboBox(); cboPropietario.DropDownStyle = ComboBoxStyle.DropDownList; cboPropietario.Location = new Point(30, 122); cboPropietario.Size = new Size(310, 30);
         txtNombre = new TextBox(); txtNombre.Font = new Font("Segoe UI", 10F); txtNombre.Location = new Point(360, 122); txtNombre.Size = new Size(180, 30);
@@ -50,7 +52,7 @@ partial class UcMascotas
         chkMostrarInactivas = new CheckBox();
         chkMostrarInactivas.AutoSize = true; chkMostrarInactivas.Location = new Point(545, 111); chkMostrarInactivas.Text = "Mostrar desactivadas";
         tablaMascotas = new DataGridView();
-        tablaMascotas.Location = new Point(30, 160); tablaMascotas.Size = new Size(975, 470); tablaMascotas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        tablaMascotas.Location = new Point(30, 160); tablaMascotas.Size = new Size(882, 412); tablaMascotas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         tablaMascotas.AllowUserToAddRows = false; tablaMascotas.AllowUserToDeleteRows = false; tablaMascotas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; tablaMascotas.BackgroundColor = Color.White; tablaMascotas.ReadOnly = true; tablaMascotas.RowHeadersVisible = false; tablaMascotas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         txtBuscar.TextChanged += TxtBuscar_TextChanged;
         btnNuevo.Click += BtnNuevo_Click;
@@ -65,7 +67,7 @@ partial class UcMascotas
             btnNuevo, btnEditar, btnDesactivar, btnFicha, chkMostrarInactivas, tablaMascotas });
         BackColor = Color.FromArgb(248, 250, 252);
         Font = new Font("Segoe UI", 9F);
-        Size = new Size(1040, 680);
+        AutoScaleDimensions = new SizeF(96F, 96F); AutoScaleMode = AutoScaleMode.Dpi;
     }
 
 }

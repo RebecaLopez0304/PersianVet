@@ -26,11 +26,11 @@ partial class FrmCalendarioCitas
         lblTitulo.ForeColor = Color.FromArgb(8, 52, 90);
         lblTitulo.Location = new Point(20, 12);
         lblTitulo.Text = "Calendario de citas";
-        lblAyuda.Location = new Point(24, 108);
+        lblAyuda.Location = new Point(24, 276);
         lblAyuda.Size = new Size(228, 60);
         lblAyuda.ForeColor = Color.FromArgb(94, 103, 112);
         lblAyuda.Text = "Los días en negrita tienen citas. Seleccione un día para ver el detalle.";
-        calendario.Location = new Point(24, 176);
+        calendario.Location = new Point(24, 100);
         calendario.MaxSelectionCount = 1;
         calendario.DateSelected += Calendario_DateSelected;
         lblDia.AutoSize = true;

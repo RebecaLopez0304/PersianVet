@@ -95,7 +95,6 @@ partial class UcReportes
         lblEspecies.ForeColor = Color.FromArgb(8, 52, 90);
         lblEspecies.Location = new Point(28, 356);
         lblEspecies.Text = "Atención por especie";
-        tablaEspecies.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         tablaEspecies.Location = new Point(28, 390);
         tablaEspecies.Size = new Size(440, 150);
         tablaEspecies.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
@@ -114,6 +113,8 @@ partial class UcReportes
         Controls.AddRange(new Control[] { lblTitulo, lblDescripcion, lblDesde, dtpDesde, lblHasta, dtpHasta, btnGenerar, btnCancelar, btnExportar, barraProgreso, lblVeterinarios, tablaVeterinarios, lblEspecies, tablaEspecies, graficoEspecies, lblEstado });
         BackColor = Color.FromArgb(248, 250, 252);
         Font = new Font("Segoe UI", 9F);
+        AutoScaleDimensions = new SizeF(96F, 96F);
+        AutoScaleMode = AutoScaleMode.Dpi;
         Size = new Size(940, 592);
         ((System.ComponentModel.ISupportInitialize)tablaVeterinarios).EndInit();
         ((System.ComponentModel.ISupportInitialize)tablaEspecies).EndInit();

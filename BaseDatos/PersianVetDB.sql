@@ -205,15 +205,28 @@ GO
 IF NOT EXISTS (SELECT 1 FROM dbo.Usuarios WHERE NombreUsuario = N'admin')
 BEGIN
     INSERT INTO dbo.Usuarios (NombreUsuario, ClaveHash, Rol, Activo)
-    VALUES (N'admin', '8C6976E5B5410415BDE908BD4DEE15DFB167A9C873FC4BB8A81F6F2AB448A918', N'Administrador', 1);
+    VALUES (N'admin', '6F05170ADEB309351C4730D0C9E819FA5DD31F0DBB9C9D535F3C0EE38FD16E2E', N'Administrador', 1);
 END;
 ELSE
 BEGIN
     UPDATE dbo.Usuarios
-    SET ClaveHash = '8C6976E5B5410415BDE908BD4DEE15DFB167A9C873FC4BB8A81F6F2AB448A918',
+    SET ClaveHash = '6F05170ADEB309351C4730D0C9E819FA5DD31F0DBB9C9D535F3C0EE38FD16E2E',
         Rol = N'Administrador',
         Activo = 1
     WHERE NombreUsuario = N'admin';
+END;
+GO
+
+-- Usuarios de demostración con otros roles (clave: persian123).
+IF NOT EXISTS (SELECT 1 FROM dbo.Usuarios WHERE NombreUsuario = N'recepcion')
+BEGIN
+    INSERT INTO dbo.Usuarios (NombreUsuario, ClaveHash, Rol, Activo)
+    VALUES (N'recepcion', '6F05170ADEB309351C4730D0C9E819FA5DD31F0DBB9C9D535F3C0EE38FD16E2E', N'Recepcionista', 1);
+END;
+IF NOT EXISTS (SELECT 1 FROM dbo.Usuarios WHERE NombreUsuario = N'veterinario')
+BEGIN
+    INSERT INTO dbo.Usuarios (NombreUsuario, ClaveHash, Rol, Activo)
+    VALUES (N'veterinario', '6F05170ADEB309351C4730D0C9E819FA5DD31F0DBB9C9D535F3C0EE38FD16E2E', N'Veterinario', 1);
 END;
 GO
 

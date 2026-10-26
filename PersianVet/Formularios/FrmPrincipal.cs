@@ -22,6 +22,7 @@ public partial class FrmPrincipal : Form
     private readonly ReporteServicio reporteServicio;
     private readonly BusquedaServicio busquedaServicio;
     private bool cerrandoSesion;
+    private readonly List<Button> botonesPermitidos = [];
 
     /// <summary>
     /// Indica si el usuario eligió regresar a la pantalla de acceso.
@@ -64,8 +65,15 @@ public partial class FrmPrincipal : Form
         lblRol.Text = usuario.Rol;
         pictureMascota.Image = RecursosImagen.CargarMascota();
         AsignarIconos();
+        AplicarPermisosMenu();
         AcomodarEncabezado();
         AcomodarMenu();
+
+        // La ventana no puede achicarse por debajo de su tamaño de diseño (sin pasar del tamaño de la pantalla),
+        // así los módulos nunca se recortan ni se superponen.
+        Rectangle pantalla = Screen.FromControl(this).WorkingArea;
+        MinimumSize = new Size(Math.Min(Width, pantalla.Width), Math.Min(Height, pantalla.Height));
+
         ActualizarFechaHora();
         timerReloj.Start();
         MostrarDashboard();
@@ -83,7 +91,7 @@ public partial class FrmPrincipal : Form
         control.Dock = DockStyle.Fill;
         panelContenido.Controls.Add(control);
 
-        foreach (Button boton in panelMenu.Controls.OfType<Button>())
+        foreach (Button boton in panelBotonesMenu.Controls.OfType<Button>())
         {
             boton.BackColor = boton == botonActivo ? Tema.Naranja : Color.White;
             boton.ForeColor = boton == botonActivo ? Color.White : Tema.AzulOscuro;
@@ -106,10 +114,21 @@ public partial class FrmPrincipal : Form
     /// </summary>
     private void Navegar(string destino)
     {
+        if (!Permisos.PuedeAcceder(usuario.Rol, destino))
+        {
+            MessageBox.Show(
+                $"El rol {usuario.Rol} no tiene acceso a este módulo.",
+                "PersianVet",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+            return;
+        }
+
         switch (destino)
         {
             case "Inicio":
                 UcDashboard dashboard = new(dashboardServicio);
+                dashboard.AplicarPermisos(modulo => Permisos.PuedeAcceder(usuario.Rol, modulo));
                 // BeginInvoke evita destruir el dashboard mientras todavía atiende el clic.
                 dashboard.NavegarSolicitado += solicitado => BeginInvoke(() => Navegar(solicitado));
                 MostrarControl(dashboard, btnInicio);
@@ -270,22 +289,45 @@ public partial class FrmPrincipal : Form
 
     private void AcomodarEncabezado()
     {
-        lblFechaHora.Location = new Point(Math.Max(540, panelEncabezado.ClientSize.Width - 505), 22);
-        lblUsuario.Location = new Point(Math.Max(880, panelEncabezado.ClientSize.Width - 165), 17);
-        lblRol.Location = new Point(Math.Max(880, panelEncabezado.ClientSize.Width - 165), 43);
-        txtBusqueda.Location = new Point(lblFechaHora.Left, 56);
+        // Las distancias se escalan con la configuración de pantalla (100 %, 125 %, 150 %...).
+        int ancho = panelEncabezado.ClientSize.Width;
+        int columnaFecha = Math.Max(LogicalToDeviceUnits(540), ancho - LogicalToDeviceUnits(505));
+        int columnaUsuario = Math.Max(LogicalToDeviceUnits(880), ancho - LogicalToDeviceUnits(165));
+        lblFechaHora.Location = new Point(columnaFecha, LogicalToDeviceUnits(20));
+        txtBusqueda.Location = new Point(columnaFecha, LogicalToDeviceUnits(52));
+        lblUsuario.Location = new Point(columnaUsuario, LogicalToDeviceUnits(17));
+        lblRol.Location = new Point(columnaUsuario, LogicalToDeviceUnits(43));
+    }
+
+    /// <summary>
+    /// Muestra en el menú solo los módulos permitidos para el rol; el panel los apila sin huecos.
+    /// </summary>
+    private void AplicarPermisosMenu()
+    {
+        (Button Boton, string Modulo)[] opciones =
+        [
+            (btnInicio, "Inicio"), (btnClientes, "Clientes"), (btnMascotas, "Mascotas"), (btnCitas, "Citas"),
+            (btnConsultas, "Consultas"), (btnVacunas, "Vacunas"), (btnVeterinarios, "Veterinarios"), (btnReportes, "Reportes")
+        ];
+
+        botonesPermitidos.Clear();
+        foreach ((Button boton, string modulo) in opciones)
+        {
+            boton.Visible = Permisos.PuedeAcceder(usuario.Rol, modulo);
+            if (boton.Visible)
+            {
+                botonesPermitidos.Add(boton);
+            }
+        }
     }
 
     private void AcomodarMenu()
     {
-        btnCerrarSesion.Location = new Point(14, Math.Max(520, panelMenu.ClientSize.Height - 58));
-
-        // La mascota ocupa el espacio libre entre el último botón y "Cerrar sesión".
-        int arriba = btnReportes.Bottom + 8;
-        int disponible = btnCerrarSesion.Top - 8 - arriba;
-        pictureMascota.Visible = disponible >= 60;
-        pictureMascota.Size = new Size(155, Math.Min(120, Math.Max(0, disponible)));
-        pictureMascota.Location = new Point(34, arriba);
+        // Si los botones no caben junto con la imagen de la mascota, se oculta la imagen.
+        int alturaBotones = panelBotonesMenu.Padding.Vertical
+            + botonesPermitidos.Sum(boton => boton.Height + boton.Margin.Vertical);
+        int disponible = panelMenu.ClientSize.Height - panelMenu.Padding.Vertical - btnCerrarSesion.Height;
+        pictureMascota.Visible = disponible - pictureMascota.Height >= alturaBotones;
     }
 
     private void AsignarIconos()
