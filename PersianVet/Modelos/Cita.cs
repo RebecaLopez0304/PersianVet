@@ -3,8 +3,13 @@ using System.ComponentModel;
 namespace PersianVet.Modelos;
 
 /// <summary>
-/// Guarda los datos de una cita veterinaria (tabla Citas).
+/// Cita programada para una mascota con un veterinario (tabla Citas).
 /// </summary>
+/// <remarks>
+/// Las propiedades <c>Nombre*</c> requieren cargar <see cref="Mascota"/> (con su cliente) y
+/// <see cref="Veterinario"/> con <c>Include</c>. Las relaciones llevan <c>Browsable(false)</c>
+/// para que no aparezcan como columnas en las tablas.
+/// </remarks>
 public class Cita
 {
     public int IdCita { get; set; }
@@ -12,9 +17,12 @@ public class Cita
     public int IdVeterinario { get; set; }
     public DateTime FechaHora { get; set; } = DateTime.Now;
     public string Motivo { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Obtiene o establece el estado: Programada, Confirmada, Completada o Cancelada.
+    /// </summary>
     public string Estado { get; set; } = "Programada";
 
-    // Propiedades calculadas a partir de los datos cargados con Include.
     [DisplayName("Mascota")]
     public string NombreMascota => Mascota == null ? string.Empty : Mascota.Nombre;
 

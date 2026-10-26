@@ -16,11 +16,17 @@ public class VeterinarioServicio
         this.veterinarioDatos = veterinarioDatos;
     }
 
+    /// <inheritdoc cref="IVeterinarioDatos.Listar(string, bool)"/>
     public List<Veterinario> Listar(string filtro, bool soloActivos = true)
     {
         return veterinarioDatos.Listar(filtro, soloActivos);
     }
 
+    /// <summary>
+    /// Valida los nombres, la especialidad y el teléfono, y registra el veterinario.
+    /// </summary>
+    /// <param name="veterinario">Datos del veterinario.</param>
+    /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion Guardar(Veterinario veterinario)
     {
         ResultadoOperacion validacion = Validar(veterinario);
@@ -33,6 +39,11 @@ public class VeterinarioServicio
         return ResultadoOperacion.Correcto("El veterinario se guardó correctamente.");
     }
 
+    /// <summary>
+    /// Valida los datos y modifica un veterinario existente.
+    /// </summary>
+    /// <param name="veterinario">Datos del veterinario, con su identificador.</param>
+    /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion Actualizar(Veterinario veterinario)
     {
         if (veterinario.IdVeterinario <= 0)
@@ -50,6 +61,7 @@ public class VeterinarioServicio
         return ResultadoOperacion.Correcto("El veterinario se modificó correctamente.");
     }
 
+    /// <inheritdoc cref="IVeterinarioDatos.Desactivar(int)"/>
     public void Desactivar(int idVeterinario)
     {
         veterinarioDatos.Desactivar(idVeterinario);

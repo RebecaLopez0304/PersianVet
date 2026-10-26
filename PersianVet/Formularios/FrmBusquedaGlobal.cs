@@ -14,7 +14,7 @@ public partial class FrmBusquedaGlobal : Form
     private readonly CancellationTokenSource cancelacion = new();
 
     /// <summary>
-    /// Resultado elegido por el usuario (nulo si cerró la ventana sin elegir).
+    /// Obtiene el resultado elegido por el usuario, o <see langword="null"/> si cerró la ventana sin elegir.
     /// </summary>
     public ResultadoBusqueda? Seleccion { get; private set; }
 

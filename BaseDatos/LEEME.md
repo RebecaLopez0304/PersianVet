@@ -2,8 +2,12 @@
 
 ## Reconstruir la base de datos (Database First)
 1. Ejecutar `BaseDatos/PersianVetDB.sql` en SSMS o con `sqlcmd -i PersianVetDB.sql` (crea la base, tablas y datos de demostración).
-2. Ajustar `CadenaConexion` en `PersianVet/configuracion.json` si no se usa LocalDB/localhost.
-3. Usuario inicial: `admin`.
+2. (Opcional) Ejecutar `BaseDatos/DatosPrueba.sql` para cargar datos de prueba: clientes, mascotas, citas pasadas, de hoy y futuras, consultas y vacunas. Las fechas son relativas al día en que se ejecuta y el script no duplica datos si se corre dos veces.
+3. Ajustar `CadenaConexion` en `PersianVet/configuracion.json` si no se usa localhost.
+
+Si la aplicación no encuentra la base de datos, la crea sola ejecutando ambos scripts.
+
+Usuarios (clave `persian123`): `admin` (Administrador), `recepcion` (Recepcionista) y `veterinario` (Veterinario).
 
 ## Entity Framework Core
 - Paquete: `Microsoft.EntityFrameworkCore.SqlServer` 8.0.11.

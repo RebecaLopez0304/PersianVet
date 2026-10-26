@@ -13,7 +13,7 @@ public partial class UcDashboard : UserControl
     private CancellationTokenSource? cancelacion;
 
     /// <summary>
-    /// Se dispara cuando el usuario pide ir a otro módulo (tarjeta, botón o aviso).
+    /// Se produce cuando el usuario pide ir a otro módulo desde una tarjeta, un botón o un aviso.
     /// </summary>
     public event Action<string>? NavegarSolicitado;
 

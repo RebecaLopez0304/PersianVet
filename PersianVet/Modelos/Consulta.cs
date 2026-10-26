@@ -3,8 +3,13 @@ using System.ComponentModel;
 namespace PersianVet.Modelos;
 
 /// <summary>
-/// Guarda los datos médicos registrados durante una consulta (tabla Consultas).
+/// Datos médicos registrados durante una consulta (tabla Consultas).
 /// </summary>
+/// <remarks>
+/// <see cref="NombreVeterinario"/> y <see cref="Tratamientos"/> requieren cargar <see cref="Veterinario"/> y
+/// <see cref="ListaTratamientos"/> con <c>Include</c>. Las relaciones llevan <c>Browsable(false)</c>
+/// para que no aparezcan como columnas en las tablas.
+/// </remarks>
 public class Consulta
 {
     public int IdConsulta { get; set; }
@@ -15,10 +20,12 @@ public class Consulta
     public string Diagnostico { get; set; } = string.Empty;
     public string Observaciones { get; set; } = string.Empty;
 
-    // Propiedades calculadas a partir de los datos cargados con Include.
     [DisplayName("Veterinario")]
     public string NombreVeterinario => Veterinario == null ? string.Empty : Veterinario.NombreCompleto;
 
+    /// <summary>
+    /// Obtiene los tratamientos en una sola línea, por ejemplo "Meloxicam - 1.5 mg; Glucosamina - 500 mg".
+    /// </summary>
     public string Tratamientos => string.Join("; ", ListaTratamientos.Select(t => $"{t.Medicamento} - {t.Dosis}"));
 
     [Browsable(false)]

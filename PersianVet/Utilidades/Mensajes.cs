@@ -7,6 +7,10 @@ namespace PersianVet.Utilidades;
 /// </summary>
 public static class Mensajes
 {
+    /// <summary>
+    /// Registra el error en errores.log y muestra al usuario un mensaje comprensible en lugar del técnico.
+    /// </summary>
+    /// <param name="excepcion">Error ocurrido.</param>
     public static void MostrarError(Exception excepcion)
     {
         RegistrarError(excepcion);
@@ -22,9 +26,10 @@ public static class Mensajes
     }
 
     /// <summary>
-    /// Ejecuta una operación de un servicio, muestra su mensaje y, si salió bien, ejecuta la acción indicada
-    /// (por ejemplo limpiar el formulario y recargar la tabla). La usan todos los módulos.
+    /// Ejecuta una operación de un servicio, muestra su mensaje y, si salió bien, ejecuta la acción indicada.
     /// </summary>
+    /// <param name="operacion">Llamada al servicio, por ejemplo <c>() => clienteServicio.Guardar(cliente)</c>.</param>
+    /// <param name="siSaleBien">Acción posterior, por ejemplo limpiar el formulario y recargar la tabla.</param>
     public static void EjecutarOperacion(Func<ResultadoOperacion> operacion, Action siSaleBien)
     {
         try

@@ -3,7 +3,9 @@ using PersianVet.Utilidades;
 
 namespace PersianVet.Formularios;
 
-/// <summary>Permite escribir los datos de una mascota en una ventana separada.</summary>
+/// <summary>
+/// Permite escribir los datos de una mascota en una ventana separada.
+/// </summary>
 public partial class FrmMascotaEdicion : Form
 {
     public Mascota Mascota { get; private set; }

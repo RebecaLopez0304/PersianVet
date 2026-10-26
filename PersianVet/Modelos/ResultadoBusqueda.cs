@@ -8,9 +8,10 @@ public class ResultadoBusqueda
     public int Id { get; set; }
 
     /// <summary>
-    /// Cliente, Mascota o Cita.
+    /// Obtiene o establece el tipo de resultado: Cliente, Mascota o Cita.
     /// </summary>
     public string Tipo { get; set; } = string.Empty;
+
     public string Titulo { get; set; } = string.Empty;
     public string Detalle { get; set; } = string.Empty;
 }

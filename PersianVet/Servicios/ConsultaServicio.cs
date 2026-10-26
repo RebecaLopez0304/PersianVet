@@ -15,11 +15,17 @@ public class ConsultaServicio
         this.consultaDatos = consultaDatos;
     }
 
+    /// <inheritdoc cref="IConsultaDatos.ListarPorMascota(int)"/>
     public List<Consulta> ListarPorMascota(int idMascota)
     {
         return idMascota > 0 ? consultaDatos.ListarPorMascota(idMascota) : [];
     }
 
+    /// <summary>
+    /// Valida la consulta (sin fecha futura) y que cada tratamiento tenga medicamento y dosis, y la registra con sus tratamientos.
+    /// </summary>
+    /// <param name="consulta">Consulta con la lista de tratamientos.</param>
+    /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion Guardar(Consulta consulta)
     {
         if (consulta.IdMascota <= 0 || consulta.IdVeterinario <= 0)

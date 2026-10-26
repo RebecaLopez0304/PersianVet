@@ -16,6 +16,12 @@ public class UsuarioServicio
         this.usuarioDatos = usuarioDatos;
     }
 
+    /// <summary>
+    /// Comprueba que el usuario exista, esté activo y que la contraseña coincida.
+    /// </summary>
+    /// <param name="nombreUsuario">Nombre de usuario.</param>
+    /// <param name="clave">Contraseña escrita por el usuario.</param>
+    /// <returns>El resultado del inicio de sesión y, si es correcto, el usuario.</returns>
     public ResultadoInicioSesion IniciarSesion(string nombreUsuario, string clave)
     {
         if (string.IsNullOrWhiteSpace(nombreUsuario) || string.IsNullOrWhiteSpace(clave))
@@ -43,8 +49,13 @@ public class UsuarioServicio
     }
 
     /// <summary>
-    /// Crea un usuario nuevo para ingresar al sistema.
+    /// Valida los datos y crea un usuario nuevo; la contraseña se guarda como hash SHA-256.
     /// </summary>
+    /// <param name="nombreUsuario">Nombre de usuario; no puede estar en uso.</param>
+    /// <param name="clave">Contraseña de al menos 4 caracteres.</param>
+    /// <param name="confirmacion">Contraseña repetida; debe coincidir con <paramref name="clave"/>.</param>
+    /// <param name="rol">Rol del usuario; si se deja vacío se usa Recepcionista.</param>
+    /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion CrearUsuario(string nombreUsuario, string clave, string confirmacion, string rol)
     {
         if (string.IsNullOrWhiteSpace(nombreUsuario) || string.IsNullOrWhiteSpace(clave))
@@ -80,8 +91,12 @@ public class UsuarioServicio
     }
 
     /// <summary>
-    /// Cambia la contraseña de un usuario registrado.
+    /// Valida la nueva contraseña y la guarda como hash SHA-256.
     /// </summary>
+    /// <param name="nombreUsuario">Nombre de un usuario registrado.</param>
+    /// <param name="nuevaClave">Contraseña nueva de al menos 4 caracteres.</param>
+    /// <param name="confirmacion">Contraseña repetida; debe coincidir con <paramref name="nuevaClave"/>.</param>
+    /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion CambiarClave(string nombreUsuario, string nuevaClave, string confirmacion)
     {
         if (string.IsNullOrWhiteSpace(nombreUsuario) || string.IsNullOrWhiteSpace(nuevaClave))
@@ -108,11 +123,17 @@ public class UsuarioServicio
         return ResultadoOperacion.Correcto("La contraseña se cambió correctamente.");
     }
 
+    /// <inheritdoc cref="IUsuarioDatos.Listar(bool)"/>
     public List<Usuario> Listar(bool incluirDesactivados = false)
     {
         return usuarioDatos.Listar(incluirDesactivados);
     }
 
+    /// <summary>
+    /// Desactiva un usuario; el usuario admin no se puede desactivar.
+    /// </summary>
+    /// <param name="usuario">Usuario seleccionado.</param>
+    /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion Desactivar(Usuario usuario)
     {
         if (usuario.IdUsuario <= 0)

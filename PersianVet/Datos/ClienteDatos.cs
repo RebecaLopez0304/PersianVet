@@ -16,6 +16,7 @@ public class ClienteDatos : IClienteDatos
         this.conexionBD = conexionBD;
     }
 
+    /// <inheritdoc/>
     public List<Cliente> Listar(string filtro, bool soloActivos = true)
     {
         string texto = filtro.Trim();
@@ -32,6 +33,7 @@ public class ClienteDatos : IClienteDatos
             .ToList();
     }
 
+    /// <inheritdoc/>
     public int Guardar(Cliente cliente)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
@@ -42,16 +44,18 @@ public class ClienteDatos : IClienteDatos
         return cliente.IdCliente;
     }
 
+    /// <inheritdoc/>
     public void Actualizar(Cliente cliente)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
         Limpiar(cliente);
         contexto.Clientes.Update(cliente);
-        // Modificar no cambia el estado activo/desactivado.
+        // El estado activo solo cambia con Desactivar; Update no debe sobrescribirlo.
         contexto.Entry(cliente).Property(c => c.Activo).IsModified = false;
         contexto.SaveChanges();
     }
 
+    /// <inheritdoc/>
     public void Desactivar(int idCliente)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();

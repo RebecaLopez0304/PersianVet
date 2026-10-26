@@ -15,11 +15,17 @@ public class VacunaServicio
         this.vacunaDatos = vacunaDatos;
     }
 
+    /// <inheritdoc cref="IVacunaDatos.Listar(int?, bool)"/>
     public List<Vacuna> Listar(int? idMascota = null, bool soloProximas = false)
     {
         return vacunaDatos.Listar(idMascota, soloProximas);
     }
 
+    /// <summary>
+    /// Valida la mascota, el lote y que las fechas sean coherentes, y registra la vacuna.
+    /// </summary>
+    /// <param name="vacuna">Datos de la vacuna.</param>
+    /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion Guardar(Vacuna vacuna)
     {
         if (vacuna.IdMascota <= 0)

@@ -16,6 +16,7 @@ public class VeterinarioDatos : IVeterinarioDatos
         this.conexionBD = conexionBD;
     }
 
+    /// <inheritdoc/>
     public List<Veterinario> Listar(string filtro, bool soloActivos = true)
     {
         string texto = filtro.Trim();
@@ -31,6 +32,7 @@ public class VeterinarioDatos : IVeterinarioDatos
             .ToList();
     }
 
+    /// <inheritdoc/>
     public int Guardar(Veterinario veterinario)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
@@ -41,16 +43,18 @@ public class VeterinarioDatos : IVeterinarioDatos
         return veterinario.IdVeterinario;
     }
 
+    /// <inheritdoc/>
     public void Actualizar(Veterinario veterinario)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
         Limpiar(veterinario);
         contexto.Veterinarios.Update(veterinario);
-        // Modificar no cambia el estado activo/desactivado.
+        // El estado activo solo cambia con Desactivar; Update no debe sobrescribirlo.
         contexto.Entry(veterinario).Property(v => v.Activo).IsModified = false;
         contexto.SaveChanges();
     }
 
+    /// <inheritdoc/>
     public void Desactivar(int idVeterinario)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();

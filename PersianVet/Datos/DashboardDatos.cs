@@ -16,6 +16,7 @@ public class DashboardDatos : IDashboardDatos
         this.conexionBD = conexionBD;
     }
 
+    /// <inheritdoc/>
     public async Task<ResumenDashboard> ObtenerResumenAsync(CancellationToken cancelacion)
     {
         DateTime hoy = DateTime.Today;
@@ -24,7 +25,7 @@ public class DashboardDatos : IDashboardDatos
         DateTime inicioMes = new(hoy.Year, hoy.Month, 1);
         DateTime inicioMesSiguiente = inicioMes.AddMonths(1);
 
-        // Cada conteo usa su propio contexto para poder ejecutarse en paralelo.
+        // DbContext no admite consultas simultáneas: cada conteo paralelo usa su propio contexto.
         Task<int> mascotas = ContarAsync(c => c.Mascotas.CountAsync(m => m.Activa, cancelacion));
         Task<int> citas = ContarAsync(c => c.Citas.CountAsync(
             ci => ci.FechaHora >= hoy && ci.FechaHora < manana && ci.Estado != "Cancelada", cancelacion));
@@ -44,6 +45,7 @@ public class DashboardDatos : IDashboardDatos
         };
     }
 
+    /// <inheritdoc/>
     public async Task<List<Cita>> ListarProximasCitasAsync(CancellationToken cancelacion)
     {
         DateTime ahora = DateTime.Now;
@@ -58,6 +60,7 @@ public class DashboardDatos : IDashboardDatos
             .ToListAsync(cancelacion);
     }
 
+    /// <inheritdoc/>
     public async Task<List<Alerta>> ListarAlertasAsync(CancellationToken cancelacion)
     {
         DateTime hoy = DateTime.Today;
@@ -119,6 +122,7 @@ public class DashboardDatos : IDashboardDatos
         return alertas;
     }
 
+    /// <inheritdoc/>
     public async Task<List<PuntoGrafico>> ContarCitasProximosDiasAsync(int dias, CancellationToken cancelacion)
     {
         DateTime hoy = DateTime.Today;

@@ -9,7 +9,7 @@ public class Alerta
     public string Mensaje { get; set; } = string.Empty;
 
     /// <summary>
-    /// Módulo al que se navega al hacer doble clic sobre el aviso.
+    /// Obtiene o establece el módulo que se abre al hacer doble clic sobre el aviso.
     /// </summary>
     public string Modulo { get; set; } = "Inicio";
 

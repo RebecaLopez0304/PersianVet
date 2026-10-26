@@ -103,7 +103,6 @@ partial class UcDashboard
         lblDescripcion.Location = new Point(4, 52);
         lblDescripcion.Text = "Resumen general de la clínica. Haga clic en una tarjeta para abrir su módulo.";
 
-        // Tarjetas de resumen (cuatro columnas iguales).
         filaTarjetas.ColumnCount = 4;
         filaTarjetas.RowCount = 1;
         filaTarjetas.Dock = DockStyle.Fill;
@@ -117,7 +116,6 @@ partial class UcDashboard
         filaTarjetas.Controls.Add(tarjetaVacunas, 2, 0);
         filaTarjetas.Controls.Add(tarjetaConsultas, 3, 0);
 
-        // Acciones rápidas.
         panelAcciones.Dock = DockStyle.Fill;
         panelAcciones.WrapContents = false;
         panelAcciones.Padding = new Padding(0, 8, 0, 0);

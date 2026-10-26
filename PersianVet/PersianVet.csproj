@@ -18,7 +18,7 @@
     <None Update="configuracion.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Content Include="..\BaseDatos\PersianVetDB.sql" Link="BaseDatos\PersianVetDB.sql">
+    <Content Include="..\BaseDatos\*.sql" LinkBase="BaseDatos">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Recursos\**\*.png">

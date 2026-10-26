@@ -5,6 +5,10 @@ namespace PersianVet.Utilidades;
 /// </summary>
 public static class EstiloControles
 {
+    /// <summary>
+    /// Aplica el estilo de la acción principal de una pantalla: fondo naranja y texto blanco.
+    /// </summary>
+    /// <param name="boton">Botón a configurar.</param>
     public static void ConfigurarBotonPrincipal(Button boton)
     {
         boton.BackColor = Tema.Naranja;
@@ -17,6 +21,10 @@ public static class EstiloControles
         boton.FlatAppearance.MouseDownBackColor = Color.FromArgb(194, 92, 7);
     }
 
+    /// <summary>
+    /// Aplica el estilo de las acciones secundarias: fondo blanco con borde azul.
+    /// </summary>
+    /// <param name="boton">Botón a configurar.</param>
     public static void ConfigurarBotonSecundario(Button boton)
     {
         boton.BackColor = Color.White;
@@ -30,6 +38,10 @@ public static class EstiloControles
         boton.FlatAppearance.MouseDownBackColor = Color.FromArgb(215, 230, 241);
     }
 
+    /// <summary>
+    /// Aplica el estilo común de las tablas: solo lectura, selección de fila completa y encabezado azul.
+    /// </summary>
+    /// <param name="tabla">Tabla a configurar.</param>
     public static void ConfigurarTabla(DataGridView tabla)
     {
         tabla.AutoGenerateColumns = true;
@@ -65,6 +77,8 @@ public static class EstiloControles
     /// <summary>
     /// Oculta las columnas indicadas (por ejemplo los Id) si la tabla las tiene.
     /// </summary>
+    /// <param name="tabla">Tabla con los datos ya asignados.</param>
+    /// <param name="columnas">Nombres de las propiedades cuyas columnas se ocultan.</param>
     public static void OcultarColumnas(DataGridView tabla, params string[] columnas)
     {
         foreach (string nombre in columnas)

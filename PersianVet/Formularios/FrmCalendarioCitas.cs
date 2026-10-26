@@ -36,7 +36,6 @@ public partial class FrmCalendarioCitas : Form
                 return;
             }
 
-            // Los días con citas activas se marcan en negrita.
             calendario.BoldedDates = citas
                 .Where(cita => cita.Estado != "Cancelada")
                 .Select(cita => cita.FechaHora.Date)

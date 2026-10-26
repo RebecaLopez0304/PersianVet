@@ -3,7 +3,9 @@ using PersianVet.Utilidades;
 
 namespace PersianVet.Formularios;
 
-/// <summary>Permite escribir los datos de un veterinario en una ventana separada.</summary>
+/// <summary>
+/// Permite escribir los datos de un veterinario en una ventana separada.
+/// </summary>
 public partial class FrmVeterinarioEdicion : Form
 {
     public Veterinario Veterinario { get; private set; }

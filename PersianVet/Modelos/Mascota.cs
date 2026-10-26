@@ -3,14 +3,19 @@ using System.ComponentModel;
 namespace PersianVet.Modelos;
 
 /// <summary>
-/// Guarda la información de una mascota atendida en la veterinaria (tabla Mascotas).
+/// Mascota atendida en la veterinaria (tabla Mascotas).
 /// </summary>
+/// <remarks>
+/// Las propiedades de relación llevan <c>Browsable(false)</c> para que no aparezcan como columnas en las tablas.
+/// </remarks>
 public class Mascota
 {
     public int IdMascota { get; set; }
     public int IdCliente { get; set; }
 
-    // Propiedad calculada a partir del cliente cargado con Include.
+    /// <summary>
+    /// Obtiene el nombre del dueño. Requiere cargar <see cref="Cliente"/> con <c>Include</c>.
+    /// </summary>
     public string Propietario => Cliente == null ? string.Empty : Cliente.NombreCompleto;
 
     public string Nombre { get; set; } = string.Empty;

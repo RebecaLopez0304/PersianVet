@@ -3,8 +3,11 @@ using System.ComponentModel;
 namespace PersianVet.Modelos;
 
 /// <summary>
-/// Guarda la información del propietario de una mascota (tabla Clientes).
+/// Propietario de una o varias mascotas (tabla Clientes).
 /// </summary>
+/// <remarks>
+/// Las propiedades de relación llevan <c>Browsable(false)</c> para que no aparezcan como columnas en las tablas.
+/// </remarks>
 public class Cliente
 {
     public int IdCliente { get; set; }
@@ -16,10 +19,11 @@ public class Cliente
     public DateTime FechaRegistro { get; set; } = DateTime.Today;
     public bool Activo { get; set; } = true;
 
-    // Propiedad calculada: no se guarda en la base de datos.
+    /// <summary>
+    /// Obtiene los nombres y apellidos juntos. Es calculada y no se guarda en la base de datos.
+    /// </summary>
     public string NombreCompleto => $"{Nombres} {Apellidos}".Trim();
 
-    // Relación de EF Core; Browsable(false) evita que aparezca como columna en las tablas.
     [Browsable(false)]
     public List<Mascota> Mascotas { get; set; } = [];
 }

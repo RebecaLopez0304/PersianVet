@@ -16,12 +16,13 @@ public class MascotaDatos : IMascotaDatos
         this.conexionBD = conexionBD;
     }
 
+    /// <inheritdoc/>
     public List<Mascota> Listar(string filtro, bool soloActivas = true)
     {
         string texto = filtro.Trim();
         using PersianVetContext contexto = conexionBD.CrearContexto();
 
-        // Include trae el cliente para poder mostrar el nombre del propietario.
+        // Include carga el cliente que usa la propiedad Propietario.
         return contexto.Mascotas.AsNoTracking()
             .Include(m => m.Cliente)
             .Where(m => (!soloActivas || m.Activa)
@@ -33,6 +34,7 @@ public class MascotaDatos : IMascotaDatos
             .ToList();
     }
 
+    /// <inheritdoc/>
     public int Guardar(Mascota mascota)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
@@ -43,16 +45,18 @@ public class MascotaDatos : IMascotaDatos
         return mascota.IdMascota;
     }
 
+    /// <inheritdoc/>
     public void Actualizar(Mascota mascota)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
         Limpiar(mascota);
         contexto.Mascotas.Update(mascota);
-        // Modificar no cambia el estado activo/desactivado.
+        // El estado activo solo cambia con Desactivar; Update no debe sobrescribirlo.
         contexto.Entry(mascota).Property(m => m.Activa).IsModified = false;
         contexto.SaveChanges();
     }
 
+    /// <inheritdoc/>
     public void Desactivar(int idMascota)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
@@ -62,7 +66,7 @@ public class MascotaDatos : IMascotaDatos
 
     private static void Limpiar(Mascota mascota)
     {
-        // Se guarda solo la mascota; el cliente relacionado no se modifica.
+        // Sin el cliente cargado, Update guarda solo la mascota y no modifica al cliente.
         mascota.Cliente = null!;
         mascota.Nombre = mascota.Nombre.Trim();
         mascota.Especie = mascota.Especie.Trim();

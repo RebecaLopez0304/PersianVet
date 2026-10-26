@@ -15,11 +15,17 @@ public class MascotaServicio
         this.mascotaDatos = mascotaDatos;
     }
 
+    /// <inheritdoc cref="IMascotaDatos.Listar(string, bool)"/>
     public List<Mascota> Listar(string filtro, bool soloActivas = true)
     {
         return mascotaDatos.Listar(filtro, soloActivas);
     }
 
+    /// <summary>
+    /// Valida el propietario, los datos básicos, la fecha de nacimiento y el peso, y registra la mascota.
+    /// </summary>
+    /// <param name="mascota">Datos de la mascota.</param>
+    /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion Guardar(Mascota mascota)
     {
         ResultadoOperacion validacion = Validar(mascota);
@@ -32,6 +38,11 @@ public class MascotaServicio
         return ResultadoOperacion.Correcto("La mascota se guardó correctamente.");
     }
 
+    /// <summary>
+    /// Valida los datos y modifica una mascota existente.
+    /// </summary>
+    /// <param name="mascota">Datos de la mascota, con su identificador.</param>
+    /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion Actualizar(Mascota mascota)
     {
         if (mascota.IdMascota <= 0)
@@ -49,6 +60,7 @@ public class MascotaServicio
         return ResultadoOperacion.Correcto("La mascota se modificó correctamente.");
     }
 
+    /// <inheritdoc cref="IMascotaDatos.Desactivar(int)"/>
     public void Desactivar(int idMascota)
     {
         mascotaDatos.Desactivar(idMascota);

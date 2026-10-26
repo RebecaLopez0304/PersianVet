@@ -13,8 +13,11 @@ public static class Permisos
     };
 
     /// <summary>
-    /// Indica si el rol puede abrir el destino (módulo o acción rápida).
+    /// Indica si el rol puede abrir el destino.
     /// </summary>
+    /// <param name="rol">Rol del usuario que inició sesión.</param>
+    /// <param name="destino">Módulo (por ejemplo "Clientes") o acción rápida (por ejemplo "NuevoCliente").</param>
+    /// <returns><see langword="true"/> si el rol tiene acceso; un rol desconocido solo accede al inicio.</returns>
     public static bool PuedeAcceder(string rol, string destino)
     {
         // Un rol desconocido solo puede ver el inicio.

@@ -16,12 +16,14 @@ public class UsuarioDatos : IUsuarioDatos
         this.conexionBD = conexionBD;
     }
 
+    /// <inheritdoc/>
     public Usuario? ObtenerPorNombre(string nombreUsuario)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
         return contexto.Usuarios.AsNoTracking().FirstOrDefault(u => u.NombreUsuario == nombreUsuario);
     }
 
+    /// <inheritdoc/>
     public bool Existe(string nombreUsuario)
     {
         string nombre = nombreUsuario.Trim();
@@ -29,6 +31,7 @@ public class UsuarioDatos : IUsuarioDatos
         return contexto.Usuarios.Any(u => u.NombreUsuario == nombre);
     }
 
+    /// <inheritdoc/>
     public int Crear(Usuario usuario)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
@@ -39,6 +42,7 @@ public class UsuarioDatos : IUsuarioDatos
         return usuario.IdUsuario;
     }
 
+    /// <inheritdoc/>
     public void CambiarClave(string nombreUsuario, string claveHash)
     {
         string nombre = nombreUsuario.Trim();
@@ -47,6 +51,7 @@ public class UsuarioDatos : IUsuarioDatos
             .ExecuteUpdate(u => u.SetProperty(x => x.ClaveHash, claveHash));
     }
 
+    /// <inheritdoc/>
     public List<Usuario> Listar(bool incluirDesactivados = false)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
@@ -56,6 +61,7 @@ public class UsuarioDatos : IUsuarioDatos
             .ToList();
     }
 
+    /// <inheritdoc/>
     public void Desactivar(int idUsuario)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();

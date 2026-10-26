@@ -15,11 +15,17 @@ public class CitaServicio
         this.citaDatos = citaDatos;
     }
 
+    /// <inheritdoc cref="ICitaDatos.Listar(DateTime?)"/>
     public List<Cita> Listar(DateTime? fecha = null)
     {
         return citaDatos.Listar(fecha);
     }
 
+    /// <summary>
+    /// Valida la cita, que no sea en el pasado y que el veterinario no tenga otra a la misma hora, y la registra.
+    /// </summary>
+    /// <param name="cita">Datos de la cita.</param>
+    /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion Guardar(Cita cita)
     {
         ResultadoOperacion validacion = Validar(cita);
@@ -37,6 +43,11 @@ public class CitaServicio
         return ResultadoOperacion.Correcto("La cita se programó correctamente.");
     }
 
+    /// <summary>
+    /// Aplica las mismas validaciones que al programar y modifica una cita existente.
+    /// </summary>
+    /// <param name="cita">Datos de la cita, con su identificador.</param>
+    /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion Actualizar(Cita cita)
     {
         if (cita.IdCita <= 0)
@@ -59,6 +70,7 @@ public class CitaServicio
         return ResultadoOperacion.Correcto("La cita se reprogramó correctamente.");
     }
 
+    /// <inheritdoc cref="ICitaDatos.Cancelar(int)"/>
     public void Cancelar(int idCita)
     {
         citaDatos.Cancelar(idCita);

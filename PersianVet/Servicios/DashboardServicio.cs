@@ -15,21 +15,25 @@ public class DashboardServicio
         this.dashboardDatos = dashboardDatos;
     }
 
+    /// <inheritdoc cref="IDashboardDatos.ObtenerResumenAsync(CancellationToken)"/>
     public Task<ResumenDashboard> ObtenerResumenAsync(CancellationToken cancelacion = default)
     {
         return dashboardDatos.ObtenerResumenAsync(cancelacion);
     }
 
+    /// <inheritdoc cref="IDashboardDatos.ListarProximasCitasAsync(CancellationToken)"/>
     public Task<List<Cita>> ListarProximasCitasAsync(CancellationToken cancelacion = default)
     {
         return dashboardDatos.ListarProximasCitasAsync(cancelacion);
     }
 
+    /// <inheritdoc cref="IDashboardDatos.ListarAlertasAsync(CancellationToken)"/>
     public Task<List<Alerta>> ListarAlertasAsync(CancellationToken cancelacion = default)
     {
         return dashboardDatos.ListarAlertasAsync(cancelacion);
     }
 
+    /// <inheritdoc cref="IDashboardDatos.ContarCitasProximosDiasAsync(int, CancellationToken)"/>
     public Task<List<PuntoGrafico>> ContarCitasProximosDiasAsync(int dias, CancellationToken cancelacion = default)
     {
         return dashboardDatos.ContarCitasProximosDiasAsync(dias, cancelacion);

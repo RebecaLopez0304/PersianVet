@@ -16,6 +16,7 @@ public class VacunaDatos : IVacunaDatos
         this.conexionBD = conexionBD;
     }
 
+    /// <inheritdoc/>
     public List<Vacuna> Listar(int? idMascota = null, bool soloProximas = false)
     {
         DateTime hoy = DateTime.Today;
@@ -30,9 +31,11 @@ public class VacunaDatos : IVacunaDatos
             .ToList();
     }
 
+    /// <inheritdoc/>
     public int Guardar(Vacuna vacuna)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
+        // Sin la mascota cargada, EF inserta solo la vacuna.
         vacuna.Mascota = null!;
         vacuna.NombreVacuna = vacuna.NombreVacuna.Trim();
         vacuna.FechaAplicacion = vacuna.FechaAplicacion.Date;

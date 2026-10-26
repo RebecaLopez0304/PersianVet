@@ -15,7 +15,7 @@ public partial class UcMascotas : UserControl
     private int idSeleccionado;
 
     /// <summary>
-    /// Se dispara cuando el usuario pide ver la ficha completa de una mascota.
+    /// Se produce cuando el usuario pide ver la ficha completa de una mascota.
     /// </summary>
     public event Action<Mascota>? FichaSolicitada;
 

@@ -16,11 +16,12 @@ public class ConsultaDatos : IConsultaDatos
         this.conexionBD = conexionBD;
     }
 
+    /// <inheritdoc/>
     public List<Consulta> ListarPorMascota(int idMascota)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
 
-        // Include trae el veterinario y los tratamientos de cada consulta.
+        // Include carga el veterinario y los tratamientos que se muestran en el historial.
         return contexto.Consultas.AsNoTracking()
             .Include(c => c.Veterinario)
             .Include(c => c.ListaTratamientos)
@@ -29,9 +30,11 @@ public class ConsultaDatos : IConsultaDatos
             .ToList();
     }
 
+    /// <inheritdoc/>
     public int GuardarConTratamientos(Consulta consulta)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
+        // Sin las relaciones cargadas, EF inserta solo la consulta y sus tratamientos.
         consulta.Mascota = null!;
         consulta.Veterinario = null!;
         consulta.Motivo = consulta.Motivo.Trim();

@@ -23,6 +23,7 @@ public class GraficoBarras : Control
     /// <summary>
     /// Reemplaza los datos y vuelve a dibujar el gráfico.
     /// </summary>
+    /// <param name="datos">Una barra por punto; la más alta ocupa todo el alto disponible.</param>
     public void AsignarDatos(IEnumerable<PuntoGrafico> datos)
     {
         puntos = datos.ToList();

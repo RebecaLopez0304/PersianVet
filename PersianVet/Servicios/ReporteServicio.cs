@@ -16,9 +16,13 @@ public class ReporteServicio
     }
 
     /// <summary>
-    /// Consulta en paralelo los dos reportes del período indicado.
-    /// Cada consulta usa su propio contexto, por lo que pueden ejecutarse al mismo tiempo.
+    /// Genera en paralelo los reportes por veterinario y por especie del período indicado.
     /// </summary>
+    /// <param name="desde">Primer día del período.</param>
+    /// <param name="hasta">Último día del período (incluido).</param>
+    /// <param name="cancelacion">Permite cancelar la generación.</param>
+    /// <returns>Las filas de ambos reportes.</returns>
+    /// <exception cref="ArgumentException">La fecha final es anterior a la inicial.</exception>
     public async Task<(List<ReporteVeterinario> Veterinarios, List<ReporteEspecie> Especies)> GenerarAsync(
         DateTime desde, DateTime hasta, CancellationToken cancelacion)
     {

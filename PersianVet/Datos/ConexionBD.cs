@@ -6,9 +6,12 @@ using Microsoft.EntityFrameworkCore;
 namespace PersianVet.Datos;
 
 /// <summary>
-/// Crea las conexiones usadas para trabajar con SQL Server.
-/// Si el servidor configurado no responde prueba otros comunes y, si la base no existe, la crea con el script.
+/// Crea las conexiones y los contextos de Entity Framework Core usados para trabajar con SQL Server.
 /// </summary>
+/// <remarks>
+/// Si el servidor de configuracion.json no responde, prueba otros servidores comunes y, si ninguno tiene
+/// la base de datos, la crea con los scripts de la carpeta BaseDatos.
+/// </remarks>
 public class ConexionBD
 {
     private const string CadenaPredeterminada =
@@ -16,11 +19,17 @@ public class ConexionBD
 
     private const string NombreBase = "PersianVetDB";
 
-    // Servidores que se prueban, en orden, cuando el configurado no sirve.
+    // Se prueban en este orden cuando el servidor de configuracion.json no responde.
     private static readonly string[] ServidoresAlternos = ["localhost", "(localdb)\\MSSQLLocalDB", ".\\SQLEXPRESS"];
 
+    /// <summary>
+    /// Obtiene la cadena de conexión del servidor que respondió y tiene la base de datos.
+    /// </summary>
     public string CadenaConexion { get; }
 
+    /// <summary>
+    /// Busca un servidor disponible; puede tardar unos segundos si el configurado no responde.
+    /// </summary>
     public ConexionBD()
     {
         CadenaConexion = ResolverCadena();
@@ -95,14 +104,18 @@ public class ConexionBD
     }
 
     /// <summary>
-    /// Ejecuta BaseDatos\PersianVetDB.sql (copiado junto al ejecutable) para crear la base y sus datos.
+    /// Crea la base de datos ejecutando los scripts de la carpeta BaseDatos copiados junto al ejecutable:
+    /// primero la estructura (PersianVetDB.sql) y después los datos de prueba (DatosPrueba.sql), si existe.
     /// </summary>
+    /// <param name="cadena">Cadena de conexión de un servidor alcanzable.</param>
+    /// <returns><see langword="true"/> si la base se creó correctamente.</returns>
     private static bool CrearBaseDatos(string cadena)
     {
         try
         {
-            string ruta = Path.Combine(AppContext.BaseDirectory, "BaseDatos", "PersianVetDB.sql");
-            if (!File.Exists(ruta))
+            string carpeta = Path.Combine(AppContext.BaseDirectory, "BaseDatos");
+            string estructura = Path.Combine(carpeta, "PersianVetDB.sql");
+            if (!File.Exists(estructura))
             {
                 return false;
             }
@@ -111,12 +124,11 @@ public class ConexionBD
             using SqlConnection conexion = new(master.ConnectionString);
             conexion.Open();
 
-            // El script separa sus bloques con líneas "GO", que SqlClient no entiende.
-            string[] bloques = Regex.Split(File.ReadAllText(ruta), @"^\s*GO\s*$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-            foreach (string bloque in bloques.Where(b => !string.IsNullOrWhiteSpace(b)))
+            EjecutarScript(conexion, estructura);
+            string datosPrueba = Path.Combine(carpeta, "DatosPrueba.sql");
+            if (File.Exists(datosPrueba))
             {
-                using SqlCommand comando = new(bloque, conexion) { CommandTimeout = 60 };
-                comando.ExecuteNonQuery();
+                EjecutarScript(conexion, datosPrueba);
             }
 
             return true;
@@ -124,6 +136,17 @@ public class ConexionBD
         catch
         {
             return false;
+        }
+    }
+
+    private static void EjecutarScript(SqlConnection conexion, string ruta)
+    {
+        // Los scripts separan sus bloques con líneas "GO", que SqlClient no entiende.
+        string[] bloques = Regex.Split(File.ReadAllText(ruta), @"^\s*GO\s*$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
+        foreach (string bloque in bloques.Where(b => !string.IsNullOrWhiteSpace(b)))
+        {
+            using SqlCommand comando = new(bloque, conexion) { CommandTimeout = 60 };
+            comando.ExecuteNonQuery();
         }
     }
 

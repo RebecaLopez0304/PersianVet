@@ -3,7 +3,9 @@ using PersianVet.Utilidades;
 
 namespace PersianVet.Formularios;
 
-/// <summary>Permite escribir los datos de un cliente en una ventana separada.</summary>
+/// <summary>
+/// Permite escribir los datos de un cliente en una ventana separada.
+/// </summary>
 public partial class FrmClienteEdicion : Form
 {
     public Cliente Cliente { get; private set; }

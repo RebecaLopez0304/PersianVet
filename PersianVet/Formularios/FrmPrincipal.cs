@@ -26,7 +26,7 @@ public partial class FrmPrincipal : Form
     private readonly Dictionary<Button, (Image? Normal, Image? Activo)> iconosMenu = [];
 
     /// <summary>
-    /// Indica si el usuario eligió regresar a la pantalla de acceso.
+    /// Obtiene un valor que indica si el usuario eligió regresar a la pantalla de acceso.
     /// </summary>
     public bool SesionCerrada => cerrandoSesion;
 
@@ -70,8 +70,7 @@ public partial class FrmPrincipal : Form
         AcomodarEncabezado();
         AcomodarMenu();
 
-        // La ventana no puede achicarse por debajo de su tamaño de diseño (sin pasar del tamaño de la pantalla),
-        // así los módulos nunca se recortan ni se superponen.
+        // Por debajo del tamaño de diseño los módulos se recortarían; el límite no supera la pantalla.
         Rectangle pantalla = Screen.FromControl(this).WorkingArea;
         MinimumSize = new Size(Math.Min(Width, pantalla.Width), Math.Min(Height, pantalla.Height));
 

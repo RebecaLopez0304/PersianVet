@@ -24,7 +24,7 @@ public class PersianVetContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Las propiedades calculadas (solo lectura, como NombreCompleto) EF Core las ignora solo.
+        // EF Core ignora por convención las propiedades de solo lectura (NombreCompleto, Propietario...).
         modelBuilder.Entity<Cliente>(e =>
         {
             e.ToTable("Clientes");

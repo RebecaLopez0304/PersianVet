@@ -16,11 +16,12 @@ public class CitaDatos : ICitaDatos
         this.conexionBD = conexionBD;
     }
 
+    /// <inheritdoc/>
     public List<Cita> Listar(DateTime? fecha = null)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
 
-        // Include trae la mascota, su dueño y el veterinario para mostrar sus nombres.
+        // Include carga la mascota, su dueño y el veterinario que usan las propiedades Nombre* de Cita.
         IQueryable<Cita> consulta = contexto.Citas.AsNoTracking()
             .Include(c => c.Mascota).ThenInclude(m => m.Cliente)
             .Include(c => c.Veterinario);
@@ -35,6 +36,7 @@ public class CitaDatos : ICitaDatos
         return consulta.OrderBy(c => c.FechaHora).ToList();
     }
 
+    /// <inheritdoc/>
     public bool ExisteCruce(Cita cita)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
@@ -44,6 +46,7 @@ public class CitaDatos : ICitaDatos
             && c.IdCita != cita.IdCita);
     }
 
+    /// <inheritdoc/>
     public int Guardar(Cita cita)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
@@ -53,6 +56,7 @@ public class CitaDatos : ICitaDatos
         return cita.IdCita;
     }
 
+    /// <inheritdoc/>
     public void Actualizar(Cita cita)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
@@ -61,6 +65,7 @@ public class CitaDatos : ICitaDatos
         contexto.SaveChanges();
     }
 
+    /// <inheritdoc/>
     public void Cancelar(int idCita)
     {
         using PersianVetContext contexto = conexionBD.CrearContexto();
@@ -70,7 +75,7 @@ public class CitaDatos : ICitaDatos
 
     private static void Limpiar(Cita cita)
     {
-        // Se guarda solo la cita; la mascota y el veterinario relacionados no se modifican.
+        // Sin las relaciones cargadas, Update guarda solo la cita y no la mascota ni el veterinario.
         cita.Mascota = null!;
         cita.Veterinario = null!;
         cita.Motivo = cita.Motivo.Trim();

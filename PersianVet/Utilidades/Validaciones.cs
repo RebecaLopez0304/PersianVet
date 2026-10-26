@@ -7,6 +7,11 @@ namespace PersianVet.Utilidades;
 /// </summary>
 public static class Validaciones
 {
+    /// <summary>
+    /// Indica si el texto tiene formato de correo electrónico válido.
+    /// </summary>
+    /// <param name="correo">Correo a revisar.</param>
+    /// <returns><see langword="true"/> si <see cref="System.Net.Mail.MailAddress"/> lo acepta sin cambios.</returns>
     public static bool EsCorreoValido(string correo)
     {
         if (string.IsNullOrWhiteSpace(correo))
@@ -25,6 +30,11 @@ public static class Validaciones
         }
     }
 
+    /// <summary>
+    /// Indica si el teléfono tiene al menos 8 dígitos; se ignoran guiones y espacios.
+    /// </summary>
+    /// <param name="telefono">Teléfono a revisar.</param>
+    /// <returns><see langword="true"/> si tiene 8 dígitos o más.</returns>
     public static bool EsTelefonoValido(string telefono)
     {
         string numeros = new(telefono.Where(char.IsDigit).ToArray());

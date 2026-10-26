@@ -16,11 +16,17 @@ public class ClienteServicio
         this.clienteDatos = clienteDatos;
     }
 
+    /// <inheritdoc cref="IClienteDatos.Listar(string, bool)"/>
     public List<Cliente> Listar(string filtro, bool soloActivos = true)
     {
         return clienteDatos.Listar(filtro, soloActivos);
     }
 
+    /// <summary>
+    /// Valida los nombres, el teléfono, el correo y la dirección, y registra el cliente.
+    /// </summary>
+    /// <param name="cliente">Datos del cliente.</param>
+    /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion Guardar(Cliente cliente)
     {
         ResultadoOperacion validacion = Validar(cliente);
@@ -33,6 +39,11 @@ public class ClienteServicio
         return ResultadoOperacion.Correcto("El cliente se guardó correctamente.");
     }
 
+    /// <summary>
+    /// Valida los datos y modifica un cliente existente.
+    /// </summary>
+    /// <param name="cliente">Datos del cliente, con su identificador.</param>
+    /// <returns>El resultado de la operación, con el mensaje para mostrar al usuario.</returns>
     public ResultadoOperacion Actualizar(Cliente cliente)
     {
         if (cliente.IdCliente <= 0)
@@ -50,6 +61,7 @@ public class ClienteServicio
         return ResultadoOperacion.Correcto("El cliente se modificó correctamente.");
     }
 
+    /// <inheritdoc cref="IClienteDatos.Desactivar(int)"/>
     public void Desactivar(int idCliente)
     {
         clienteDatos.Desactivar(idCliente);

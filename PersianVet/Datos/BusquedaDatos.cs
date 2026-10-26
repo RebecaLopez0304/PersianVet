@@ -17,9 +17,10 @@ public class BusquedaDatos : IBusquedaDatos
         this.conexionBD = conexionBD;
     }
 
+    /// <inheritdoc/>
     public async Task<List<ResultadoBusqueda>> BuscarAsync(string texto, CancellationToken cancelacion)
     {
-        // Tres consultas independientes, cada una con su propio contexto.
+        // DbContext no admite consultas simultáneas: cada búsqueda paralela usa su propio contexto.
         Task<List<ResultadoBusqueda>> clientes = BuscarClientesAsync(texto, cancelacion);
         Task<List<ResultadoBusqueda>> mascotas = BuscarMascotasAsync(texto, cancelacion);
         Task<List<ResultadoBusqueda>> citas = BuscarCitasAsync(texto, cancelacion);

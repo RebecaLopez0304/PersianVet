@@ -16,6 +16,7 @@ public class ReporteDatos : IReporteDatos
         this.conexionBD = conexionBD;
     }
 
+    /// <inheritdoc/>
     public async Task<List<ReporteVeterinario>> ObtenerActividadPorVeterinarioAsync(
         DateTime desde, DateTime hasta, CancellationToken cancelacion)
     {
@@ -42,6 +43,7 @@ public class ReporteDatos : IReporteDatos
             .ToListAsync(cancelacion);
     }
 
+    /// <inheritdoc/>
     public async Task<List<ReporteEspecie>> ObtenerAtencionPorEspecieAsync(
         DateTime desde, DateTime hasta, CancellationToken cancelacion)
     {
