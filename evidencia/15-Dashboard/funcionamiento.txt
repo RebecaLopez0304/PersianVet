@@ -17,7 +17,8 @@ más comunes.
 2. Acciones rápidas: Nueva cita, Calendario, Nuevo cliente, Nueva mascota,
    Nueva consulta, Nueva vacuna y Actualizar. Cada rol ve solo las que puede usar.
 3. Próximas citas: las siguientes 8 citas no canceladas.
-4. "Requiere atención" (doble clic en un aviso abre su módulo):
+4. "Requiere atención": tabla con Aviso, Mascota, Detalle y Fecha (doble clic en un
+   aviso abre su módulo):
    - Vacunas vencidas en los últimos 30 días o que vencen en los próximos 7.
    - Citas de las próximas 48 horas que siguen sin confirmar.
    - Mascotas activas sin consultas en los últimos 6 meses.

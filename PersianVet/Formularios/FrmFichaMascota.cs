@@ -44,10 +44,45 @@ public partial class FrmFichaMascota : Form
     {
         lblNombre.Text = mascota.Nombre;
         string observaciones = string.IsNullOrWhiteSpace(mascota.Observaciones) ? "Sin observaciones" : mascota.Observaciones;
-        lblResumen.Text =
-            $"{mascota.Especie} | {mascota.Raza} | {mascota.Sexo} | {CalcularEdad(mascota.FechaNacimiento)} | {mascota.Peso:0.##} kg | {mascota.Color}\r\n"
-            + $"Propietario: {mascota.Propietario}\r\n"
-            + $"Observaciones: {observaciones}";
+
+        AgregarDato("Especie", mascota.Especie, 0, 0);
+        AgregarDato("Raza", mascota.Raza, 1, 0);
+        AgregarDato("Sexo", mascota.Sexo, 2, 0);
+        AgregarDato("Edad", CalcularEdad(mascota.FechaNacimiento), 3, 0);
+        AgregarDato("Peso", $"{mascota.Peso:0.##} kg", 4, 0);
+        AgregarDato("Color", mascota.Color, 5, 0);
+        AgregarDato("Propietario", mascota.Propietario, 0, 1, columnas: 2);
+        AgregarDato("Observaciones", observaciones, 2, 1, columnas: 4);
+    }
+
+    /// <summary>
+    /// Agrega al panel de datos un campo con su título pequeño arriba y el valor debajo.
+    /// </summary>
+    private void AgregarDato(string titulo, string valor, int columna, int fila, int columnas = 1)
+    {
+        Label lblTitulo = new()
+        {
+            Dock = DockStyle.Top,
+            ForeColor = Tema.TextoSecundario,
+            Height = 18,
+            Text = titulo
+        };
+
+        // AutoEllipsis recorta con "..." un valor largo y muestra el texto completo al pasar el mouse.
+        Label lblValor = new()
+        {
+            AutoEllipsis = true,
+            Dock = DockStyle.Fill,
+            Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+            ForeColor = Tema.GrisOscuro,
+            Text = valor
+        };
+
+        Panel celda = new() { Dock = DockStyle.Fill, Margin = new Padding(4, 2, 4, 2) };
+        celda.Controls.Add(lblValor);
+        celda.Controls.Add(lblTitulo);
+        panelDatos.Controls.Add(celda, columna, fila);
+        panelDatos.SetColumnSpan(celda, columnas);
     }
 
     private async void FrmFichaMascota_Load(object? sender, EventArgs e)

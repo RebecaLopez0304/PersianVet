@@ -143,7 +143,6 @@ public partial class UcClientes : UserControl
         try
         {
             tablaClientes.DataSource = clienteServicio.Listar(txtBuscar.Text, !chkMostrarInactivos.Checked);
-            if (tablaClientes.Columns.Contains("IdCliente")) tablaClientes.Columns["IdCliente"].HeaderText = "ID";
             EstiloControles.OcultarColumnas(tablaClientes, "NombreCompleto");
         }
         catch (Exception excepcion)

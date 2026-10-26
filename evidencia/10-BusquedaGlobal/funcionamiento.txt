@@ -8,7 +8,9 @@ Encontrar rápidamente cualquier cliente, mascota o cita sin saber en qué módu
 
 ¿QUÉ SE PUEDE HACER?
 1. Escribir al menos 2 letras en el cuadro del encabezado y presionar Enter.
-2. Se abre la ventana de resultados con columnas Tipo, Título y Detalle:
+2. Se abre la ventana de resultados; cada dato va en su columna: Tipo, Nombre,
+   Descripción (correo, raza o motivo), Dueño, Teléfono, Fecha y hora y Estado.
+   Las columnas que no aplican a un tipo quedan vacías.
    - Cliente: busca en nombre, apellido, teléfono y correo.
    - Mascota: busca en nombre, raza y nombre del dueño.
    - Cita: busca en el motivo y la mascota de las citas de hoy en adelante

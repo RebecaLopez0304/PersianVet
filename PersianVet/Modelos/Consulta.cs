@@ -15,6 +15,7 @@ public class Consulta
     public int IdConsulta { get; set; }
     public int IdMascota { get; set; }
     public int IdVeterinario { get; set; }
+    [DisplayName("Fecha y hora")]
     public DateTime FechaHora { get; set; } = DateTime.Now;
 
     /// <summary>
@@ -23,6 +24,7 @@ public class Consulta
     public string Servicio { get; set; } = string.Empty;
 
     public string Motivo { get; set; } = string.Empty;
+    [DisplayName("Diagnóstico")]
     public string Diagnostico { get; set; } = string.Empty;
     public string Observaciones { get; set; } = string.Empty;
 
@@ -42,7 +44,7 @@ public class Consulta
     /// <summary>
     /// Obtiene los tratamientos en una sola línea, por ejemplo "Meloxicam - 1.5 mg; Glucosamina - 500 mg".
     /// </summary>
-    public string Tratamientos => string.Join("; ", ListaTratamientos.Select(t => $"{t.Medicamento} - {t.Dosis}"));
+    public string Tratamientos => string.Join(", ", ListaTratamientos.Select(t => $"{t.Medicamento} {t.Dosis}"));
 
     [Browsable(false)]
     public List<Tratamiento> ListaTratamientos { get; set; } = [];

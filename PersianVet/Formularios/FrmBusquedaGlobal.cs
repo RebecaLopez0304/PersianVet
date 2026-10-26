@@ -42,6 +42,9 @@ public partial class FrmBusquedaGlobal : Form
             List<ResultadoBusqueda> resultados = await busquedaServicio.BuscarAsync(texto, cancelacion.Token);
             tablaResultados.DataSource = resultados;
             EstiloControles.OcultarColumnas(tablaResultados, "Id");
+            tablaResultados.Columns["Fecha"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+            tablaResultados.Columns["Tipo"].FillWeight = 60;
+            tablaResultados.Columns["Descripcion"].FillWeight = 150;
 
             lblEstado.Text = resultados.Count == 0
                 ? "No se encontraron coincidencias."

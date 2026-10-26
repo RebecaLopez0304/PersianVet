@@ -9,8 +9,8 @@ que buscarla en tres módulos distintos.
 
 ¿QUÉ MUESTRA?
 1. Encabezado: nombre de la mascota.
-2. Resumen: especie, raza, sexo, edad calculada (en meses o años), peso, color,
-   propietario y observaciones.
+2. Datos de la mascota, cada uno con su título: especie, raza, sexo, edad calculada
+   (en meses o años), peso, color, propietario y observaciones.
 3. Tres pestañas, cada una con la cantidad de registros en su título:
    - Consultas: fecha, servicio, motivo, diagnóstico, precio, total, veterinario y
      tratamientos indicados.

@@ -43,7 +43,7 @@ partial class UcDashboard
     private Button btnNuevaVacuna = null!;
     private Button btnActualizar = null!;
     private DataGridView tablaCitas = null!;
-    private ListBox listaAlertas = null!;
+    private DataGridView tablaAlertas = null!;
     private GraficoBarras graficoCitas = null!;
 
     private void InitializeComponent()
@@ -75,9 +75,10 @@ partial class UcDashboard
         btnNuevaVacuna = new Button();
         btnActualizar = new Button();
         tablaCitas = new DataGridView();
-        listaAlertas = new ListBox();
+        tablaAlertas = new DataGridView();
         graficoCitas = new GraficoBarras();
         ((System.ComponentModel.ISupportInitialize)tablaCitas).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)tablaAlertas).BeginInit();
         SuspendLayout();
 
         // Estructura principal: título, tarjetas, acciones rápidas, contenido y barra de estado.
@@ -180,17 +181,13 @@ partial class UcDashboard
         columnaAlertas.RowStyles.Add(new RowStyle(SizeType.Absolute, 32F));
         columnaAlertas.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
         columnaAlertas.Controls.Add(lblAlertas, 0, 0);
-        columnaAlertas.Controls.Add(listaAlertas, 0, 1);
+        columnaAlertas.Controls.Add(tablaAlertas, 0, 1);
         lblAlertas.Dock = DockStyle.Fill;
         lblAlertas.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
         lblAlertas.ForeColor = Color.FromArgb(8, 52, 90);
         lblAlertas.Text = "Requiere atención";
-        listaAlertas.BorderStyle = BorderStyle.None;
-        listaAlertas.Dock = DockStyle.Fill;
-        listaAlertas.Font = new Font("Segoe UI", 9.5F);
-        listaAlertas.IntegralHeight = false;
-        listaAlertas.ItemHeight = 22;
-        listaAlertas.DoubleClick += ListaAlertas_DoubleClick;
+        tablaAlertas.Dock = DockStyle.Fill;
+        tablaAlertas.CellDoubleClick += TablaAlertas_CellDoubleClick;
 
         graficoCitas.Dock = DockStyle.Fill;
         graficoCitas.Margin = new Padding(0, 6, 0, 0);
@@ -210,6 +207,7 @@ partial class UcDashboard
         AutoScaleMode = AutoScaleMode.Dpi;
         Size = new Size(940, 592);
         ((System.ComponentModel.ISupportInitialize)tablaCitas).EndInit();
+        ((System.ComponentModel.ISupportInitialize)tablaAlertas).EndInit();
         ResumeLayout(false);
         PerformLayout();
     }

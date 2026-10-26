@@ -286,7 +286,7 @@ public partial class FrmPrincipal : Form
 
     private void ActualizarFechaHora()
     {
-        lblFechaHora.Text = DateTime.Now.ToString("dddd, dd 'de' MMMM 'de' yyyy  |  hh:mm tt");
+        lblFechaHora.Text = DateTime.Now.ToString("dddd, dd 'de' MMMM 'de' yyyy, h:mm tt");
     }
 
     private void PanelEncabezado_Resize(object? sender, EventArgs e)

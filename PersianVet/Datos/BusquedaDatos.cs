@@ -42,8 +42,9 @@ public class BusquedaDatos : IBusquedaDatos
             {
                 Id = c.IdCliente,
                 Tipo = "Cliente",
-                Titulo = c.Nombres + " " + c.Apellidos,
-                Detalle = c.Telefono + " | " + c.Correo
+                Nombre = c.Nombres + " " + c.Apellidos,
+                Descripcion = c.Correo,
+                Telefono = c.Telefono
             })
             .ToListAsync(cancelacion);
     }
@@ -61,8 +62,10 @@ public class BusquedaDatos : IBusquedaDatos
             {
                 Id = m.IdMascota,
                 Tipo = "Mascota",
-                Titulo = m.Nombre,
-                Detalle = m.Especie + " " + m.Raza + " | Dueño: " + m.Cliente.Nombres + " " + m.Cliente.Apellidos
+                Nombre = m.Nombre,
+                Descripcion = m.Raza + " (" + m.Especie + ")",
+                Propietario = m.Cliente.Nombres + " " + m.Cliente.Apellidos,
+                Telefono = m.Cliente.Telefono
             })
             .ToListAsync(cancelacion);
     }
@@ -72,21 +75,22 @@ public class BusquedaDatos : IBusquedaDatos
         DateTime hoy = DateTime.Today;
         await using PersianVetContext contexto = conexionBD.CrearContexto();
 
-        // La fecha se formatea en memoria porque ToString("dd/MM HH:mm") no se traduce a SQL.
-        var citas = await contexto.Citas.AsNoTracking()
+        return await contexto.Citas.AsNoTracking()
             .Where(c => c.Estado != "Cancelada" && c.FechaHora >= hoy
                 && (c.Motivo.Contains(texto) || c.Mascota.Nombre.Contains(texto)))
             .OrderBy(c => c.FechaHora)
             .Take(MaximoPorTipo)
-            .Select(c => new { c.IdCita, Mascota = c.Mascota.Nombre, c.Motivo, c.FechaHora, c.Estado })
+            .Select(c => new ResultadoBusqueda
+            {
+                Id = c.IdCita,
+                Tipo = "Cita",
+                Nombre = c.Mascota.Nombre,
+                Descripcion = c.Motivo,
+                Propietario = c.Mascota.Cliente.Nombres + " " + c.Mascota.Cliente.Apellidos,
+                Telefono = c.Mascota.Cliente.Telefono,
+                Fecha = c.FechaHora,
+                Estado = c.Estado
+            })
             .ToListAsync(cancelacion);
-
-        return citas.Select(c => new ResultadoBusqueda
-        {
-            Id = c.IdCita,
-            Tipo = "Cita",
-            Titulo = $"{c.Mascota} - {c.Motivo}",
-            Detalle = $"{c.FechaHora:dd/MM/yyyy HH:mm} | {c.Estado}"
-        }).ToList();
     }
 }

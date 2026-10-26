@@ -18,7 +18,8 @@ CONCEPTOS QUE SE USAN
 - Un DbContext por consulta paralela (DbContext no admite consultas simultáneas).
 - CancellationTokenSource que se cancela en FormClosing.
 - LINQ con Contains en varias columnas y en tablas relacionadas (dueño de la mascota).
-- Formato de fechas en memoria (ToString no se traduce a SQL).
+- Proyección directa con Select a ResultadoBusqueda: cada dato en su propia propiedad,
+  sin unir textos; la fecha se formatea en la tabla (DefaultCellStyle.Format).
 - Operador de propagación [.. lista1, .. lista2, .. lista3] para unir resultados.
 
 LO MÁS DIFÍCIL DE ESTA PANTALLA
@@ -30,5 +31,6 @@ PREGUNTAS QUE PODRÍA HACER EL DOCENTE
   DbContext no es seguro para varias consultas simultáneas; cada tarea usa el suyo.
 - ¿Qué pasa si cierro la ventana mientras busca?
   Se cancela el token y las consultas se detienen (OperationCanceledException).
-- ¿Por qué la fecha de la cita se formatea después de ToListAsync?
-  Porque ToString("dd/MM/yyyy HH:mm") no se puede traducir a SQL; se hace en memoria.
+- ¿Por qué no se muestran los datos unidos en un solo texto ("8811-1004 | correo")?
+  Porque cada dato en su columna se lee mejor, se puede ordenar y no depende de
+  separadores. Las columnas que no aplican quedan vacías.

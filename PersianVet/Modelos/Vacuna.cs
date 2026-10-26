@@ -11,18 +11,22 @@ namespace PersianVet.Modelos;
 /// </remarks>
 public class Vacuna
 {
+    [DisplayName("ID")]
     public int IdVacuna { get; set; }
     public int IdMascota { get; set; }
 
     [DisplayName("Mascota")]
     public string NombreMascota => Mascota == null ? string.Empty : Mascota.Nombre;
 
+    [DisplayName("Vacuna")]
     public string NombreVacuna { get; set; } = string.Empty;
+    [DisplayName("Fecha de aplicación")]
     public DateTime FechaAplicacion { get; set; } = DateTime.Today;
 
     /// <summary>
     /// Obtiene o establece la fecha del siguiente refuerzo, o <see langword="null"/> si no requiere otra dosis.
     /// </summary>
+    [DisplayName("Próxima dosis")]
     public DateTime? ProximaDosis { get; set; }
 
     public string Lote { get; set; } = string.Empty;

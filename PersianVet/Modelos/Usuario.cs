@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace PersianVet.Modelos;
 
 /// <summary>
@@ -6,6 +8,7 @@ namespace PersianVet.Modelos;
 public class Usuario
 {
     public int IdUsuario { get; set; }
+    [DisplayName("Usuario")]
     public string NombreUsuario { get; set; } = string.Empty;
     public string ClaveHash { get; set; } = string.Empty;
     public string Rol { get; set; } = string.Empty;

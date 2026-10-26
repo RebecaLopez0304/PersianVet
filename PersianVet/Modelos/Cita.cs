@@ -12,9 +12,11 @@ namespace PersianVet.Modelos;
 /// </remarks>
 public class Cita
 {
+    [DisplayName("ID")]
     public int IdCita { get; set; }
     public int IdMascota { get; set; }
     public int IdVeterinario { get; set; }
+    [DisplayName("Fecha y hora")]
     public DateTime FechaHora { get; set; } = DateTime.Now;
 
     /// <summary>

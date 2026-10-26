@@ -10,6 +10,7 @@ namespace PersianVet.Modelos;
 /// </remarks>
 public class Mascota
 {
+    [DisplayName("ID")]
     public int IdMascota { get; set; }
     public int IdCliente { get; set; }
 
@@ -22,6 +23,7 @@ public class Mascota
     public string Especie { get; set; } = string.Empty;
     public string Raza { get; set; } = string.Empty;
     public string Sexo { get; set; } = string.Empty;
+    [DisplayName("Fecha de nacimiento")]
     public DateTime FechaNacimiento { get; set; } = DateTime.Today;
     public string Color { get; set; } = string.Empty;
     public decimal Peso { get; set; }

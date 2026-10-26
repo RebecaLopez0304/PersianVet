@@ -81,44 +81,46 @@ public class DashboardDatos : IDashboardDatos
         alertas.AddRange(vacunas.Select(v => new Alerta
         {
             Tipo = v.ProximaDosis < hoy ? "Vacuna vencida" : "Vacuna próxima",
-            Mensaje = $"{v.NombreVacuna} de {v.Mascota} ({v.ProximaDosis:dd/MM})",
+            Mascota = v.Mascota,
+            Detalle = v.NombreVacuna,
+            Fecha = v.ProximaDosis,
             Modulo = "Vacunas"
         }));
 
         // 2. Citas de las próximas 48 horas que todavía están sin confirmar.
-        var citas = await contexto.Citas.AsNoTracking()
+        alertas.AddRange(await contexto.Citas.AsNoTracking()
             .Where(c => c.Estado == "Programada" && c.FechaHora >= ahora && c.FechaHora <= ahora.AddDays(2))
             .OrderBy(c => c.FechaHora)
             .Take(4)
-            .Select(c => new { Mascota = c.Mascota.Nombre, c.FechaHora })
-            .ToListAsync(cancelacion);
+            .Select(c => new Alerta
+            {
+                Tipo = "Cita sin confirmar",
+                Mascota = c.Mascota.Nombre,
+                Detalle = c.Servicio,
+                Fecha = c.FechaHora,
+                Modulo = "Citas"
+            })
+            .ToListAsync(cancelacion));
 
-        alertas.AddRange(citas.Select(c => new Alerta
-        {
-            Tipo = "Cita sin confirmar",
-            Mensaje = $"{c.Mascota} ({c.FechaHora:dd/MM HH:mm})",
-            Modulo = "Citas"
-        }));
-
-        // 3. Mascotas activas sin ninguna consulta en los últimos 6 meses.
+        // 3. Mascotas activas sin ninguna consulta en los últimos 6 meses; la fecha es la de su última consulta.
         DateTime limite = hoy.AddMonths(-6);
-        List<string> sinConsulta = await contexto.Mascotas.AsNoTracking()
+        alertas.AddRange(await contexto.Mascotas.AsNoTracking()
             .Where(m => m.Activa && !m.Consultas.Any(c => c.FechaHora >= limite))
             .OrderBy(m => m.Nombre)
             .Take(3)
-            .Select(m => m.Nombre)
-            .ToListAsync(cancelacion);
-
-        alertas.AddRange(sinConsulta.Select(nombre => new Alerta
-        {
-            Tipo = "Sin consulta en 6 meses",
-            Mensaje = nombre,
-            Modulo = "Mascotas"
-        }));
+            .Select(m => new Alerta
+            {
+                Tipo = "Sin consulta en 6 meses",
+                Mascota = m.Nombre,
+                Detalle = m.Consultas.Any() ? "Última consulta" : "Nunca ha tenido consulta",
+                Fecha = m.Consultas.Max(c => (DateTime?)c.FechaHora),
+                Modulo = "Mascotas"
+            })
+            .ToListAsync(cancelacion));
 
         if (alertas.Count == 0)
         {
-            alertas.Add(new Alerta { Tipo = "Todo en orden", Mensaje = "No hay avisos pendientes." });
+            alertas.Add(new Alerta { Tipo = "Todo en orden", Detalle = "No hay avisos pendientes." });
         }
 
         return alertas;

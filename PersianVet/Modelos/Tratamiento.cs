@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace PersianVet.Modelos;
 
 /// <summary>
@@ -10,6 +12,7 @@ public class Tratamiento
     public string Medicamento { get; set; } = string.Empty;
     public string Dosis { get; set; } = string.Empty;
     public string Frecuencia { get; set; } = string.Empty;
+    [DisplayName("Duración")]
     public string Duracion { get; set; } = string.Empty;
     public string Indicaciones { get; set; } = string.Empty;
     public decimal Precio { get; set; }

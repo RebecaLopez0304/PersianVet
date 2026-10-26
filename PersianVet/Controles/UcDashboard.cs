@@ -21,6 +21,10 @@ public partial class UcDashboard : UserControl
     {
         InitializeComponent();
         EstiloControles.ConfigurarTabla(tablaCitas);
+        EstiloControles.ConfigurarTabla(tablaAlertas);
+        // Filas más bajas para que quepan más avisos sin desplazarse.
+        tablaAlertas.ColumnHeadersHeight = 32;
+        tablaAlertas.RowTemplate.Height = 28;
         ConfigurarBotones();
         HacerClicable(tarjetaMascotas, "Mascotas");
         HacerClicable(tarjetaCitas, "Citas");
@@ -70,12 +74,30 @@ public partial class UcDashboard : UserControl
         NavegarSolicitado?.Invoke(destino);
     }
 
-    private void ListaAlertas_DoubleClick(object? sender, EventArgs e)
+    private void TablaAlertas_CellDoubleClick(object? sender, DataGridViewCellEventArgs e)
     {
-        if (listaAlertas.SelectedItem is Alerta alerta && alerta.Modulo != "Inicio")
+        if (e.RowIndex >= 0 && tablaAlertas.Rows[e.RowIndex].DataBoundItem is Alerta alerta && alerta.Modulo != "Inicio")
         {
             Navegar(alerta.Modulo);
         }
+    }
+
+    /// <summary>
+    /// Asigna los avisos a su tabla. La hora solo se muestra cuando importa (en las citas).
+    /// </summary>
+    private void MostrarAlertas(List<Alerta> alertas)
+    {
+        tablaAlertas.DataSource = alertas;
+        tablaAlertas.Columns["Tipo"].FillWeight = 130;
+        foreach (DataGridViewRow fila in tablaAlertas.Rows)
+        {
+            if (fila.DataBoundItem is Alerta { Fecha: DateTime fecha })
+            {
+                fila.Cells["Fecha"].Style.Format = fecha.TimeOfDay == TimeSpan.Zero ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm";
+            }
+        }
+
+        tablaAlertas.ClearSelection();
     }
 
     private void ConfigurarBotones()
@@ -144,9 +166,10 @@ public partial class UcDashboard : UserControl
             lblIngresosValor.Text = Moneda.Formatear(resumen.IngresosMes, 0);
             tablaCitas.DataSource = tareaCitas.Result;
             EstiloControles.OcultarColumnas(tablaCitas, "IdCita", "IdMascota", "IdVeterinario", "Motivo", "Precio");
+            tablaCitas.Columns["FechaHora"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+            tablaCitas.Columns["FechaHora"].FillWeight = 130;
 
-            listaAlertas.DataSource = tareaAlertas.Result;
-            listaAlertas.ClearSelected();
+            MostrarAlertas(tareaAlertas.Result);
             graficoCitas.AsignarDatos(tareaGrafico.Result);
             lblEstado.Text = "La información está actualizada.";
         }
